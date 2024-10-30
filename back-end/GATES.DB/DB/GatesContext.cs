@@ -4,7 +4,7 @@ using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Protocols;
 
-namespace GATES.DA.DB;
+namespace GATES.DB.DB;
 
 public partial class GatesContext : DbContext
 {

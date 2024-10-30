@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GATES.DA.DB;
+namespace GATES.DB.DB;
 
 public partial class PAuditLog
 {

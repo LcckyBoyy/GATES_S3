@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GATES.DA.DB;
+using GATES.DB.DB;
 using GATES.Models;
 
 namespace GATES.Controllers

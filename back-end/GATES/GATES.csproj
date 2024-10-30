@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GATES.DB\GATES.DA.csproj" />
+    <ProjectReference Include="..\GATES.DB\GATES.DB.csproj" />
+    <ProjectReference Include="..\GATES.Services\GATES.DA.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace GATES.DA.DB;
+﻿namespace GATES.DB.DB;
 
 public partial class MtUser
 {
