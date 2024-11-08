@@ -4,6 +4,9 @@ using GATES.Models;
 using GATES.DA.Interface;
 using GATES.DA.ServicesModel;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace GATES.Controllers
 {
@@ -16,6 +19,7 @@ namespace GATES.Controllers
 
         [HttpPost]
         [Route("registration")]
+        [AllowAnonymous]
         public JsonResult Registration(blRegistrationUser req)
         {
             if (!ModelState.IsValid)
@@ -25,7 +29,7 @@ namespace GATES.Controllers
 
             try
             {
-				bool response = daUser.Registration(new daRegistrationUser()
+				bool response = daUser.Registration(new daRegistrationUser
 				{
 					Email = req.Email,
 					UserId = req.UserId,
@@ -60,75 +64,37 @@ namespace GATES.Controllers
                 return new JsonResult(false);
 			}
         }
+
+
         [HttpPost]
-        [Route("addInventory")]
-        public JsonResult AddInventory(string id, string description)
+        [Route("Login")]
+        [AllowAnonymous]
+        public async Task<JsonResult> Login(string username, string password)
         {
-            using (var server = new GatesContext())
+            var response = daUser.Login(username, password);
+
+            if (response.Result != null)
             {
-                var entity = (from i in server.MtUsers
-                              where i.UserId == id
-                              select i).FirstOrDefault();
-
-                if (entity == null)
+                var claim = new List<Claim>
                 {
-                    return new JsonResult("Username doesn't exist!");
-                }
-
-                string formattedString = string.Format("INVTRY{0:D5}", entity.UserId);
-
-                var inventory = (from i in server.PInventories
-                                where i.InventoryId == formattedString
-                                select i).FirstOrDefault();
-
-                if (inventory != null)
-                {
-                    return new JsonResult("Inventory exist!");
-                }
-
-                PInventory a = new()
-                {
-                    InventoryId = formattedString,
-                    InventoryName = "Bank Fert",
-                    OwnerId = entity.UserId,
-                    Description = description,
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
+                    new Claim(ClaimTypes.NameIdentifier, response.Result.UserId),
+                    new Claim(ClaimTypes.Name, response.Result.Username),
+                    new Claim(ClaimTypes.Email, response.Result.Email),
                 };
 
-                server.PInventories.Add(a);
-                server.SaveChanges();
+                var claimsIdentity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
 
-                return new JsonResult("Success");
-            }
-        }
-
-        [HttpPost]
-        [Route("addInventoryAccess")]
-        public JsonResult AddInventoryAccess(string userId, string inventoryId)
-        {
-            using (var server = new GatesContext())
+                };
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                
+                return new JsonResult(new { Message = "Success", Result = true });
+            }else
             {
-                try
-                {
-                    PInventoryAccess a = new()
-                    {
-                        InventoryId = inventoryId,
-                        UserId = userId,
-                        InventoryAccesId = string.Format("INVACSS{0:D30}", DateTime.UtcNow.ToString("yyMMddHHmmssfff") ),
-                        GrantedAt = DateTime.UtcNow,
-                        IsActive = true
-                    };
-                    server.Add(a);
-                    server.SaveChanges();
-                }
-                catch(Exception e)
-                {
-                    return new JsonResult(e.Message);
-                }
-
-                return new JsonResult("Success");
+                return new JsonResult( new { Message = "Failed", Result = false });
             }
+
         }
     }
 }

@@ -10,6 +10,9 @@ namespace GATES.DA.Interface
 	public interface IUsersDA
 	{
 		public bool Registration(daRegistrationUser req);
+
 		public List<daGetUsers> GetList();
+
+		public BaseResponse<daUserCookie> Login(string username, string password);
 	}
 }

@@ -38,8 +38,9 @@ void ConfigureService(ConfigurationManager config, IServiceCollection services)
 	services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 		.AddCookie(options =>
 		{
-			options.ExpireTimeSpan = TimeSpan.FromMinutes(120);
+			options.ExpireTimeSpan = TimeSpan.FromHours(720);
 			options.SlidingExpiration = true;
+			options.AccessDeniedPath = "/Forbiden";
 		});
 
 	services.AddTransient<IUsersDA, UsersDA>();

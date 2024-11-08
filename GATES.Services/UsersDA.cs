@@ -56,6 +56,28 @@ namespace GATES.DA
 			}
 		}
 
+		public BaseResponse<daUserCookie> Login(string username, string password)
+		{
+			var res = new BaseResponse<daUserCookie>();
+			using (var server = new GatesContext())
+			{
+				var user = server.MtUsers
+					.Where(i => i.Username == password && i.IsActive == true)
+					.FirstOrDefault();
 
+				if (user == null) { res.Message = "Invalid User"; return res; }
+				if (password != user.PasswordSalt) { res.Message = "Invalid Password"; return res; }
+
+				res.Result = new daUserCookie
+				{
+					UserId = user.UserId,
+					Username = user.Username,
+					Email = user.Email
+				};
+
+				res.Message = "Succes";
+				return res;
+			}
+		}
 	}
 }
