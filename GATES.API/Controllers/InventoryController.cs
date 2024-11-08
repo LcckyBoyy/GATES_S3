@@ -1,5 +1,5 @@
 ﻿using GATES.DA.Interface;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GATES.API.Controllers

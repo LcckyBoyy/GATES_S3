@@ -1,18 +1,17 @@
 using GATES.DA.Interface;
 using GATES.DA;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-builder.Services.AddTransient<IUsersDA, UsersDA>();
+ConfigureService(builder.Configuration, builder.Services);
 
 var app = builder.Build();
 
@@ -25,8 +24,23 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
+
+void ConfigureService(ConfigurationManager config, IServiceCollection services)
+{
+	services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+		.AddCookie(options =>
+		{
+			options.ExpireTimeSpan = TimeSpan.FromMinutes(120);
+			options.SlidingExpiration = true;
+		});
+
+	services.AddTransient<IUsersDA, UsersDA>();
+}

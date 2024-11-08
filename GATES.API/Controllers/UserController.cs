@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GATES.DB.DB;
 using GATES.Models;
-
 using GATES.DA.Interface;
-using GATES.DA;
 using GATES.DA.ServicesModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GATES.Controllers
 {
-    [ApiController]
+	[Authorize]
+	[ApiController]
     [Route("[controller]")]
     public class UserController(IUsersDA usersDA) : ControllerBase
     {
