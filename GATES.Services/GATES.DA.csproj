@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GATES.DB\GATES.DB.csproj" />
+  </ItemGroup>
+
 </Project>

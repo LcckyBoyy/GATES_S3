@@ -2,46 +2,64 @@
 using GATES.DB.DB;
 using GATES.Models;
 
+using GATES.DA.Interface;
+using GATES.DA;
+using GATES.DA.ServicesModel;
+
 namespace GATES.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class UserController(IUsersDA usersDA) : ControllerBase
     {
+        private readonly IUsersDA daUser = usersDA;
+
         [HttpPost]
         [Route("registration")]
-        public JsonResult Registration(UserRegistration req)
+        public JsonResult Registration(blRegistrationUser req)
         {
-            using (var server = new GatesContext())
+            if (!ModelState.IsValid)
             {
-                var entity = (from i in server.MtUsers
-                             where i.Username == req.Username
-                            select i).FirstOrDefault();
-
-                if(entity != null)
-                {
-                    return new JsonResult("Username exist!");
-                }
-
-                MtUser a = new()
-                {
-                    UserId = req.UserId,
-                    Username = req.Username,
-                    Email = req.Email,
-                    PasswordSalt = req.PasswordSalt,
-
-                    CreatedAt = DateTime.UtcNow,
-                    LastLogin = DateTime.UtcNow,
-                    IsActive = true,
-                };
-
-                server.MtUsers.Add(a);
-                server.SaveChanges();
-
-                return new JsonResult("Success");
+                return new JsonResult(false);
             }
+
+            try
+            {
+				bool response = daUser.Registration(new daRegistrationUser()
+				{
+					Email = req.Email,
+					UserId = req.UserId,
+					Username = req.Username,
+					PasswordSalt = req.PasswordSalt,
+				});
+                
+                return new JsonResult(response);
+			}
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new JsonResult(false);
+			}
         }
 
+        [HttpGet]
+        [Route("getlist")]
+		public JsonResult GetList()
+        {
+            try
+            {
+                var list = daUser.GetList();
+                return new JsonResult(list);
+			}
+            catch(Exception ex) 
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.White;
+				Console.WriteLine(ex.Message);
+				Console.ResetColor();
+                return new JsonResult(false);
+			}
+        }
         [HttpPost]
         [Route("addInventory")]
         public JsonResult AddInventory(string id, string description)
