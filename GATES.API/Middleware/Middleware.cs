@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Threading.Tasks;
@@ -21,12 +22,13 @@ namespace GATES.API.Middleware
             try
             {
                 bool islogged = httpContext.User.Identity?.IsAuthenticated ?? false;
-                if (httpContext.Request.Path.ToString().ToLower() != "/user/login")
-                    if (!islogged)
-                    {
-                        httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                        return;
-                    }
+                string route = httpContext.Request.Path.ToString().ToLower();
+                if (route != "/user/login" && route != "/user/registration")
+                if (!islogged)
+                {
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    return;
+                }
 
                 await _next(httpContext);
             }
