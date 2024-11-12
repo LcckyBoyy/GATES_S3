@@ -1,6 +1,7 @@
 using GATES.DA.Interface;
 using GATES.DA;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using GATES.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +28,11 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<Middleware1>();
+
 app.MapControllers();
 
 app.Run();
-
-
 
 void ConfigureService(ConfigurationManager config, IServiceCollection services)
 {
@@ -41,7 +42,9 @@ void ConfigureService(ConfigurationManager config, IServiceCollection services)
 			options.ExpireTimeSpan = TimeSpan.FromHours(720);
 			options.SlidingExpiration = true;
 			options.AccessDeniedPath = "/Forbiden";
-		});
+			options.Cookie.Name = "Users";
+			options.LoginPath = "/account";
+        });
 
 	services.AddTransient<IUsersDA, UsersDA>();
 }

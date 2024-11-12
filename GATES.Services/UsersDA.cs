@@ -19,10 +19,7 @@ namespace GATES.DA
 							  where i.Username == req.Username
 							  select i).FirstOrDefault();
 
-				if (entity != null)
-				{
-					return false;
-				}
+				if (entity != null) return false;
 
 				MtUser a = new()
 				{
@@ -42,6 +39,7 @@ namespace GATES.DA
 				return true;
 			}
 		}
+
 		public List<daGetUsers> GetList()
 		{
 			using (var server = new GatesContext())
@@ -62,7 +60,7 @@ namespace GATES.DA
 			using (var server = new GatesContext())
 			{
 				var user = server.MtUsers
-					.Where(i => i.Username == password && i.IsActive == true)
+					.Where(i => i.Username == username && i.IsActive == true)
 					.FirstOrDefault();
 
 				if (user == null) { res.Message = "Invalid User"; return res; }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using System.Net;
 
 namespace GATES.Controllers
 {
@@ -46,30 +47,10 @@ namespace GATES.Controllers
 			}
         }
 
-        [HttpGet]
-        [Route("getlist")]
-		public JsonResult GetList()
-        {
-            try
-            {
-                var list = daUser.GetList();
-                return new JsonResult(list);
-			}
-            catch(Exception ex) 
-            {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.ForegroundColor = ConsoleColor.White;
-				Console.WriteLine(ex.Message);
-				Console.ResetColor();
-                return new JsonResult(false);
-			}
-        }
-
-
         [HttpPost]
         [Route("Login")]
         [AllowAnonymous]
-        public async Task<JsonResult> Login(string username, string password)
+        public async Task<JsonResult> Login(string username, string password, bool rememberMe)
         {
             var response = daUser.Login(username, password);
 
@@ -85,16 +66,37 @@ namespace GATES.Controllers
                 var claimsIdentity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-
+                    IsPersistent = rememberMe
                 };
+
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
                 
                 return new JsonResult(new { Message = "Success", Result = true });
-            }else
+            }
+            else
             {
                 return new JsonResult( new { Message = "Failed", Result = false });
             }
-
         }
+
+        [HttpGet]
+        [Route("getlist")]
+        public IActionResult GetList()
+        {
+            try
+            {
+                var list = daUser.GetList();
+                return new JsonResult(list);
+            }
+            catch (Exception ex)
+            {
+                Console.BackgroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(ex.Message);
+                Console.ResetColor();
+                return new JsonResult(false);
+            }
+        }
+
     }
 }
