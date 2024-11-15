@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Net;
+using GATES.API.Helper;
 
 namespace GATES.Controllers
 {
@@ -30,7 +31,7 @@ namespace GATES.Controllers
 
             try
             {
-				bool response = daUser.Registration(new daRegistrationUser
+				var result = daUser.Registration(new daRegistrationUser
 				{
 					Email = req.Email,
 					UserId = req.UserId,
@@ -38,7 +39,7 @@ namespace GATES.Controllers
 					PasswordSalt = req.PasswordSalt,
 				});
                 
-                return new JsonResult(response);
+                return new JsonResult(result);
 			}
             catch (Exception ex)
             {
@@ -52,15 +53,15 @@ namespace GATES.Controllers
         [AllowAnonymous]
         public async Task<JsonResult> Login(string username, string password, bool rememberMe)
         {
-            var response = daUser.Login(username, password);
+            var result = daUser.Login(username, password);
 
-            if (response.Result != null)
+            if (result.Result != null)
             {
                 var claim = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, response.Result.UserId),
-                    new Claim(ClaimTypes.Name, response.Result.Username),
-                    new Claim(ClaimTypes.Email, response.Result.Email),
+                    new Claim(ClaimTypes.NameIdentifier, result.Result.UserId),
+                    new Claim(ClaimTypes.Name, result.Result.Username),
+                    new Claim(ClaimTypes.Email, result.Result.Email),
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -71,15 +72,23 @@ namespace GATES.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
                 
-                return new JsonResult(new { Message = "Success", Result = true });
+                return new JsonResult(new { Message = result.Message, Result = true });
             }
             else
             {
-                return new JsonResult( new { Message = "Failed", Result = false });
+                return new JsonResult( new { Message = result.Message, Result = false });
             }
         }
 
-        [HttpGet]
+		[HttpPost]
+		[Route("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
+        }
+
+		[HttpGet]
         [Route("getlist")]
         public IActionResult GetList()
         {
@@ -96,6 +105,13 @@ namespace GATES.Controllers
                 Console.ResetColor();
                 return new JsonResult(false);
             }
+        }
+		
+        [HttpGet]
+        [Route("pingauth")]
+        public JsonResult PingAuth()
+        {
+            return new JsonResult( new{ Username = User.Name(), Email = User.Email() });
         }
 
     }

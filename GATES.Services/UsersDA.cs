@@ -11,15 +11,16 @@ namespace GATES.DA
 {
 	public class UsersDA : IUsersDA
 	{
-		public bool Registration(daRegistrationUser req)
+		public BaseResponse<bool> Registration(daRegistrationUser req)
 		{
+			var response = new BaseResponse<bool>();
 			using (var server = new GatesContext())
 			{
 				var entity = (from i in server.MtUsers
 							  where i.Username == req.Username
 							  select i).FirstOrDefault();
 
-				if (entity != null) return false;
+				if (entity != null) { response.Message = "User exist"; return response; }
 
 				MtUser a = new()
 				{
@@ -36,21 +37,9 @@ namespace GATES.DA
 				server.MtUsers.Add(a);
 				server.SaveChanges();
 
-				return true;
-			}
-		}
-
-		public List<daGetUsers> GetList()
-		{
-			using (var server = new GatesContext())
-			{
-				var db = server.MtUsers.Select(i => new daGetUsers()
-				{
-					Name = i.Username,
-					Email = i.Email
-				}).ToList();
-
-				return db;
+				response.Result = true;
+				response.Message = "Success";
+				return response;
 			}
 		}
 
@@ -73,9 +62,24 @@ namespace GATES.DA
 					Email = user.Email
 				};
 
-				res.Message = "Succes";
+				res.Message = "Success";
 				return res;
 			}
 		}
+
+		public List<daGetUsers> GetList()
+		{
+			using (var server = new GatesContext())
+			{
+				var db = server.MtUsers.Select(i => new daGetUsers()
+				{
+					Name = i.Username,
+					Email = i.Email
+				}).ToList();
+
+				return db;
+			}
+		}
+	
 	}
 }
