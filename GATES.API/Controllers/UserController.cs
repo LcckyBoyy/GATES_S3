@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GATES.DB.DB;
 using GATES.Models;
 using GATES.DA.Interface;
 using GATES.DA.ServicesModel;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using System.Net;
 using GATES.API.Helper;
 
 namespace GATES.Controllers
@@ -87,25 +85,6 @@ namespace GATES.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok();
         }
-
-		[HttpGet]
-        [Route("getlist")]
-        public IActionResult GetList()
-        {
-            try
-            {
-                var list = daUser.GetList();
-                return new JsonResult(list);
-            }
-            catch (Exception ex)
-            {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(ex.Message);
-                Console.ResetColor();
-                return new JsonResult(false);
-            }
-        }
 		
         [HttpGet]
         [Route("pingauth")]
@@ -113,6 +92,5 @@ namespace GATES.Controllers
         {
             return new JsonResult( new{ Username = User.Name(), Email = User.Email() });
         }
-
     }
 }

@@ -1,8 +1,9 @@
+using GATES.API.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GATES.API.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("[controller]")]
 	public class WeatherForecastController : ControllerBase
 	{
