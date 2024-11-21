@@ -17,8 +17,13 @@ namespace GATES.API.Middleware
             try
             {
                 bool islogged = httpContext.User.Identity?.IsAuthenticated ?? false;
+
+                List<string> notIncludeRoute = new()
+                {
+					"/user/login", "/user/registration", "/user/test"
+				};
                 string route = httpContext.Request.Path.ToString().ToLower();
-                if (route != "/user/login" && route != "/user/registration")
+                if (!notIncludeRoute.Contains(route))
                 if (!islogged)
                 {
                     httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
@@ -28,8 +33,9 @@ namespace GATES.API.Middleware
                 await _next(httpContext);
             }
             catch(Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
+			{
+                Console.WriteLine();
+				Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(ex.Message);
                 Console.ResetColor();
                 return;

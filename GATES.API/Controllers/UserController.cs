@@ -7,6 +7,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using GATES.API.Helper;
+using System.Net;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace GATES.Controllers
 {
@@ -92,5 +94,28 @@ namespace GATES.Controllers
         {
             return new JsonResult( new{ Username = User.Name(), Email = User.Email() });
         }
-    }
+
+		[HttpPost]
+        [Route("test")]
+        [AllowAnonymous]
+		public IActionResult MyAction()
+		{
+			string? host = Request.Host.Value;
+
+			string? header = Request.Headers["Referer"];
+			
+			Response.Cookies.Append("Account", "value", new CookieOptions
+			{
+				Expires = DateTimeOffset.UtcNow.AddMinutes(15),
+				HttpOnly = true,
+                Domain = host,
+				Secure = true,
+				IsEssential = true
+			});
+
+            return Ok();
+
+		}
+
+	}
 }
