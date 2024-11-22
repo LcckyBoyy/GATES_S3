@@ -20,7 +20,6 @@ CREATE TABLE mtCategory(
 )
 
 CREATE TABLE pInventory(
-	id INT IDENTITY(1,1) NOT NULL,
 	inventory_id VARCHAR(30) NOT NULL,
 	inventory_name VARCHAR(30) NOT NULL,
 	description VARCHAR(255) NULL,

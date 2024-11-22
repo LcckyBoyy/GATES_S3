@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Protocols;
+using System.Configuration;
 
 namespace GATES.DB.DB;
 
@@ -40,9 +39,7 @@ public partial class GatesContext : DbContext
     public virtual DbSet<PStockMovement> PStockMovements { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["GATES"].ConnectionString);
-    }
+        => optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["GATES"].ConnectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -203,9 +200,6 @@ public partial class GatesContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("description");
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd()
-                .HasColumnName("id");
             entity.Property(e => e.InventoryName)
                 .HasMaxLength(30)
                 .IsUnicode(false)

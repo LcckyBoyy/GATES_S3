@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GATES.DA.ServicesModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace GATES.DA.Interface
 {
 	public interface IInventoryDA
 	{
-		public List<string> GetList();
+		public BaseResponse<bool> Insert(daCreateInventory req);
+		public BaseResponse<List<daGetlistInventory>> GetList();
 	}
 }

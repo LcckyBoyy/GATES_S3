@@ -1,4 +1,7 @@
-﻿namespace GATES.DB.DB;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GATES.DB.DB;
 
 public partial class MtUser
 {

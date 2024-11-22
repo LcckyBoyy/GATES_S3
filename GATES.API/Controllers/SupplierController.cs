@@ -1,8 +1,8 @@
-﻿using GATES.DA.Interface;
+﻿using GATES.API.Model;
+using GATES.DA.Interface;
 using GATES.DA.ServicesModel;
-using Microsoft.AspNetCore.Mvc;
-using GATES.API.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GATES.API.Controllers
 {

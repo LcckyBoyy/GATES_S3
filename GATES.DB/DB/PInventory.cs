@@ -5,8 +5,6 @@ namespace GATES.DB.DB;
 
 public partial class PInventory
 {
-    public int Id { get; set; }
-
     public string InventoryId { get; set; } = null!;
 
     public string InventoryName { get; set; } = null!;
