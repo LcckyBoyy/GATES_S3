@@ -40,6 +40,7 @@ namespace GATES.API.Controllers
 		public IActionResult Read()
 		{
 			var response = daInventory.GetList();
+
 			return Ok(response);
 		}
 
