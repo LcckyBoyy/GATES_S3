@@ -41,7 +41,7 @@ const RegisterForm = () => {
         })
         .then((data) => {
           console.log(data);
-          if (data.result == true) setIsRegistern("Successful register.");
+          if (data.result == true) setIsRegister("Successful register.");
           else setError("Error registering.");
         })
         .catch((error) => {
@@ -63,7 +63,9 @@ const RegisterForm = () => {
         </div>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-        {isRegister && <p className="text-green-500 text-sm text-center">{error}</p>}
+        {isRegister && (
+          <p className="text-green-500 text-sm text-center">{error}</p>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-4">

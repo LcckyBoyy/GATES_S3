@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import { Navigate } from "react-router-dom";
+import Loading from "./Loading";
 
 export const UserContext = createContext({});
 
@@ -71,7 +72,7 @@ function AuthorizeView(props) {
   if (loading) {
     return (
       <>
-        <p>Loading...</p>
+        <Loading />
       </>
     );
   } else {
