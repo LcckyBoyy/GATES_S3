@@ -34,16 +34,22 @@ namespace GATES.API.Controllers
 			}
 		}
 
-
 		[HttpGet]
 		[Route("read")]
 		public IActionResult Read()
 		{
-			var response = daInventory.GetList();
+			var result = daInventory.GetList();
 
-			return Ok(response);
+			return Ok(result);
 		}
 
+		[HttpDelete]
+		[Route("delete")]
+		public JsonResult Delete(string id)
+		{
+			var result = daInventory.Delete(id);
+			return new JsonResult(result);
+		}
 
-	}
+    }
 }

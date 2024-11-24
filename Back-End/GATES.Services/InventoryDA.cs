@@ -73,5 +73,28 @@ namespace GATES.DA
 			}
 			return response;
 		}
+	
+		public BaseResponse<bool> Delete(string id)
+		{
+			var response = new BaseResponse<bool>();
+			using (GatesContext server = new())
+			{
+				var db = server.PInventories.Where(i => i.InventoryId == id).FirstOrDefault();
+
+				if (db == null)
+				{
+					response.Message = "Invalid id!";
+					return response;
+				}
+
+				server.PInventories.Remove(db);
+				server.SaveChanges();
+
+				response.Result = true;
+				response.Message = "Sucess";
+			}
+			return response;
+		}
+
 	}
 }

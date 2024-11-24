@@ -42,7 +42,7 @@ void ConfigureService(ConfigurationManager config, IServiceCollection services)
 			options.ExpireTimeSpan = TimeSpan.FromHours(720);
 			options.SlidingExpiration = true;
 			options.AccessDeniedPath = "/Forbiden";
-			options.Cookie.Name = "User";
+			options.Cookie.Name = "Users.Cookie";
 			options.LoginPath = "/account";
         });
 
