@@ -51,9 +51,9 @@ namespace GATES.Controllers
         [HttpPost]
         [Route("Login")]
         [AllowAnonymous]
-        public async Task<JsonResult> Login(string username, string password, bool rememberMe)
+        public async Task<JsonResult> Login(blLoginUser req)
         {
-            var result = daUser.Login(username, password);
+            var result = daUser.Login(req.Username, req.Password);
 
             if (result.Result != null)
             {
@@ -67,7 +67,7 @@ namespace GATES.Controllers
                 var claimsIdentity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = rememberMe
+                    IsPersistent = req.RememberMe
                 };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
