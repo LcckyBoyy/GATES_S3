@@ -47,8 +47,17 @@ namespace GATES.API.Controllers
 		[Route("delete")]
 		public JsonResult Delete(string id)
 		{
-			var result = daInventory.Delete(id);
-			return new JsonResult(result);
+			try
+			{
+                var result = daInventory.Delete(id);
+                return new JsonResult(result);
+
+            }
+			catch(Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return new JsonResult(new {Result = false, Message = ex.Message});
+			}
 		}
 
     }

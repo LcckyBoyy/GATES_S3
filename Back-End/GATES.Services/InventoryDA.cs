@@ -18,16 +18,6 @@ namespace GATES.DA
 					return response;
 				}
 
-				//PInventory newInvent = new()
-				//{
-				//	InventoryId = DateTime.UtcNow.ToString(),
-				//	InventoryName = req.InventoryName,
-				//	CreatedAt = DateTime.UtcNow,
-				//	Description = req.Description,
-				//	IsActive = true,
-				//	OwnerId = req.OwnerId,
-				//};
-
 				server.PInventories.Add(new PInventory
 				{
 					InventoryId = req.InventoryId,
@@ -51,7 +41,7 @@ namespace GATES.DA
 				server.SaveChanges();
 
 				response.Result = true;
-				response.Message = "Succes";
+				response.Message = "Success";
 			}
 			return response;
 		}
@@ -92,6 +82,37 @@ namespace GATES.DA
 
 				response.Result = true;
 				response.Message = "Sucess";
+			}
+			return response;
+		}
+
+		public BaseResponse<bool> GiveAccessTo(string userId, string InventoryId)
+		{
+			var response = new BaseResponse<bool>();
+			using (GatesContext server = new())
+			{
+				var db = server.PInventories.Where(i => i.InventoryId == InventoryId)
+					.Join(server.MtUsers, i => i.OwnerId, j => j.UserId,
+					(x, y) => new { x.InventoryId, y.UserId }).FirstOrDefault();
+
+				if (db == null)
+				{
+					response.Message = "Inventory doesn't exist!";
+					return response;
+				}
+
+				server.PInventoryAccesses.Add(new PInventoryAccess
+				{
+                    InventoryAccesId = DateTime.UtcNow.ToString(),
+                    InventoryId = InventoryId,
+                    ExpiredAt = DateTime.UtcNow.AddDays(30),
+                    GrantedAt = DateTime.UtcNow,
+                    IsActive = true,
+                    UserId = userId
+                });
+				server.SaveChanges();
+				response.Result = true;
+				response.Message = "Success";
 			}
 			return response;
 		}
