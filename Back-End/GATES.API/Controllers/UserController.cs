@@ -94,28 +94,5 @@ namespace GATES.Controllers
         {
             return new JsonResult( new{ Username = User.Name(), Email = User.Email() });
         }
-
-		[HttpPost]
-        [Route("test")]
-        [AllowAnonymous]
-		public IActionResult MyAction()
-		{
-			string? host = Request.Host.Value;
-
-			string? header = Request.Headers["Referer"];
-			
-			Response.Cookies.Append("Account", "value", new CookieOptions
-			{
-				Expires = DateTimeOffset.UtcNow.AddMinutes(15),
-				HttpOnly = true,
-                Domain = host,
-				Secure = true,
-				IsEssential = true
-			});
-
-            return Ok();
-
-		}
-
 	}
 }
