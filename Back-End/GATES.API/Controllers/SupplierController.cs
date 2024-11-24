@@ -17,16 +17,25 @@ namespace GATES.API.Controllers
 		[Route("insert")]
 		public IActionResult Create(blCreateSupplier request)
 		{
-			var result = daSupplier.Insert(new daInsertSupplier
+			try
 			{
-				SupplierName = request.SupplierName,
-				ContactPerson = request.ContactPerson,
-				Email = request.Email,
-				Phone = request.Phone,
-				Address = request.Address,
-			});
+                var result = daSupplier.Insert(new daInsertSupplier
+                {
+                    SupplierName = request.SupplierName,
+                    ContactPerson = request.ContactPerson,
+                    Email = request.Email,
+                    Phone = request.Phone,
+                    Address = request.Address,
+                });
 
-			return new JsonResult(result);		
+                return new JsonResult(result);
+            }
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return new JsonResult(new { Result = false, Message = ex.Message });
+			}
+			
 		}
 	}
 }
