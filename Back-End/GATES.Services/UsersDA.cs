@@ -17,10 +17,10 @@ namespace GATES.DA
 			using (var server = new GatesContext())
 			{
 				var entity = (from i in server.MtUsers
-							  where i.Username == req.Username
+							  where i.Email == req.Email
 							  select i).FirstOrDefault();
 
-				if (entity != null) { response.Message = "User exist"; return response; }
+				if (entity != null) { response.Message = "Email has been used!"; return response; }
 
 				MtUser a = new()
 				{
@@ -43,17 +43,17 @@ namespace GATES.DA
 			}
 		}
 
-		public BaseResponse<daUserCookie> Login(string username, string password)
+		public BaseResponse<daUserCookie> Login(string email, string password)
 		{
 			var res = new BaseResponse<daUserCookie>();
 			using (var server = new GatesContext())
 			{
 				var user = server.MtUsers
-					.Where(i => i.Username == username && i.IsActive == true)
+					.Where(i => i.Email == email && i.IsActive == true)
 					.FirstOrDefault();
 
-				if (user == null) { res.Message = "Invalid User"; return res; }
-				if (password != user.PasswordSalt) { res.Message = "Invalid Password"; return res; }
+				if (user == null) { res.Message = "Failed"; return res; }
+				if (password != user.PasswordSalt) { res.Message = "Failed"; return res; }
 
 				res.Result = new daUserCookie
 				{

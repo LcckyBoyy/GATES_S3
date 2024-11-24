@@ -44,44 +44,52 @@ namespace GATES.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return new JsonResult(false);
+                return new JsonResult(new { Result = false, Message = "Error" });
 			}
         }
 
         [HttpPost]
-        [Route("Login")]
+        [Route("login")]
         [AllowAnonymous]
         public async Task<JsonResult> Login(blLoginUser req)
         {
-            var result = daUser.Login(req.Username, req.Password);
-
-            if (result.Result != null)
+            try
             {
-                var claim = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, result.Result.UserId),
-                    new Claim(ClaimTypes.Name, result.Result.Username),
-                    new Claim(ClaimTypes.Email, result.Result.Email),
-                };
+                var result = daUser.Login(req.Email, req.Password);
 
-                var claimsIdentity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProperties = new AuthenticationProperties
+                if (result.Result != null)
                 {
-                    IsPersistent = req.RememberMe
-                };
+                    var claim = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, result.Result.UserId),
+                        new Claim(ClaimTypes.Name, result.Result.Username),
+                        new Claim(ClaimTypes.Email, result.Result.Email),
+                    };
 
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-                
-                return new JsonResult(new { Message = result.Message, Result = true });
+                    var claimsIdentity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = req.RememberMe
+                    };
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    return new JsonResult(new { Result = true, Message = result.Message });
+                }
+                else
+                {
+                    return new JsonResult(new { Result = false, Message = result.Message });
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new JsonResult( new { Message = result.Message, Result = false });
+               return new JsonResult(new { Result = false, Message = ex.Message });
             }
+
         }
 
-		[HttpPost]
-		[Route("Logout")]
+        [HttpPost]
+		[Route("logout")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -92,7 +100,15 @@ namespace GATES.Controllers
         [Route("pingauth")]
         public JsonResult PingAuth()
         {
-            return new JsonResult( new{ Username = User.Name(), Email = User.Email() });
+            try
+            {
+                return new JsonResult( new{ User_Id = User.Id(), Username = User.Name(), Email = User.Email() });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new JsonResult("Error");
+            }
         }
 	}
 }

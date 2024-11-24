@@ -20,7 +20,7 @@ namespace GATES.API.Middleware
 
                 List<string> notIncludeRoute = new()
                 {
-					"/user/login", "/user/registration", "/user/test"
+					"/user/login", "/user/registration"
 				};
                 string route = httpContext.Request.Path.ToString().ToLower();
                 if (!notIncludeRoute.Contains(route))

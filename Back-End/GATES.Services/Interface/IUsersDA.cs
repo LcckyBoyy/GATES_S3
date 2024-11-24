@@ -13,6 +13,6 @@ namespace GATES.DA.Interface
 
 		public List<daGetUsers> GetList();
 
-		public BaseResponse<daUserCookie> Login(string username, string password);
+		public BaseResponse<daUserCookie> Login(string email, string password);
 	}
 }
