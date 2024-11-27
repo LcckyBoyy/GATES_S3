@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GATES.DA.ServicesModel
 {
-	public class daCreateInventory
+	public class daInsertInventory
 	{
 		public string InventoryId { get; set; } = null!;
 

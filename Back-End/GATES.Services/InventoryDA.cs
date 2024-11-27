@@ -6,7 +6,7 @@ namespace GATES.DA
 {
 	public class InventoryDA : IInventoryDA
 	{
-		public BaseResponse<bool> Insert(daCreateInventory req)
+		public BaseResponse<bool> Insert(daInsertInventory req)
 		{
 			var response = new BaseResponse<bool>();
 			using (GatesContext server = new())

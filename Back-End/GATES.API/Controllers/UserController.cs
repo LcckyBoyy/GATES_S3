@@ -107,7 +107,7 @@ namespace GATES.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return new JsonResult("Error");
+                return new JsonResult(new { Result = false, Message = ex.Message });
             }
         }
 	}

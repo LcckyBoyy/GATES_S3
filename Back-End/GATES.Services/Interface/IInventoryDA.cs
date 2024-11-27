@@ -9,8 +9,10 @@ namespace GATES.DA.Interface
 {
 	public interface IInventoryDA
 	{
-		public BaseResponse<bool> Insert(daCreateInventory req);
+		public BaseResponse<bool> Insert(daInsertInventory req);
 		public BaseResponse<List<daGetlistInventory>> GetList();
-		public BaseResponse<bool> Delete(string id);
+		public BaseResponse<bool> GiveAccessTo(string userId, string InventoryId);
+
+        public BaseResponse<bool> Delete(string id);
 	}
 }

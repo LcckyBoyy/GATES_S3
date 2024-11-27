@@ -8,6 +8,7 @@ namespace GATES.API.Controllers
 {
 	[Route("[controller]")]
 	[ApiController]
+	[Authorize]
 	public class InventoryController(IInventoryDA inventoryDA) : ControllerBase
 	{
 		private readonly IInventoryDA daInventory = inventoryDA;
@@ -18,7 +19,7 @@ namespace GATES.API.Controllers
 		{
 			try
 			{
-				var result = daInventory.Insert(new daCreateInventory()
+				var result = daInventory.Insert(new daInsertInventory()
 				{
 					InventoryId = request.InventoryId,
 					InventoryName = request.InventoryName,
@@ -42,6 +43,24 @@ namespace GATES.API.Controllers
 
 			return Ok(result);
 		}
+
+		[HttpPost]
+		[Route("give-access")]
+		public JsonResult GiveAccess(string userId, string InventoryId)
+		{
+            try
+            {
+                var result = daInventory.GiveAccessTo(userId, InventoryId);
+				return new JsonResult(result);
+
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return new JsonResult(new {Result = false, Message = ex.Message });
+			}
+		}
+
 
 		[HttpDelete]
 		[Route("delete")]

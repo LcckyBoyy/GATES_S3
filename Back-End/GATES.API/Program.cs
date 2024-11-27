@@ -48,5 +48,6 @@ void ConfigureService(ConfigurationManager config, IServiceCollection services)
 
 	services.AddTransient<IUsersDA, UsersDA>();
 	services.AddTransient<ISupplierDA, SupplierDA>();
-	services.AddTransient<IInventoryDA, InventoryDA>();
+	services.AddTransient<IInventoryDA, InventoryDA>(); 
+	services.AddTransient<IProductDA, ProductDA>();
 }
