@@ -1,12 +1,12 @@
 import "./App.css";
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import LoginForm from "./pages/LoginForm";
-import Home from "./pages/Home";
 import RegisterForm from "./pages/RegisterForm";
 import Test from "./pages/Test";
 import Loading from "./components/Loading";
 import Manage from "./pages/Manage";
+import Tes from "./components/Tes";
 
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
         <Route path="/" element={<Test />} />
         <Route path="/Loading" element={<Loading />} />
         <Route path="/Manage" element={<Manage />} />
+        <Route path="/tes/*" element={<Tes />} />
       </Routes>
     </BrowserRouter>
   );

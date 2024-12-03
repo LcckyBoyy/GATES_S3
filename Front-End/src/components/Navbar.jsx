@@ -7,7 +7,7 @@ import { CiSettings } from "react-icons/ci";
 import { MdOutlineAddBox, MdOutlineLogout } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
 
-function NavBar() {
+function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -114,4 +114,4 @@ function NavBar() {
   );
 }
 
-export default NavBar;
+export default Navbar;

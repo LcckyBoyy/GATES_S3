@@ -72,6 +72,14 @@ export default defineConfig({
       "^/user/logout": {
         target: "https://localhost:7156/",
         secure: false,
+      },
+      "^/Inventory/read": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Inventory/delete": {
+        target: "https://localhost:7156/",
+        secure: false,
       }
     },
     port: 5173,

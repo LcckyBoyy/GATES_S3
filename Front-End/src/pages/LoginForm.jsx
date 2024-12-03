@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import Loading from "../components/Loading"; // Import the previous bubble loading component
+import React, { useEffect, useState } from "react";
+import Loading from "../components/Loading";
 
 function LoginForm() {
-  const [username, setUserName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
@@ -11,35 +11,33 @@ function LoginForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // validate email and passwords
-    if (!username || !password) {
+    if (!email || !password) {
       setError("Please fill in all fields.");
       return;
     }
-
-    // Clear previous errors
     setError("");
     setIsLoading(true);
-    const data = {
-      username: username,
-      password: password,
-      rememberMe: rememberMe,
-    };
-    const queryString = new URLSearchParams(data).toString();
 
-    fetch(`/user/login?${queryString}`, {
+    fetch("/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        rememberMe: rememberMe,
+      }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        return response.json();
+      })
       .then((data) => {
         setTimeout(() => {
           setIsLoading(false);
           if (data.result === true) {
             setIsLogin("Successful Login.");
-            window.location.href = "/";
+            window.location.href = "/manage";
           } else {
             setError("Error Logging In.");
           }
@@ -81,10 +79,10 @@ function LoginForm() {
             <div className="space-y-4">
               <div>
                 <input
-                  type="text"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUserName(e.target.value)}
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
                   disabled={isLoading}
                 />
