@@ -6,7 +6,7 @@ import RegisterForm from "./pages/RegisterForm";
 import Test from "./pages/Test";
 import Loading from "./components/Loading";
 import Manage from "./pages/Manage";
-import Tes from "./components/Tes";
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         <Route path="/" element={<Test />} />
         <Route path="/Loading" element={<Loading />} />
         <Route path="/Manage" element={<Manage />} />
-        <Route path="/tes/*" element={<Tes />} />
+        <Route path="/tes/*" element={<Home />} />
       </Routes>
     </BrowserRouter>
   );

@@ -15,6 +15,9 @@ import {
   FiSettings,
 } from "react-icons/fi";
 import Navbar from "./Navbar";
+import Products from "./Products/Products";
+import AddProduct from "./Products/AddProduct";
+import ProductDetails from "./Products/ProductDetails";
 
 // Content Components
 const ProductsContent = () => (
@@ -101,24 +104,7 @@ const Tes = () => {
         { label: "Stock Levels", id: "stock", path: "/tes/inventory/stock" },
       ],
     },
-    {
-      id: "inventory2",
-      label: "Inventory2",
-      icon: FiBox,
-      subItems: [
-        {
-          label: "Products2",
-          id: "products2",
-          path: "/tes/inventory/products",
-        },
-        {
-          label: "Categories2",
-          id: "categories2",
-          path: "/tes/inventory/categories",
-        },
-        { label: "Stock Levels2", id: "stock2", path: "/tes/inventory/stock" },
-      ],
-    },
+    
     { id: "users", label: "Users", icon: FiUsers, path: "/tes/users" },
     {
       id: "shipments",
@@ -135,23 +121,20 @@ const Tes = () => {
   ];
 
   const toggleDropdown = (id) => {
-    setOpenDropdown((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col overflow-hidden">
       {/* Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-16">
+      <div className="fixed top-0 left-0 right-0 z-50 h-16 ">
         <Navbar />
       </div>
 
       {/* Main content area */}
-      <div className="flex pt-16 h-[calc(100vh-4rem)]">
+      <div className="flex pt-16 h-[calc(100vh-4rem)] z-0">
         {/* Sidebar */}
-        <div className="fixed left-0 top-16 bottom-0 z-40 w-56 bg-[#DFE8FA]">
+        <div className="fixed left-0 top-16 bottom-0 z-40 w-56 bg-[#DFE8FA] overflow-y-auto">
           <div>
             {menuItems.map((item) => (
               <div key={item.id}>
@@ -171,36 +154,34 @@ const Tes = () => {
                       </div>
                       <FiTriangle
                         className={`transform transition-transform duration-300 ${
-                          openDropdown[item.id] ? "rotate-180" : "rotate-90"
+                          openDropdown === item.id ? "rotate-180" : "rotate-90"
                         }`}
                       />
                     </button>
-                    {openDropdown[item.id] && (
-                      <div
-                        className={`
+                    <div
+                      className={`
                         overflow-hidden transition-all duration-300 ease-in-out 
                         ${
-                          openDropdown[item.id]
-                            ? "max-h-40"
+                          openDropdown === item.id
+                            ? "max-h-40 opacity-100"
                             : "max-h-0 opacity-0"
                         }
                       `}
-                      >
-                        {item.subItems.map((sub) => (
-                          <button
-                            onClick={() => navigate(sub.path)}
-                            key={sub.id}
-                            className={`w-full text-left px-10 py-1 ${
-                              location.pathname === sub.path
-                                ? "bg-[#26487E] text-white rounded-xl"
-                                : "hover:bg-gray-200 rounded-xl"
-                            }`}
-                          >
-                            {sub.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    >
+                      {item.subItems.map((sub) => (
+                        <button
+                          onClick={() => navigate(sub.path)}
+                          key={sub.id}
+                          className={`w-full text-left px-14 py-1 ${
+                            location.pathname.startsWith(sub.path)
+                              ? "bg-[#26487E] text-white rounded-xl"
+                              : "hover:bg-gray-200 rounded-xl"
+                          }`}
+                        >
+                          {sub.label}
+                        </button>
+                      ))}
+                    </div>
                   </>
                 ) : (
                   <button
@@ -223,10 +204,12 @@ const Tes = () => {
         </div>
 
         {/* Main content area */}
-        <div className="ml-56 flex-1 bg-gray-50 p-6 overflow-auto">
+        <div className="ml-56 flex-1 bg-gray-50 p-6 overflow-y-auto h-screen">
           <Routes>
             <Route path="/" element={<HomeContent />} />
-            <Route path="/inventory/products" element={<ProductsContent />} />
+            <Route path="/inventory/products" element={<Products />} />
+            <Route path="/inventory/products/new" element={<AddProduct />} />
+            <Route path="/inventory/products/:id" element={<ProductDetails />} />
             <Route
               path="/inventory/categories"
               element={<CategoriesContent />}

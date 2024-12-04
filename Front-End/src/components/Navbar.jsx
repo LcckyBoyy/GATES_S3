@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useContext  } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from './AuthorizeView';
+import { UserContext } from "./AuthorizeView";
 import { IoIosSearch, IoIosNotificationsOutline } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
 import { CiSettings } from "react-icons/ci";
@@ -45,7 +45,7 @@ function Navbar() {
   };
 
   return (
-    <div className="h-full bg-[#26487E] flex items-center">
+    <div className="h-full bg-[#26487E] flex items-center shadow-md">
       <div className="w-56 h-full flex items-center justify-center bg-[#223658]">
         <span className="text-white text-xl font-bold">Inventory</span>
       </div>
@@ -72,10 +72,12 @@ function Navbar() {
 
             {isProfileOpen && (
               <div className="absolute right-0 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
-              <div className="px-4 py-3 border-b border-gray-200">
-                <p className="text-sm font-medium text-gray-900">{user?.username}</p>
-                <p className="text-sm text-gray-500">{user?.email}</p>
-              </div>
+                <div className="px-4 py-3 border-b border-gray-200">
+                  <p className="text-sm font-medium text-gray-900">
+                    {user?.username}
+                  </p>
+                  <p className="text-sm text-gray-500">{user?.email}</p>
+                </div>
 
                 <a
                   href="/profile"

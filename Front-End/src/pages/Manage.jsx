@@ -1,7 +1,7 @@
 import React from "react";
 
 import AuthorizeView from "../components/AuthorizeView.jsx";
-import ManageInventory from "../components/ManageInventory.jsx";
+import ManageInventory from "../components/Inventories/ManageInventory.jsx";
 
 
 function Manage() {

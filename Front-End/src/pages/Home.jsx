@@ -1,12 +1,10 @@
-import WeatherForecast from "../components/WeatherForcast.jsx";
 import AuthorizeView from "../components/AuthorizeView.jsx";
-import LogoutLink from "../components/LogoutLink.jsx";
+import Tes from "../components/Tes.jsx";
 
 function Home() {
   return (
     <AuthorizeView>
-      <LogoutLink />
-      <WeatherForecast />
+      <Tes />
     </AuthorizeView>
   );
 }

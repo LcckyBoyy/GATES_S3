@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FaChevronLeft } from "react-icons/fa";
 import InventoryCard from "./InventoryCard";
-import { UserContext } from "../components/AuthorizeView.jsx";
-import { CiSquarePlus } from "react-icons/ci";
-import Loading from "./Loading.jsx";
+import { UserContext } from "../AuthorizeView.jsx";
+import Loading from "../Loading.jsx";
 import NewInventoryModal from "./NewInventoryModal.jsx";
 
 function ManageInventory() {
