@@ -62,7 +62,6 @@ namespace GATES.API.Controllers
 			}
 		}
 
-
 		[HttpDelete]
 		[Route("delete")]
 		public JsonResult Delete(string id)

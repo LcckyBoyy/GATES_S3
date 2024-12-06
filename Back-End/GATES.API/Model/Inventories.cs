@@ -7,7 +7,5 @@
 		public string InventoryName { get; set; } = null!;
 
 		public string? Description { get; set; }
-
-		public string OwnerId { get; set; } = null!;
 	}
 }
