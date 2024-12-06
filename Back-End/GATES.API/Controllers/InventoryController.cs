@@ -25,7 +25,7 @@ namespace GATES.API.Controllers
 					InventoryId = request.InventoryId,
 					InventoryName = request.InventoryName,
 					Description = request.Description,
-					OwnerId = request.OwnerId,
+					OwnerId = User.Id(),
 				});
 
 				return new JsonResult(result);
