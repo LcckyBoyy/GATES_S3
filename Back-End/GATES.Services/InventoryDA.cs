@@ -46,19 +46,25 @@ namespace GATES.DA
 			return response;
 		}
 
-		public BaseResponse<List<daGetlistInventory>> GetList()
+		public BaseResponse<List<daGetlistInventory>> GetList(string id)
 		{
 			var response = new BaseResponse<List<daGetlistInventory>>();
 
 			using (GatesContext server = new())
 			{
-				var db = server.PInventories.Select(i => new daGetlistInventory
+				var acces = server.PInventoryAccesses
+					.Where(i => i.UserId.Contains(id))
+					.Select(i => i.InventoryId)
+					.ToList();
+
+				var db = server.PInventories.Where(i => acces.Contains(i.InventoryId)).Select(i => new daGetlistInventory
 				{
 					 InventoryId = i.InventoryId,
 					 Description = i.Description,
 					 InventoryName = i.InventoryName,
 					 OwnerId = i.OwnerId
 				}).ToList();
+
 				response.Result = db;
 			}
 			return response;
@@ -86,31 +92,40 @@ namespace GATES.DA
 			return response;
 		}
 
-		public BaseResponse<bool> GiveAccessTo(string userId, string InventoryId)
+		public BaseResponse<bool> GiveAccessTo(string email, string InventoryId)
 		{
 			var response = new BaseResponse<bool>();
 			using (GatesContext server = new())
 			{
-				var db = server.PInventories.Where(i => i.InventoryId == InventoryId)
-					.Join(server.MtUsers, i => i.OwnerId, j => j.UserId,
-					(x, y) => new { x.InventoryId, y.UserId }).FirstOrDefault();
+				var inventory = server.PInventories.Where(i => i.InventoryId == InventoryId).FirstOrDefault();
 
-				if (db == null)
+				if (inventory == null)
 				{
 					response.Message = "Inventory doesn't exist!";
 					return response;
 				}
 
+				string? user = (from i in server.MtUsers
+							   where i.Email == email
+							   select i.UserId).FirstOrDefault();
+				
+				if(!string.IsNullOrEmpty(user))
+				{
+					response.Message = "User not found.";
+					return response;
+				}
+
 				server.PInventoryAccesses.Add(new PInventoryAccess
 				{
-                    InventoryAccesId = DateTime.UtcNow.ToString(),
-                    InventoryId = InventoryId,
-                    ExpiredAt = DateTime.UtcNow.AddDays(30),
-                    GrantedAt = DateTime.UtcNow,
-                    IsActive = true,
-                    UserId = userId
-                });
+					InventoryAccesId = DateTime.UtcNow.ToString(),
+					UserId = user ?? "",
+					InventoryId = InventoryId,
+					GrantedAt = DateTime.UtcNow,
+					ExpiredAt = DateTime.UtcNow.AddDays(30),
+					IsActive = true
+				});
 				server.SaveChanges();
+
 				response.Result = true;
 				response.Message = "Success";
 			}

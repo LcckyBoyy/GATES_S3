@@ -15,16 +15,27 @@ namespace GATES.DA
 							  where i.SupplierName == req.SupplierName
 							  select i).FirstOrDefault();
 
-				if (entity != null) { response.Message = "User exist"; return response; }
+				if (entity != null) { response.Message = "Supplier exist"; return response; }
 
 				MtSupplier a = new()
 				{
 					SupplierId = DateTime.UtcNow.ToString(),
+					
 					SupplierName = req.SupplierName,
 					IsActive = true,
 				};
 
-				server.MtSuppliers.Add(a);
+				server.MtSuppliers.Add(new MtSupplier()
+                {
+                    SupplierId = DateTime.UtcNow.ToString(),
+                    SupplierName = req.SupplierName,
+					ContactPerson = req.ContactPerson,
+					Email = req.Email,
+					Phone = req.Phone,
+					Address = req.Address,
+                    IsActive = true,
+                });
+
 				server.SaveChanges();
 
 				response.Result = true;

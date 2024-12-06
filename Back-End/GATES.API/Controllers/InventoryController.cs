@@ -1,4 +1,5 @@
-﻿using GATES.API.Model;
+﻿using GATES.API.Helper;
+using GATES.API.Model;
 using GATES.DA.Interface;
 using GATES.DA.ServicesModel;
 using Microsoft.AspNetCore.Authorization;
@@ -39,18 +40,18 @@ namespace GATES.API.Controllers
 		[Route("read")]
 		public IActionResult Read()
 		{
-			var result = daInventory.GetList();
+			var result = daInventory.GetList(User.Id());
 
 			return Ok(result);
 		}
 
 		[HttpPost]
 		[Route("give-access")]
-		public JsonResult GiveAccess(string userId, string InventoryId)
+		public JsonResult GiveAccess(string email, string InventoryId)
 		{
             try
             {
-                var result = daInventory.GiveAccessTo(userId, InventoryId);
+                var result = daInventory.GiveAccessTo(email, InventoryId);
 				return new JsonResult(result);
 
 			}
