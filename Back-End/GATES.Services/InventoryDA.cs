@@ -70,28 +70,6 @@ namespace GATES.DA
 			return response;
 		}
 	
-		public BaseResponse<bool> Delete(string id)
-		{
-			var response = new BaseResponse<bool>();
-			using (GatesContext server = new())
-			{
-				var db = server.PInventories.Where(i => i.InventoryId == id).FirstOrDefault();
-
-				if (db == null)
-				{
-					response.Message = "Invalid id!";
-					return response;
-				}
-
-				server.PInventories.Remove(db);
-				server.SaveChanges();
-
-				response.Result = true;
-				response.Message = "Sucess";
-			}
-			return response;
-		}
-
 		public BaseResponse<bool> GiveAccessTo(string email, string InventoryId)
 		{
 			var response = new BaseResponse<bool>();
@@ -109,7 +87,7 @@ namespace GATES.DA
 							   where i.Email == email
 							   select i.UserId).FirstOrDefault();
 				
-				if(!string.IsNullOrEmpty(user))
+				if(string.IsNullOrEmpty(user))
 				{
 					response.Message = "User not found.";
 					return response;
@@ -132,5 +110,34 @@ namespace GATES.DA
 			return response;
 		}
 
-	}
+        public BaseResponse<bool> Delete(string inventoryId, string ownerId)
+        {
+            var response = new BaseResponse<bool>();
+            using (GatesContext server = new())
+            {
+                var acces = server.PInventoryAccesses.Where(i => i.InventoryId == inventoryId).ToList();
+
+                foreach (var i in acces)
+                {
+                    server.PInventoryAccesses.Remove(i);
+                }
+
+                var inventory = server.PInventories.Where(i => i.InventoryId == inventoryId && i.OwnerId == ownerId).FirstOrDefault();
+
+                if (inventory == null)
+                {
+                    response.Message = "Only the owner of this inventory can delete it!";
+                    return response;
+                }
+
+                server.PInventories.Remove(inventory);
+                server.SaveChanges();
+
+                response.Result = true;
+                response.Message = "Sucess";
+            }
+            return response;
+        }
+
+    }
 }

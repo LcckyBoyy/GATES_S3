@@ -56,5 +56,20 @@ namespace GATES.API.Controllers
                 return new JsonResult(new { Result = false, Message = ex.Message });
             }
         }
+        
+        [HttpDelete]
+        [Route("delete")]
+        public JsonResult Delete(string productId)
+        {
+            try
+            {
+
+                return new JsonResult(new { Result = false, Message = "" });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
+        }
     }
 }

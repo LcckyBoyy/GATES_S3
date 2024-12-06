@@ -64,11 +64,11 @@ namespace GATES.API.Controllers
 
 		[HttpDelete]
 		[Route("delete")]
-		public JsonResult Delete(string id)
+		public JsonResult Delete(string inventoryId)
 		{
 			try
 			{
-                var result = daInventory.Delete(id);
+                var result = daInventory.Delete(inventoryId, User.Id());
                 return new JsonResult(result);
 
             }
