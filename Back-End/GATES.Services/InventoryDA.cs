@@ -70,7 +70,7 @@ namespace GATES.DA
 			return response;
 		}
 	
-		public BaseResponse<bool> GiveAccessTo(string email, string InventoryId)
+		public BaseResponse<bool> GiveAccessTo(string email, string InventoryId, string ownerId)
 		{
 			var response = new BaseResponse<bool>();
 			using (GatesContext server = new())
@@ -82,6 +82,13 @@ namespace GATES.DA
 					response.Message = "Inventory doesn't exist!";
 					return response;
 				}
+				if (inventory.OwnerId != ownerId)
+				{
+                    response.Message = "Only the owner of this inventory can give the access!";
+                    return response;
+                }
+
+
 
 				string? user = (from i in server.MtUsers
 							   where i.Email == email

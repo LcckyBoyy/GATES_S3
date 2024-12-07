@@ -51,7 +51,7 @@ namespace GATES.API.Controllers
 		{
             try
             {
-                var result = daInventory.GiveAccessTo(email, InventoryId);
+                var result = daInventory.GiveAccessTo(email, InventoryId, User.Id());
 				return new JsonResult(result);
 
 			}
