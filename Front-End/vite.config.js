@@ -80,6 +80,18 @@ export default defineConfig({
       "^/Inventory/delete": {
         target: "https://localhost:7156/",
         secure: false,
+      },
+      "^/Inventory/create": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Inventory/give-access": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Product/read": {
+        target: "https://localhost:7156/",
+        secure: false,
       }
     },
     port: 5173,

@@ -1,7 +1,7 @@
 import AuthorizeView from "../components/AuthorizeView.jsx";
 import Tes from "../components/Tes.jsx";
 
-function Home() {
+function Dashboard() {
   return (
     <AuthorizeView>
       <Tes />
@@ -9,4 +9,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Dashboard;

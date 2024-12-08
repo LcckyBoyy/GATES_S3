@@ -2,20 +2,25 @@ import React, { useState, useRef, useEffect } from "react";
 import { CiMenuKebab } from "react-icons/ci";
 import { CiEdit } from "react-icons/ci";
 import { CiTrash } from "react-icons/ci";
+import { RiUserSettingsLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+import ShareAccessModal from "./ShareAccessModal";
 
 function InventoryCard({
   invName,
   createdDate,
   invId,
-  edition,
+  ownerId,
+  userId,
   userRole,
   logoUrl,
-  Manage,
-  onEdit,
   onDelete,
+  onEdit,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteConfirming, setIsDeleteConfirming] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -42,7 +47,6 @@ function InventoryCard({
       invName,
       createdDate,
       invId,
-      edition,
       userRole,
     });
     setIsOpen(false);
@@ -52,11 +56,30 @@ function InventoryCard({
     setIsDeleteConfirming(true);
   };
 
-  const handleDeleteConfirm = () => {
-    onDelete({
-      invName,
-      invId,
-    });
+  const handleDeleteConfirm = async () => {
+    try {
+      const response = await fetch(`/Inventory/delete?inventoryId=${invId}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      if (onDelete) {
+        onDelete();
+      }
+
+      console.log(`Inventory with ID ${invId} deleted successfully`);
+    } catch (error) {
+      console.error("Delete inventory error:", error);
+    }
     setIsOpen(false);
     setIsDeleteConfirming(false);
   };
@@ -65,6 +88,36 @@ function InventoryCard({
     setIsDeleteConfirming(false);
   };
 
+  const handleManageClick = () => {
+    navigate(`/manage/${invId}`);
+  };
+  const handleShareAccess = async (email) => {
+    try {
+      const response = await fetch(
+        `/Inventory/give-access?email=${encodeURIComponent(
+          email
+        )}&InventoryId=${encodeURIComponent(invId)}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      // Show success notification or toast
+      console.log("Access shared successfully");
+    } catch (error) {
+      console.error("Share access error:", error);
+      // Optional: Show error notification
+    }
+  };
   return (
     <div className="bg-white rounded-lg shadow-md p-4 flex items-start justify-between w-[656px] mt-2">
       <div className="flex items-center">
@@ -88,7 +141,6 @@ function InventoryCard({
           <p className="text-gray-500 text-sm">
             Inventory Id: <span className="font-bold">{invId}</span>
           </p>
-          <p className="text-gray-500 text-sm">Edition: {edition}</p>
           <p className="text-gray-500 text-sm">
             You are a {userRole} in this organization
           </p>
@@ -96,7 +148,7 @@ function InventoryCard({
       </div>
       <div className="flex items-center justify-end">
         <button
-          onClick={Manage}
+          onClick={handleManageClick}
           className="border-2 border-[#008CFF] hover:bg-blue-500/10 text-[#008CFF] font-semibold py-0.5 px-1 rounded"
         >
           Manage
@@ -135,13 +187,38 @@ function InventoryCard({
                 <ul className="py-1">
                   <li
                     onClick={handleEditClick}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 hover:text-black flex items-center"
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 hover:text-black flex items-center border-b-[1px]"
                   >
                     <CiEdit className="mr-2" /> Edit
                   </li>
                   <li
-                    onClick={handleDeleteInitiate}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-500 hover:text-red-700 flex items-center"
+                    onClick={
+                      userId !== ownerId
+                        ? undefined
+                        : () => {
+                            setIsShareModalOpen(true);
+                            setIsOpen(false);
+                          }
+                    }
+                    className={`w-full text-left px-4 py-2 flex items-center border-b-[1px] 
+                                ${
+                                  userId !== ownerId
+                                    ? "text-gray-400 cursor-not-allowed opacity-50"
+                                    : "hover:bg-gray-100 text-gray-700 hover:text-black cursor-pointer"
+                                }`}
+                  >
+                    <RiUserSettingsLine className="mr-2" /> Share Access
+                  </li>
+                  <li
+                    onClick={
+                      userId !== ownerId ? undefined : handleDeleteInitiate
+                    }
+                    className={`w-full text-left px-4 py-2 flex items-center text-red-500 
+                                ${
+                                  userId !== ownerId
+                                    ? "text-gray-400 cursor-not-allowed opacity-50"
+                                    : "hover:bg-gray-100 text-gray-700 cursor-pointer hover:text-red-700"
+                                }`}
                   >
                     <CiTrash className="mr-2" /> Delete
                   </li>
@@ -151,6 +228,11 @@ function InventoryCard({
           )}
         </div>
       </div>
+      <ShareAccessModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        onSubmit={handleShareAccess}
+      />
     </div>
   );
 }

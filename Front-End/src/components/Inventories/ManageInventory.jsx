@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import InventoryCard from "./InventoryCard";
 import { UserContext } from "../AuthorizeView.jsx";
 import Loading from "../Loading.jsx";
@@ -10,40 +10,39 @@ function ManageInventory() {
   const [inventories, setInventories] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(3);
+
+  const fetchInventory = async () => {
+    try {
+      const response = await fetch("/Inventory/read", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`
+        );
+      }
+
+      const data = await response.json();
+      const inventoryList = data.result || data || [];
+      setInventories(inventoryList);
+      setLoading(false);
+    } catch (err) {
+      console.error("Fetch Error:", err);
+      setError(err.message);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchInventory() {
-      try {
-        const response = await fetch("/Inventory/read", {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Error response:", errorText);
-          throw new Error(
-            `HTTP error! status: ${response.status}, message: ${errorText}`
-          );
-        }
-
-        const data = await response.json();
-
-        const inventoryList = data.result || data || [];
-
-        setInventories(inventoryList);
-        setLoading(false);
-      } catch (err) {
-        console.error("Fetch Error:", err);
-        setError(err.message);
-        setLoading(false);
-      }
-    }
-
     fetchInventory();
   }, []);
 
@@ -60,31 +59,16 @@ function ManageInventory() {
     console.log("Edit");
   };
 
-  const handleDeleteInventory = async (inventoryDetails) => {
-    try {
-      const response = await fetch(
-        `/Inventory/delete?id=${inventoryDetails.invId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentInventories = inventories.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
-      if (!response.ok) {
-        throw new Error("Failed to delete inventory");
-      }
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-      setInventories((prev) =>
-        prev.filter((inv) => inv.inventoryId !== inventoryDetails.invId)
-      );
-    } catch (error) {
-      console.error("Delete inventory error:", error);
-    }
-  };
+  const totalPages = Math.ceil(inventories.length / itemsPerPage);
 
   if (loading)
     return (
@@ -101,39 +85,73 @@ function ManageInventory() {
 
   return (
     <div className="flex justify-center items-center h-screen flex-col bg-slate-200">
-      <div className="flex flex-col">
-        <a
-          className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 "
-          href="/"
-        >
-          <FaChevronLeft size={12} />
-          <span>Back</span>
-        </a>
-        <h2 className="text-lg font-medium flex-col">Hi, {user?.username}!</h2>
-        <p className="text-gray-600 mt-4">
-          You are a part of the following Inventory, Go to the Inventory which
-          you wish to access now
-        </p>
-        <NewInventoryModal />
-      </div>
-      {inventories.length === 0 ? (
-        <div>No inventory available</div>
-      ) : (
-        inventories.map((item) => (
+    <div className="flex flex-col">
+      <a
+        className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 "
+        href="/"
+      >
+        <FaChevronLeft size={12} />
+        <span>Back</span>
+      </a>
+      <h2 className="text-lg font-medium flex-col">Hi, {user?.username}!</h2>
+      <p className="text-gray-600 mt-4">
+        You are a part of the following Inventory, Go to the Inventory which
+        you wish to access now
+      </p>
+      <NewInventoryModal onInventoryCreated={fetchInventory} />
+    </div>
+    
+    {inventories.length === 0 ? (
+      <div>No inventory available</div>
+    ) : (
+      <>
+        {currentInventories.map((item) => (
           <InventoryCard
             key={item.inventoryId}
             invName={item.inventoryName}
             description={item.description}
             invId={item.inventoryId}
             ownerId={item.ownerId}
-            Manage={() => console.log(`View details for ${item.inventoryId}`)}
+            userId={user?.userId}
             onEdit={handleEditInventory}
-            onDelete={handleDeleteInventory}
+            onDelete={fetchInventory}
           />
-        ))
-      )}
-    </div>
-  );
+        ))}
+
+        {/* Pagination Controls */}
+        <div className="flex justify-center items-center mt-4 space-x-2">
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 border rounded ${
+              currentPage === 1 
+                ? 'bg-gray-200 cursor-not-allowed' 
+                : 'bg-white hover:bg-gray-100'
+            }`}
+          >
+            <FaChevronLeft />
+          </button>
+
+          <span className="text-gray-700">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 border rounded ${
+              currentPage === totalPages 
+                ? 'bg-gray-200 cursor-not-allowed' 
+                : 'bg-white hover:bg-gray-100'
+            }`}
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      </>
+    )}
+  </div>
+);
 }
 
 export default ManageInventory;

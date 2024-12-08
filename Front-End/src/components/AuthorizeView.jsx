@@ -26,7 +26,7 @@ function AuthorizeView(props) {
         if (response.status == 200) {
           console.log("Authorized");
           let j = await response.json();
-          setUser({ userId: j.user_id, email: j.email, username: j.username });
+          setUser({ userId: j.user_Id, email: j.email, username: j.username });
           setAuthorized(true);
           return response;
         } else if (response.Result = false) {

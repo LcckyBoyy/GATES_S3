@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Loading from "../Loading";
 
 function ProductDetails() {
-  const { id } = useParams(); // Extract the dynamic id from the URL
+  const { Productid } = useParams(); // Extract the dynamic id from the URL
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -42,24 +42,22 @@ function ProductDetails() {
       },
     ];
 
-    // Simulate data fetching
     const fetchProduct = () => {
       setLoading(true);
 
-      // Simulate network delay
       setTimeout(() => {
-        const foundProduct = mockProducts.find((p) => p.id === id);
+        const foundProduct = mockProducts.find((p) => p.id === Productid);
         if (foundProduct) {
           setProduct(foundProduct);
         } else {
-          setProduct(null); // Handle not found case
+          setProduct(null); 
         }
         setLoading(false);
-      }, 500); // Simulate a 500ms delay
+      }, 500); 
     };
 
     fetchProduct();
-  }, [id]);
+  }, [Productid]);
 
   if (loading) {
     return <Loading />;

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FiSave } from 'react-icons/fi';
 
 function AddProduct() {
+  const { InventoryId } = useParams();
   const navigate = useNavigate();
   const [productData, setProductData] = useState({
     name: '',
@@ -170,7 +171,7 @@ function AddProduct() {
         <div className="flex justify-end space-x-4">
           <button
             type="button"
-            onClick={() => navigate('/tes/inventory/products')}
+            onClick={() => navigate(`/manage/${InventoryId}/products`)}
             className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
           >
             Cancel

@@ -1,13 +1,14 @@
+import cuid from "cuid";
 import React, { useState } from "react";
 import { CiSquarePlus } from "react-icons/ci";
 import { IoCloseOutline } from "react-icons/io5";
 
-function NewInventoryModal() {
+function NewInventoryModal({onInventoryCreated }) {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
+    inventoryId: cuid(),
     inventoryName: "",
     description: "",
-    edition: "",
   });
 
   const handleInputChange = (e) => {
@@ -28,7 +29,10 @@ function NewInventoryModal() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          inventoryId: cuid()
+        }),
       });
 
       if (!response.ok) {
@@ -37,13 +41,15 @@ function NewInventoryModal() {
       }
 
       const result = await response.json();
-      console.log("Inventory created:", result);
 
       setFormData({
+        inventory_id: "",
         inventoryName: "",
         description: "",
-        edition: "",
       });
+      if (onInventoryCreated) {
+        onInventoryCreated();
+      }
       setIsOpen(false);
     } catch (error) {
       console.error("Create inventory error:", error);
@@ -117,24 +123,6 @@ function NewInventoryModal() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#008CFF] focus:border-transparent"
                   placeholder="Enter inventory description"
                 ></textarea>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="edition"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Edition
-                </label>
-                <input
-                  type="text"
-                  id="edition"
-                  name="edition"
-                  value={formData.edition}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#008CFF] focus:border-transparent"
-                  placeholder="Enter edition (optional)"
-                />
               </div>
 
               <div className="flex justify-end space-x-3 pt-4 border-t">
