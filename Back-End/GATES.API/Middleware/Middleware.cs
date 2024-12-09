@@ -16,18 +16,21 @@ namespace GATES.API.Middleware
         {
             try
             {
-                bool islogged = httpContext.User.Identity?.IsAuthenticated ?? false;
-
                 List<string> notIncludeRoute = new()
                 {
-					"/user/login", "/user/registration"
-				};
+                    "/user/login", "/user/registration"
+                };
+
                 string route = httpContext.Request.Path.ToString().ToLower();
+
                 if (!notIncludeRoute.Contains(route))
-                if (!islogged)
                 {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    return;
+                    bool islogged = httpContext.User.Identity?.IsAuthenticated ?? false;
+                    if (!islogged)
+                    {
+                        httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        return;
+                    }
                 }
 
                 await _next(httpContext);

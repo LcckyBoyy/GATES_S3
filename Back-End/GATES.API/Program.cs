@@ -16,9 +16,6 @@ ConfigureService(builder.Configuration, builder.Services);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-	app.UseSwagger();
-	app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -26,6 +23,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<Middleware1>();
+
+// Configure the HTTP request pipeline.
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 
