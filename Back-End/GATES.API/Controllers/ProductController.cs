@@ -16,7 +16,7 @@ namespace GATES.API.Controllers
         IProductDA daProduct = productDA;
 
         [HttpPost]
-        [Route("insert")]
+        [Route("create")]
         public JsonResult Create(blCreateProduct request)
         {
             try

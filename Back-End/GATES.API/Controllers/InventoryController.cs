@@ -15,7 +15,7 @@ namespace GATES.API.Controllers
 		private readonly IInventoryDA daInventory = inventoryDA;
 
 		[HttpPost]
-		[Route("insert")]
+		[Route("create")]
 		public JsonResult Create(blCreateInventory request)
 		{
 			try
