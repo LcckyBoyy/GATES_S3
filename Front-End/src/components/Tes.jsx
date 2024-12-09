@@ -20,25 +20,14 @@ import Products from "./Products/Products";
 import AddProduct from "./Products/AddProduct";
 import ProductDetails from "./Products/ProductDetails";
 import Home from "../components/Dashboard/Home";
+import ProductCategory from "./Products/ProductCategory";
+import AddCategory from "./Products/AddCategory";
 
-const CategoriesContent = () => (
-  <div className="p-6 bg-white rounded-lg shadow-md">
-    <h1 className="text-2xl font-bold mb-4">Product Categories</h1>
-    <p>Organize and manage product categories.</p>
-  </div>
-);
 
 const StockLevelsContent = () => (
   <div className="p-6 bg-white rounded-lg shadow-md">
     <h1 className="text-2xl font-bold mb-4">Stock Levels</h1>
     <p>Monitor and track current inventory stock levels.</p>
-  </div>
-);
-
-const InventoryContent = () => (
-  <div className="p-6 bg-white rounded-lg shadow-md">
-    <h1 className="text-2xl font-bold mb-4">Inventory Management</h1>
-    <p>View and manage your product inventory here.</p>
   </div>
 );
 
@@ -204,13 +193,14 @@ const Tes = () => {
         </div>
 
         {/* Main content area */}
-        <div className="ml-56 flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10">
+        <div className="ml-56 flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10 custom-scrollbar ">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
             <Route path="/products/:Productid" element={<ProductDetails />} />
-            <Route path="/categories" element={<CategoriesContent />} />
+            <Route path="/categories" element={<ProductCategory />} />
+            <Route path="/categories/new" element={<AddCategory />} />
             <Route path="/stock" element={<StockLevelsContent />} />
             <Route path="/users" element={<UsersContent />} />
             <Route path="/shipments" element={<ShipmentsContent />} />
