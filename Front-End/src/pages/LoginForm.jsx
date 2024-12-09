@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Loading from "../components/Loading";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -54,16 +53,6 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      {isLoading && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <Loading
-            count={4}
-            size="w-6 h-6"
-            baseColor="bg-white/30"
-            activeColor="bg-white"
-          />
-        </div>
-      )}
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="text-center">
@@ -103,38 +92,51 @@ function LoginForm() {
             <div className="flex items-center">
               <input
                 type="checkbox"
+                id="rememberMe"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 disabled={isLoading}
               />
-              <label className="ml-2 block text-sm text-gray-900">
+              <label
+                htmlFor="rememberMe"
+                className="ml-2 block text-sm text-gray-900"
+              >
                 Remember me
               </label>
             </div>
 
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
+                isLoading
+                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : "text-white bg-blue-600 hover:bg-blue-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
               disabled={isLoading}
             >
-              Login
+              {isLoading ? (
+                <span className="flex ">
+                  <span className="animate-pulse">Loading</span>
+                  <span className="animate-bounce ml-1 inline-block font-bold">. . .</span>
+                </span>
+              ) : (
+                "Login"
+              )}
             </button>
           </>
         </form>
-        {!isLoading && (
-          <div className="text-center text-sm">
-            <p className="text-gray-600">
-              Don't have an account yet?{" "}
-              <a
-                href="/register"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                Sign up
-              </a>
-            </p>
-          </div>
-        )}
+        <div className="text-center text-sm">
+          <p className="text-gray-600">
+            Don't have an account yet?
+            <a
+              href="/register"
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
+              Sign up
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

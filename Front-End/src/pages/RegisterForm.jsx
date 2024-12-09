@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import cuid from "cuid";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
@@ -8,10 +9,11 @@ const RegisterForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isRegister, setIsRegister] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // validate email and passwords
     if (!email || !password || !confirmPassword) {
       setError("Please fill in all fields.");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -19,11 +21,9 @@ const RegisterForm = () => {
     } else if (password !== confirmPassword) {
       setError("Passwords do not match.");
     } else {
-      // clear error message
       setError("");
-      // set cuid for the userId
+      setIsLoading(true);
       const userId = cuid();
-      // post data to the /register api
       fetch("/user/registration", {
         method: "POST",
         headers: {
@@ -41,12 +41,16 @@ const RegisterForm = () => {
         })
         .then((data) => {
           console.log(data);
-          if (data.result == true) setIsRegister("Successful register.");
-          else setError("Error registering.");
+          setIsLoading(false);
+          if (data.result == true) {
+            setIsRegister("Successful register.");
+            navigate("/login/");
+          } else setError("Error registering.");
         })
         .catch((error) => {
-          // handle network error
           console.error(error);
+          setIsLoading(false);
+
           setError("Error registering.");
         });
     }
@@ -149,15 +153,29 @@ const RegisterForm = () => {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out"
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
+                isLoading
+                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : "text-white bg-blue-600 hover:bg-blue-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
+              disabled={isLoading}
             >
-              Create Account
+              {isLoading ? (
+                <span className="flex ">
+                  <span className="animate-pulse">Loading</span>
+                  <span className="animate-bounce ml-1 inline-block font-bold">
+                    . . .
+                  </span>
+                </span>
+              ) : (
+                "Create Account"
+              )}
             </button>
           </div>
 
           <div className="text-center text-sm">
             <p className="text-gray-600">
-              Already have an account?{" "}
+              Already have an account?
               <a
                 href="/login"
                 className="font-medium text-blue-600 hover:text-blue-500"

@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { CiSquarePlus } from "react-icons/ci";
 import { IoCloseOutline } from "react-icons/io5";
 
-function NewInventoryModal({onInventoryCreated }) {
+function NewInventoryModal({ onInventoryCreated }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     inventoryId: cuid(),
     inventoryName: "",
@@ -21,6 +22,8 @@ function NewInventoryModal({onInventoryCreated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
       const response = await fetch("/Inventory/create", {
         method: "POST",
@@ -31,13 +34,13 @@ function NewInventoryModal({onInventoryCreated }) {
         },
         body: JSON.stringify({
           ...formData,
-          inventoryId: cuid()
+          inventoryId: cuid(),
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText);
+        throw new Error(errorText || "Failed to create inventory");
       }
 
       const result = await response.json();
@@ -47,12 +50,16 @@ function NewInventoryModal({onInventoryCreated }) {
         inventoryName: "",
         description: "",
       });
+
       if (onInventoryCreated) {
-        onInventoryCreated();
+        onInventoryCreated(result);
       }
+
       setIsOpen(false);
     } catch (error) {
       console.error("Create inventory error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -129,15 +136,29 @@ function NewInventoryModal({onInventoryCreated }) {
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+                  className="px-4 py-2 text-gray-600 hover:bg-gray-300 bg-gray-200 rounded-md transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#008CFF] text-white rounded-md hover:bg-[#3b99e5] transition-colors"
+                  className={`group relative  flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
+                    isLoading
+                      ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                      : "text-white bg-blue-600 hover:bg-blue-700"
+                  } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
+                  disabled={isLoading}
                 >
-                  Create Inventory
+                  {isLoading ? (
+                    <span className="flex ">
+                      <span className="animate-pulse">Loading</span>
+                      <span className="animate-bounce ml-1 inline-block font-bold">
+                        . . .
+                      </span>
+                    </span>
+                  ) : (
+                    "Create Inventory"
+                  )}
                 </button>
               </div>
             </form>

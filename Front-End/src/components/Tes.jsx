@@ -20,8 +20,9 @@ import Products from "./Products/Products";
 import AddProduct from "./Products/AddProduct";
 import ProductDetails from "./Products/ProductDetails";
 import Home from "../components/Dashboard/Home";
-import ProductCategory from "./Products/ProductCategory";
-import AddCategory from "./Products/AddCategory";
+import AddCategory from "./Category/AddCategory";
+import Categories from "./Category/Categories";
+import EditCategory from "./Category/EditCategory";
 
 
 const StockLevelsContent = () => (
@@ -199,8 +200,9 @@ const Tes = () => {
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
             <Route path="/products/:Productid" element={<ProductDetails />} />
-            <Route path="/categories" element={<ProductCategory />} />
+            <Route path="/categories" element={<Categories />} />
             <Route path="/categories/new" element={<AddCategory />} />
+            <Route path="/categories/:categoryId" element={<EditCategory />} />
             <Route path="/stock" element={<StockLevelsContent />} />
             <Route path="/users" element={<UsersContent />} />
             <Route path="/shipments" element={<ShipmentsContent />} />

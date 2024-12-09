@@ -41,9 +41,7 @@ function Products() {
           return;
         }
 
-        const productList = data.result || [];
-
-        setProducts(productList);
+        setProducts(data);
         setLoading(false);
       } catch (err) {
         console.error("Fetch Error:", err);
@@ -62,7 +60,6 @@ function Products() {
     if (description.length <= maxLength) return description;
     return description.substring(0, maxLength) + "...";
   };
-  
 
   if (loading)
     return (
@@ -111,12 +108,7 @@ function Products() {
             >
               <td className="p-3">
                 <div className="flex items-center space-x-3">
-                  <img
-                    src={product.image}
-                    alt={product.productName}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <span>{product.name}</span>
+                  <span>{product.productName}</span>
                 </div>
               </td>
               <td className="p-3">{product.categoryId}</td>

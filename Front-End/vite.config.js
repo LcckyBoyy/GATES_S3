@@ -53,10 +53,6 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "^/weatherforecast": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
       "^/user/pingauth": {
         target: "https://localhost:7156/",
         secure: false,
@@ -92,7 +88,27 @@ export default defineConfig({
       "^/Product/read": {
         target: "https://localhost:7156/",
         secure: false,
-      }
+      },
+      "^/Product/create": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Category/read": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Category/create": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Category/delete": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Category/update": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
     },
     port: 5173,
     https: {

@@ -22,12 +22,12 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<Middleware1>();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseMiddleware<Middleware1>();
 app.MapControllers();
 
 app.Run();
