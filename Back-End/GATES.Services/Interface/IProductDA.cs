@@ -12,5 +12,7 @@ namespace GATES.DA.Interface
         public BaseResponse<bool> Insert(daInsertProduct req);
 
         public BaseResponse<List<daGetlistProduct>> GetList(string userId, string InventoryId);
+
+        public BaseResponse<bool> Remove(string productId);
     }
 }

@@ -1,12 +1,6 @@
 ﻿using GATES.DA.Interface;
 using GATES.DA.ServicesModel;
 using GATES.DB.DB;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GATES.DA
 {
@@ -53,10 +47,15 @@ namespace GATES.DA
             using (GatesContext server = new())
             {
                 var acces = (from i in server.PInventoryAccesses
-                             where i.InventoryId == InventoryId && i.UserId == userId
-                             select i.InventoryId).FirstOrDefault();
+                             where i.InventoryId == InventoryId
+                             select new { i.InventoryId, i.UserId }).FirstOrDefault();
 
                 if (acces == null)
+                {
+                    response.Message = "Inventory not found";
+                    return response;
+                }
+                else if (acces.UserId != userId)
                 {
                     response.Message = "You dont have the acces for this inventory";
                     return response;
@@ -79,5 +78,28 @@ namespace GATES.DA
             return response;
         } 
         
+        public BaseResponse<bool> Remove(string productId)
+        {
+            var response = new BaseResponse<bool>();
+            using (GatesContext server = new())
+            {
+                var db = (from i in server.PProducts
+                         where i.ProductId == productId
+                         select i).FirstOrDefault();
+                
+                if (db == null)
+                {
+                    response.Message = "Prodcut doesn't exist!";
+                    return response;
+                }
+
+                server.PProducts.Remove(db);
+                server.SaveChanges();
+
+                response.Result = true;
+                response.Message = "Success";
+            }
+            return response;
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace GATES.API.Controllers
 		{
 			var result = daInventory.GetList(User.Id());
 
-			return Ok(result);
+			return Ok(result.Result);
 		}
 
 		[HttpPost]

@@ -50,7 +50,7 @@ namespace GATES.API.Controllers
             try
             {
                 var result = daProduct.GetList(User.Id(), inventoryId);
-                return new JsonResult(result);
+                return new JsonResult(result.Result);
             }
             catch(Exception ex)
             {
@@ -64,8 +64,8 @@ namespace GATES.API.Controllers
         {
             try
             {
-
-                return new JsonResult(new { Result = false, Message = "" });
+                var result = daProduct.Remove(productId);
+                return new JsonResult(result);
             }
             catch (Exception ex)
             {
