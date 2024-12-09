@@ -14,7 +14,7 @@ namespace GATES.API.Controllers
 		ISupplierDA daSupplier = supplierDA;
 
 		[HttpPost]
-		[Route("insert")]
+		[Route("create")]
 		public IActionResult Create(blCreateSupplier request)
 		{
 			try
