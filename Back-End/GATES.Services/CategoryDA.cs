@@ -54,6 +54,33 @@ namespace GATES.DA
             return response;
         }
 
+        public BaseResponse<daUpdateCategory> GetCategory(string categoryId)
+        {
+            var response = new BaseResponse<daUpdateCategory>();
+            using (GatesContext server = new())
+            {
+                var cateogry = (from i in server.MtCategories
+                          where i.CategoryId == categoryId
+                          select i).FirstOrDefault();
+
+                if (cateogry == null)
+                {
+                    response.Message = "Category not found!";
+                    return response;
+                }
+
+                response.Result = new daUpdateCategory()
+                {
+                    CategoryId = cateogry.CategoryId,
+                    Description = cateogry.Description,
+                    Name = cateogry.Name,
+                };
+                response.Message = "Success";
+            }
+
+            return response;
+        }
+
         public BaseResponse<bool> Set(daUpdateCategory req)
         {
             var response = new BaseResponse<bool>();
