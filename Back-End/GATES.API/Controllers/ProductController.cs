@@ -5,15 +5,20 @@ using GATES.DA.ServicesModel;
 using Microsoft.AspNetCore.Authorization;
 using GATES.API.Model;
 using GATES.API.Helper;
+using GATES.DA;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+using Azure.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace GATES.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class ProductController(IProductDA productDA) : ControllerBase
+    public class ProductController(IProductDA productDA, IHelperDA helperDa) : ControllerBase
     {
         IProductDA daProduct = productDA;
+        IHelperDA daHelper = helperDa;
 
         [HttpPost]
         [Route("create")]
@@ -21,6 +26,9 @@ namespace GATES.API.Controllers
         {
             try
             {
+                var check = daHelper.CheckAccess(User.Id(), request.InventoryId);
+                if (!check) return new JsonResult(new { Result = false, Message = "You dont have the access for this inventory" }); 
+
                 var result = daProduct.Insert(new daInsertProduct()
                 {
                     ProductId = request.ProductId,
@@ -49,22 +57,47 @@ namespace GATES.API.Controllers
         {
             try
             {
+                var check = daHelper.CheckAccess(User.Id(), inventoryId);
+                if (!check) return new JsonResult(new { Result = new { }, Message = "You dont have the access for this inventory" });
+
                 var result = daProduct.GetList(User.Id(), inventoryId);
                 return new JsonResult(result.Result);
             }
             catch(Exception ex)
             {
-                return new JsonResult(new { Result = false, Message = ex.Message });
+                return new JsonResult(new { Result = new { }, Message = ex.Message });
             }
         }
-        
-        [HttpDelete]
-        [Route("delete")]
-        public JsonResult Delete(string productId)
+
+        [HttpPut]
+        [Route("update")]
+        public JsonResult Update(blUpdateProduct request)
         {
             try
             {
-                var result = daProduct.Remove(productId);
+                var check = daHelper.CheckAccess(User.Id(), request.InventoryId);
+                if (!check) return new JsonResult(new { Result = new { }, Message = "You dont have the access for this inventory" });
+
+                //var result = ;
+                //return new JsonResult(result);
+                return new JsonResult(new {});
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete")]
+        public JsonResult Delete(string productId, string inventoryId)
+        {
+            try
+            {
+                var check = daHelper.CheckAccess(User.Id(), inventoryId);
+                if (!check) return new JsonResult(new { Result = new { }, Message = "You dont have the access for this inventory" });
+
+                var result = daProduct.Remove(productId, inventoryId);
                 return new JsonResult(result);
             }
             catch (Exception ex)

@@ -122,19 +122,19 @@ namespace GATES.DA
             var response = new BaseResponse<bool>();
             using (GatesContext server = new())
             {
-                var acces = server.PInventoryAccesses.Where(i => i.InventoryId == inventoryId).ToList();
-
-                foreach (var i in acces)
-                {
-                    server.PInventoryAccesses.Remove(i);
-                }
-
                 var inventory = server.PInventories.Where(i => i.InventoryId == inventoryId && i.OwnerId == ownerId).FirstOrDefault();
 
                 if (inventory == null)
                 {
                     response.Message = "Only the owner of this inventory can delete it!";
                     return response;
+                }
+
+                var acces = server.PInventoryAccesses.Where(i => i.InventoryId == inventoryId).ToList();
+
+                foreach (var i in acces)
+                {
+                    server.PInventoryAccesses.Remove(i);
                 }
 
                 server.PInventories.Remove(inventory);
@@ -145,6 +145,5 @@ namespace GATES.DA
             }
             return response;
         }
-
     }
 }

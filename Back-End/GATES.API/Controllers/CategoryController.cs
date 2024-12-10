@@ -41,30 +41,51 @@ namespace GATES.API.Controllers
         [Route("read")]
         public JsonResult Read()
         {
-            var result = daCategory.GetList();
-            return new JsonResult(result.Result);
+            try
+            {
+                var result = daCategory.GetList();
+                return new JsonResult(result.Result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Result = new { }, Message = ex.Message });
+            }
         }
 
         [HttpPut]
         [Route("update")]
         public JsonResult Update(blUpdateCategory req)
         {
-            var result = daCategory.Set(new daUpdateCategory()
+            try
             {
-                CategoryId = req.CategoryId,
-                Name = req.Name,
-                Description = req.Description
-            });
+                var result = daCategory.Set(new daUpdateCategory()
+                {
+                    CategoryId = req.CategoryId,
+                    Name = req.Name,
+                    Description = req.Description
+                });
 
-            return new JsonResult(result);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
         }
 
         [HttpDelete]
         [Route("delete")]
         public JsonResult Delete(string categoryId)
         {
-            var result = daCategory.Remove(categoryId);
-            return new JsonResult(result);
+            try 
+            { 
+                var result = daCategory.Remove(categoryId);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
         }
     }
 }
