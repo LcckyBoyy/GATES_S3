@@ -40,9 +40,15 @@ namespace GATES.API.Controllers
 		[Route("read")]
 		public IActionResult Read()
 		{
-			var result = daInventory.GetList(User.Id());
+			try
+			{
+                var result = daInventory.GetList(User.Id());
 
-			return Ok(result.Result);
+                return Ok(result.Result);
+            }
+			catch (Exception ex) {
+                return new JsonResult(new { Result = new { }, Message = ex.Message });
+            }
 		}
 
 		[HttpPost]
@@ -58,7 +64,7 @@ namespace GATES.API.Controllers
 			catch(Exception ex)
 			{
 				Console.WriteLine(ex.Message);
-				return new JsonResult(new {Result = false, Message = ex.Message });
+				return new JsonResult(new { Result = false, Message = ex.Message });
 			}
 		}
 

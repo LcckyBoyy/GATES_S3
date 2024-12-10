@@ -13,6 +13,6 @@ namespace GATES.DA.Interface
 
         public BaseResponse<List<daGetlistProduct>> GetList(string userId, string InventoryId);
 
-        public BaseResponse<bool> Remove(string productId);
+        public BaseResponse<bool> Remove(string productId, string inventoryId);
     }
 }

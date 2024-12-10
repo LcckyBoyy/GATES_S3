@@ -12,8 +12,8 @@ namespace GATES.DA
 
             using (GatesContext server = new())
             {
-                var db = server.PProducts.Where(i => i.ProductId == req.ProductId && i.IsActive == true).FirstOrDefault();
-                if (db != null) { response.Message = "Product Exist";  return response; }
+                var db = server.PProducts.Where(i => i.ProductId == req.ProductId && i.InventoryId == req.InventoryId && i.IsActive == true).FirstOrDefault();
+                if (db != null) { response.Message = "Product exist!";  return response; }
 
                 server.PProducts.Add(new PProduct()
                 {
@@ -46,21 +46,6 @@ namespace GATES.DA
 
             using (GatesContext server = new())
             {
-                var acces = (from i in server.PInventoryAccesses
-                             where i.InventoryId == InventoryId
-                             select new { i.InventoryId, i.UserId }).FirstOrDefault();
-
-                if (acces == null)
-                {
-                    response.Message = "Inventory not found";
-                    return response;
-                }
-                else if (acces.UserId != userId)
-                {
-                    response.Message = "You dont have the acces for this inventory";
-                    return response;
-                }
-
                 var products = server.PProducts.Where(i => i.InventoryId.Contains(InventoryId) && i.IsActive == true)
                     .Select(i => new daGetlistProduct()
                     {
@@ -78,13 +63,26 @@ namespace GATES.DA
             return response;
         } 
         
-        public BaseResponse<bool> Remove(string productId)
+        
+        public BaseResponse<bool> Set(daUpdateProduct req)
+        {
+            var response = new BaseResponse<bool>();
+
+            using (GatesContext server = new())
+            {
+                
+            }
+
+            return response;
+        }
+
+        public BaseResponse<bool> Remove(string productId, string inventoryId)
         {
             var response = new BaseResponse<bool>();
             using (GatesContext server = new())
             {
                 var db = (from i in server.PProducts
-                         where i.ProductId == productId
+                         where i.ProductId == productId && i.InventoryId == inventoryId
                          select i).FirstOrDefault();
                 
                 if (db == null)

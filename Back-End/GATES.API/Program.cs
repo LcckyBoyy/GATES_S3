@@ -2,6 +2,7 @@ using GATES.DA.Interface;
 using GATES.DA;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using GATES.API.Middleware;
+using GATES.DA.ServicesModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,4 +50,5 @@ void ConfigureService(ConfigurationManager config, IServiceCollection services)
 	services.AddTransient<IInventoryDA, InventoryDA>(); 
 	services.AddTransient<IProductDA, ProductDA>();
 	services.AddTransient<ICategoryDA, CategoryDA>();
+	services.AddTransient<IHelperDA, HelperDA>();
 }
