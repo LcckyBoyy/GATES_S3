@@ -52,6 +52,21 @@ namespace GATES.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("get")]
+        public JsonResult Get(string categoryId)
+        {
+            try
+            {
+                var result = daCategory.GetCategory(categoryId);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
+        }
+
         [HttpPut]
         [Route("update")]
         public JsonResult Update(blUpdateCategory req)

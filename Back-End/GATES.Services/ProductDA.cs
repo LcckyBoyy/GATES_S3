@@ -63,6 +63,38 @@ namespace GATES.DA
             return response;
         } 
         
+        public BaseResponse<daUpdateProduct> GetProduct(string inventoryId, string productId)
+        {
+            var response = new BaseResponse<daUpdateProduct>();
+
+            using (GatesContext server = new())
+            {
+                var product = server.PProducts.FirstOrDefault(i => i.InventoryId == inventoryId && i.ProductId == productId);
+
+                if (product == null)
+                {
+                    response.Message = "Product not found!";
+                    return response;
+                }
+
+                response.Result = new daUpdateProduct()
+                {
+                    ProductId = product.ProductId,
+                    CategoryId = product.CategoryId,
+                    InventoryId = product.InventoryId,
+                    ProductName = product.ProductName,
+                    Description = product.Description,
+                    Sku = product.Sku,
+                    UnitPrice = product.UnitPrice,
+                    CurrentStock = product.CurrentStock,
+                    MinimumStock = product.MinimumStock,
+                    UnitMeasure = product.UnitMeasure,
+                };
+                response.Message = "Success";
+            }
+
+            return response;
+        }
         
         public BaseResponse<bool> Set(daUpdateProduct req)
         {

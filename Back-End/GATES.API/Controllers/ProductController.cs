@@ -69,6 +69,24 @@ namespace GATES.API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("get")]
+        public JsonResult Get(string inventoryId, string productId)
+        {
+            try
+            {
+                var check = daHelper.CheckAccess(User.Id(), inventoryId);
+                if (!check) return new JsonResult(new { Result = new { }, Message = "You dont have the access for this inventory" });
+
+                var result = daProduct.GetProduct(inventoryId, productId);
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
+        }
+
         [HttpPut]
         [Route("update")]
         public JsonResult Update(blUpdateProduct request)
@@ -90,14 +108,14 @@ namespace GATES.API.Controllers
 
         [HttpDelete]
         [Route("delete")]
-        public JsonResult Delete(string productId, string inventoryId)
+        public JsonResult Delete(string inventoryId, string productId)
         {
             try
             {
                 var check = daHelper.CheckAccess(User.Id(), inventoryId);
                 if (!check) return new JsonResult(new { Result = new { }, Message = "You dont have the access for this inventory" });
 
-                var result = daProduct.Remove(productId, inventoryId);
+                var result = daProduct.Remove(inventoryId, productId);
                 return new JsonResult(result);
             }
             catch (Exception ex)
