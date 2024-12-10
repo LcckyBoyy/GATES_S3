@@ -2,6 +2,10 @@ import cuid from "cuid";
 import React, { useState } from "react";
 import { CiSquarePlus } from "react-icons/ci";
 import { IoCloseOutline } from "react-icons/io5";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 function NewInventoryModal({ onInventoryCreated }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,13 +44,18 @@ function NewInventoryModal({ onInventoryCreated }) {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || "Failed to create inventory");
+        MySwal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorText || "Failed to create inventory.",
+        });
+        return;
       }
 
       const result = await response.json();
 
       setFormData({
-        inventory_id: "",
+        inventoryId: cuid(), 
         inventoryName: "",
         description: "",
       });
@@ -55,9 +64,20 @@ function NewInventoryModal({ onInventoryCreated }) {
         onInventoryCreated(result);
       }
 
+      MySwal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Inventory created successfully!',
+      });
+
       setIsOpen(false);
     } catch (error) {
       console.error("Create inventory error:", error);
+      MySwal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || "An error occurred while creating the inventory.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +87,7 @@ function NewInventoryModal({ onInventoryCreated }) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="ml-auto items-center  p-1.5 bg-[#008CFF] rounded-md text-white flex gap-2 hover:bg-[#3b99e5]"
+        className="ml-auto items-center p-1.5 bg-[#008CFF] rounded-md text-white flex gap-2 hover:bg-[#3b99e5]"
       >
         <CiSquarePlus size={20} className="mr-2" />
         New Inventory
@@ -142,7 +162,7 @@ function NewInventoryModal({ onInventoryCreated }) {
                 </button>
                 <button
                   type="submit"
-                  className={`group relative  flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
+                  className={`group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
                     isLoading
                       ? "bg-gray-400 text-gray-200 cursor-not-allowed"
                       : "text-white bg-blue-600 hover:bg-blue-700"

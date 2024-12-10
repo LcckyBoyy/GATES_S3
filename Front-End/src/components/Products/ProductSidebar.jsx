@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { GoPlus } from "react-icons/go";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 function ProductSidebar() {
   const { InventoryId } = useParams();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const location = useLocation();
   const [selectedFilter, setSelectedFilter] = useState("All Items");
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
   const filters = [
@@ -18,8 +20,28 @@ function ProductSidebar() {
     "Shopping",
     "Urgent",
   ];
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(
+          `/Product/read?inventoryId=${InventoryId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data = await response.json();
+        setProducts(data); 
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, [InventoryId]);
+
   return (
-    <div className="w-1/4 bg-white border-r border-gray-300 rounded-l-lg p-2 shadow-lg">
+    <div className="w-1/4 bg-white border-r border-gray-300 rounded-l-lg p-2 shadow-lg ">
       <div className="border-b-2 p-4 flex items-center flex-row justify-between">
         <div className="relative">
           <button
@@ -35,7 +57,7 @@ function ProductSidebar() {
           </button>
 
           {isDropdownOpen && (
-            <ul className="absolute z-10 top-full left-0 mt-2 bg-white border rounded-md shadow-lg w-32">
+            <ul className="absolute z-10 top-full left-0 mt-2 bg-white border rounded-md shadow-lg">
               {filters.map((filter) => (
                 <li
                   key={filter}
@@ -61,15 +83,30 @@ function ProductSidebar() {
         </button>
       </div>
 
-      <ul className="bg-white px-4 h-[80vh] custom-scrollbar overflow-y-auto">
-        {Array.from({ length: 50 }, (_, i) => (
-          <li key={i} className="text-blue-500 cursor-pointer border-b-2 py-2">
-            Item {i + 1}
-          </li>
-        ))}
+      <ul className="bg-white custom-scrollbar overflow-y-auto">
+        {products.length > 0 ? (
+          products.map((product) => (
+            <li
+              key={product.productId}
+              onClick={() =>
+                navigate(`/manage/${InventoryId}/products/${product.productId}`)
+              }
+              className={`text-blue-500 cursor-pointer border-b-2 py-2 px-4 hover:bg-gray-100 ${
+                location.pathname ===
+                `/manage/${InventoryId}/products/${product.productId}`
+                  ? "bg-gray-200"
+                  : ""
+              }`}
+            >
+              {product.productName}
+            </li>
+          ))
+        ) : (
+          <li className="text-gray-500 py-2">No products found.</li>
+        )}
       </ul>
     </div>
   );
 }
 
-export default ProductSidebar;
+export default ProductSidebar; 

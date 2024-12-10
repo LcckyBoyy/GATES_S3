@@ -36,7 +36,7 @@ function Products() {
 
         const data = await response.json();
 
-        if (data.message == "You dont have the acces for this inventory") {
+        if (data.message == "You dont have the access for this inventory") {
           window.location.href = "/no-access";
           return;
         }

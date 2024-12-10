@@ -89,11 +89,27 @@ export default defineConfig({
         target: "https://localhost:7156/",
         secure: false,
       },
+      "^/Product/get": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
       "^/Product/create": {
         target: "https://localhost:7156/",
         secure: false,
       },
+      "^/Product/get": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Product/update": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
       "^/Category/read": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Category/get": {
         target: "https://localhost:7156/",
         secure: false,
       },

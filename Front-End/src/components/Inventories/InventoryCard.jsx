@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { CiMenuKebab } from "react-icons/ci";
-import { CiEdit } from "react-icons/ci";
-import { CiTrash } from "react-icons/ci";
+import { CiMenuKebab, CiEdit, CiTrash } from "react-icons/ci";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import ShareAccessModal from "./ShareAccessModal";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 function InventoryCard({
   invName,
@@ -18,7 +20,6 @@ function InventoryCard({
   onEdit,
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDeleteConfirming, setIsDeleteConfirming] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -27,7 +28,6 @@ function InventoryCard({
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
-        setIsDeleteConfirming(false);
       }
     };
 
@@ -39,7 +39,6 @@ function InventoryCard({
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
-    setIsDeleteConfirming(false);
   };
 
   const handleEditClick = () => {
@@ -50,10 +49,6 @@ function InventoryCard({
       userRole,
     });
     setIsOpen(false);
-  };
-
-  const handleDeleteInitiate = () => {
-    setIsDeleteConfirming(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -81,11 +76,23 @@ function InventoryCard({
       console.error("Delete inventory error:", error);
     }
     setIsOpen(false);
-    setIsDeleteConfirming(false);
   };
 
-  const handleDeleteCancel = () => {
-    setIsDeleteConfirming(false);
+  const handleDeleteInitiate = () => {
+    MySwal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDeleteConfirm();
+        MySwal.fire("Deleted!", "Your inventory has been deleted.", "success");
+      }
+    });
   };
 
   const handleManageClick = () => {
@@ -106,18 +113,34 @@ function InventoryCard({
         }
       );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
+      const data = await response.json();
+
+      if (data.result === false) {
+        MySwal.fire({
+          title: "User Not Found",
+          text: data.message || "The specified user could not be found.",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
+        return;
       }
 
-      // Show success notification or toast
-      console.log("Access shared successfully");
+      MySwal.fire({
+        title: "Access Granted!",
+        text: `The user (${email}) has been granted access to edit your inventory.`,
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      });
     } catch (error) {
-      console.error("Share access error:", error);
-      // Optional: Show error notification
+      MySwal.fire({
+        title: "Error!",
+        text: error.message || "An error occurred while sharing access.",
+        icon: "error",
+        confirmButtonColor: "#d33",
+      });
     }
   };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-4 flex items-start justify-between w-[656px] mt-2">
       <div className="flex items-center">
@@ -163,67 +186,45 @@ function InventoryCard({
 
           {isOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-20">
-              {isDeleteConfirming ? (
-                <div className="p-3">
-                  <p className="text-sm text-gray-600 mb-2">
-                    Are you sure you want to delete this inventory?
-                  </p>
-                  <div className="flex justify-between">
-                    <button
-                      onClick={handleDeleteConfirm}
-                      className="bg-red-500 text-white px-2 py-1 rounded text-sm"
-                    >
-                      Confirm
-                    </button>
-                    <button
-                      onClick={handleDeleteCancel}
-                      className="bg-gray-200 text-gray-700 px-2 py-1 rounded text-sm"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <ul className="py-1">
-                  <li
-                    onClick={handleEditClick}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 hover:text-black flex items-center border-b-[1px]"
-                  >
-                    <CiEdit className="mr-2" /> Edit
-                  </li>
-                  <li
-                    onClick={
-                      userId !== ownerId
-                        ? undefined
-                        : () => {
-                            setIsShareModalOpen(true);
-                            setIsOpen(false);
-                          }
-                    }
-                    className={`w-full text-left px-4 py-2 flex items-center border-b-[1px] 
-                                ${
-                                  userId !== ownerId
-                                    ? "text-gray-400 cursor-not-allowed opacity-50"
-                                    : "hover:bg-gray-100 text-gray-700 hover:text-black cursor-pointer"
-                                }`}
-                  >
-                    <RiUserSettingsLine className="mr-2" /> Share Access
-                  </li>
-                  <li
-                    onClick={
-                      userId !== ownerId ? undefined : handleDeleteInitiate
-                    }
-                    className={`w-full text-left px-4 py-2 flex items-center text-red-500 
-                                ${
-                                  userId !== ownerId
-                                    ? "text-gray-400 cursor-not-allowed opacity-50"
-                                    : "hover:bg-gray-100 text-gray-700 cursor-pointer hover:text-red-700"
-                                }`}
-                  >
-                    <CiTrash className="mr-2" /> Delete
-                  </li>
-                </ul>
-              )}
+              <ul className="py-1">
+                <li
+                  onClick={handleEditClick}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700 hover:text-black flex items-center border-b-[1px]"
+                >
+                  <CiEdit className="mr-2" /> Edit
+                </li>
+                <li
+                  onClick={
+                    userId !== ownerId
+                      ? undefined
+                      : () => {
+                          setIsShareModalOpen(true);
+                          setIsOpen(false);
+                        }
+                  }
+                  className={`w-full text-left px-4 py-2 flex items-center border-b-[1px] 
+                              ${
+                                userId !== ownerId
+                                  ? "text-gray-400 cursor-not-allowed opacity-50"
+                                  : "hover:bg-gray-100 text-gray-700 hover:text-black cursor-pointer"
+                              }`}
+                >
+                  <RiUserSettingsLine className="mr-2" /> Share Access
+                </li>
+                <li
+                  onClick={
+                    userId !== ownerId ? undefined : handleDeleteInitiate
+                  }
+                  className={`w-full text-left px-4 py-2 flex items-center text-red-500 
+                              ${
+                                userId !== ownerId
+                                  ? "text-gray-400 cursor-not-allowed opacity-50"
+                                  : "hover:bg-gray-100 text-gray-700 cursor-pointer hover:text-red-700"
+                              }`}
+                >
+                  <CiTrash className="mr-2" /> Delete
+                </li>
+              </ul>
             </div>
           )}
         </div>

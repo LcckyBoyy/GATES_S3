@@ -1,20 +1,26 @@
 import React, { useState } from "react";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState("");
-  const [isLogin, setIsLogin] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("Please fill in all fields.");
+      MySwal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Please fill in all fields.',
+      });
       return;
     }
-    setError("");
+    
     setIsLoading(true);
 
     fetch("/user/login", {
@@ -28,26 +34,35 @@ function LoginForm() {
         rememberMe: rememberMe,
       }),
     })
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        setTimeout(() => {
-          setIsLoading(false);
-          if (data.result === true) {
-            setIsLogin("Successful Login.");
+        setIsLoading(false);
+        if (data.result === true) {
+          MySwal.fire({
+            icon: 'success',
+            title: 'Successful Login',
+            text: 'Redirecting to manage page...',
+            timer: 1500,
+            showConfirmButton: false
+          }).then(() => {
             window.location.href = "/manage";
-          } else {
-            setError("Error Logging In.");
-          }
-        }, 2000);
+          });
+        } else {
+          MySwal.fire({
+            icon: 'error',
+            title: 'Opps...',
+            text: "The email or password you entered is incorrect.",
+          });
+        }
       })
       .catch((error) => {
-        setTimeout(() => {
-          setIsLoading(false);
-          console.error(error);
-          setError("Error Logging in.");
-        }, 2000);
+        setIsLoading(false);
+        console.error(error);
+        MySwal.fire({
+          icon: 'error',
+          title: 'Opps!',
+          text: "Something went wrong while logging in. Please try again later.",
+        });
       });
   };
 
@@ -59,34 +74,27 @@ function LoginForm() {
             <h2 className="text-3xl font-bold text-gray-900 mb-8">Login</h2>
           </div>
 
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          <div className="space-y-4">
+            <div>
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+                disabled={isLoading}
+              />
+            </div>
 
-          {isLogin && (
-            <p className="text-green-500 text-sm text-center">{isLogin}</p>
-          )}
-          <>
-            <div className="space-y-4">
-              <div>
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
-                  disabled={isLoading}
-                />
-              </div>
-
-              <div>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
-                  disabled={isLoading}
-                />
-              </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10"
+                disabled={isLoading}
+              />
             </div>
 
             <div className="flex items-center">
@@ -124,14 +132,14 @@ function LoginForm() {
                 "Login"
               )}
             </button>
-          </>
+          </div>
         </form>
         <div className="text-center text-sm">
           <p className="text-gray-600">
             Don't have an account yet?
             <a
               href="/register"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              className="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
             >
               Sign up
             </a>

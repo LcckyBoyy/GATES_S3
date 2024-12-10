@@ -2,48 +2,42 @@ import React, { useEffect, useState } from "react";
 import { FaSave } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaRegTrashAlt } from "react-icons/fa";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 
-const MySwal = withReactContent(Swal);
-
-function EditCategory() {
-  const { InventoryId, categoryId } = useParams();
+function EditSupplier() {
+  const { InventoryId, supplierId } = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [category, setCategory] = useState({
+  const [supplier, setSupplier] = useState({
     name: "",
-    description: "",
+    contact: "",
+    email: "",
+    address: "",
   });
-  const [oldCategory, setOldCategory] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch supplier data when the component mounts
   useEffect(() => {
-    const fetchCategory = async () => {
+    const fetchSupplier = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/Category/get?categoryId=${categoryId}`);
+        const response = await fetch(`/Supplier/read?supplierId=${supplierId}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch category");
+          throw new Error("Failed to fetch supplier");
         }
         const data = await response.json();
-        setOldCategory(data.result);
-        setCategory({
-          name: data.result.name,
-          description: data.result.description,
-        });
+        setSupplier(data);
       } catch (error) {
-        console.error("Error fetching category:", error);
+        console.error("Error fetching supplier:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchCategory();
-  }, [categoryId]);
+    fetchSupplier();
+  }, [supplierId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCategory((prev) => ({
+    setSupplier((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -54,145 +48,139 @@ function EditCategory() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/Category/update`, {
+      const response = await fetch(`/Supplier/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          categoryId: categoryId,
-          name: category.name,
-          description: category.description,
+          supplierId: supplierId,
+          name: supplier.name,
+          contact: supplier.contact,
+          email: supplier.email,
+          address: supplier.address,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update category");
+        throw new Error("Failed to update supplier");
       }
 
       const data = await response.json();
-      console.log("Category Updated:", data);
+      console.log("Supplier Updated:", data);
 
-      MySwal.fire({
-        title: "Success!",
-        text: "Category updated successfully.",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-      }).then(() => {
-        navigate(`/manage/${InventoryId}/categories`);
-      });
+      navigate(`/manage/${InventoryId}/suppliers`);
     } catch (error) {
       console.error("Error:", error);
-
-      MySwal.fire({
-        title: "Error!",
-        text: error.message || "An error occurred while updating the category.",
-        icon: "error",
-        confirmButtonColor: "#d33",
-      });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    const result = await MySwal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    });
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this supplier?"
+    );
+    if (!confirmDelete) return;
 
-    if (result.isConfirmed) {
-      setIsLoading(true);
+    setIsLoading(true);
 
-      try {
-        const response = await fetch(
-          `/Category/delete?categoryId=${categoryId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to delete category");
+    try {
+      const response = await fetch(
+        `/Supplier/delete?supplierId=${supplierId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
+      );
 
-        console.log("Category Deleted");
-
-        MySwal.fire({
-          title: "Deleted!",
-          text: "The category has been deleted successfully.",
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-        }).then(() => {
-          navigate(`/manage/${InventoryId}/categories`);
-        });
-      } catch (error) {
-        console.error("Error:", error);
-
-        MySwal.fire({
-          title: "Error!",
-          text:
-            error.message || "An error occurred while deleting the category.",
-          icon: "error",
-          confirmButtonColor: "#d33",
-        });
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to delete supplier");
       }
+
+      console.log("Supplier Deleted");
+      navigate(`/manage/${InventoryId}/suppliers`);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="bg-white shadow-md rounded-lg p-8">
-      <h1 className="text-2xl font-bold mb-6 text-gray-700/95">
-        Edit <span className="text-black">{oldCategory?.name}</span>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">
+        Edit Supplier: {supplier.name}
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           <div>
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">
-                Category Name
+                Supplier Name
               </label>
               <input
                 type="text"
                 name="name"
-                value={category.name}
+                value={supplier.name}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter category name"
+                placeholder="Enter supplier name"
                 required
               />
             </div>
 
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">
-                Description
+                Contact Number
               </label>
-              <textarea
-                name="description"
-                value={category.description}
+              <input
+                type="text"
+                name="contact"
+                value={supplier.contact}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows="4"
-                placeholder="Enter category description"
+                placeholder="Enter contact number"
                 required
-              ></textarea>
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={supplier.email}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter email address"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">
+                Address
+              </label>
+              <input
+                type="text"
+                name="address"
+                value={supplier.address}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter address"
+                required
+              />
             </div>
           </div>
         </div>
 
         <div className="flex justify-between gap-4">
           <button
-            type="button"
             onClick={handleDelete}
             className={`flex items-center justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
               isLoading
@@ -218,7 +206,7 @@ function EditCategory() {
           <div className="flex flex-row gap-2">
             <button
               type="button"
-              onClick={() => navigate(`/manage/${InventoryId}/categories`)}
+              onClick={() => navigate(`/manage/${InventoryId}/suppliers`)}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
             >
               Cancel
@@ -253,4 +241,4 @@ function EditCategory() {
   );
 }
 
-export default EditCategory;
+export default EditSupplier;

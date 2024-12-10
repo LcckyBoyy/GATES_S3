@@ -7,19 +7,21 @@ import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
 
-function AddCategory() {
+function AddSupplier() {
   const { InventoryId } = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [category, setCategory] = useState({
-    categoryId: "",
+  const [supplier, setSupplier] = useState({
+    supplierId: "",
     name: "",
-    description: "",
+    contact: "",
+    email: "",
+    address: "",
   });
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCategory((prev) => ({
+    setSupplier((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -30,42 +32,41 @@ function AddCategory() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/Category/create", {
+      const response = await fetch("/Supplier/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          categoryId: cuid(),
-          name: category.name,
-          description: category.description,
+          supplierId: cuid(),
+          name: supplier.name,
+          contact: supplier.contact,
+          email: supplier.email,
+          address: supplier.address,
         }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Failed to create category");
+        throw new Error("Failed to create supplier");
       }
 
       const data = await response.json();
-      console.log("Category Created:", data);
+      console.log("Supplier Created:", data);
 
-      // Show success alert
       MySwal.fire({
         title: "Success!",
-        text: "Category created successfully.",
+        text: "Supplier created successfully.",
         icon: "success",
         confirmButtonColor: "#3085d6",
       }).then(() => {
-        navigate(`/manage/${InventoryId}/categories`);
+        navigate(`/manage/${InventoryId}/suppliers`);
       });
     } catch (error) {
       console.error("Error:", error);
 
-      // Show error alert
       MySwal.fire({
         title: "Error!",
-        text: error.message || "An error occurred while creating the category.",
+        text: error.message || "An error occurred while creating the supplier.",
         icon: "error",
         confirmButtonColor: "#d33",
       });
@@ -77,49 +78,78 @@ function AddCategory() {
   return (
     <div className="bg-white shadow-md rounded-lg p-8">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">
-        Add New Product Category
+        Add New Supplier
       </h1>
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-          {/* Left Column */}
           <div>
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">
-                Category Name
+                Supplier Name
               </label>
               <input
                 type="text"
                 name="name"
-                value={category.name}
+                value={supplier.name}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
-                placeholder="Enter category name"
+                placeholder="Enter supplier name"
                 required
               />
             </div>
 
             <div className="mb-4">
               <label className="block text-gray-700 font-bold mb-2">
-                Description
+                Contact Number
               </label>
-              <textarea
-                name="description"
-                value={category.description}
+              <input
+                type="text"
+                name="contact"
+                value={supplier.contact}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
-                rows="4"
-                placeholder="Enter category description"
-              ></textarea>
+                placeholder="Enter contact number"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={supplier.email}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Enter email address"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">
+                Address
+              </label>
+              <input
+                type="text"
+                name="address"
+                value={supplier.address}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Enter address"
+                required
+              />
             </div>
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end gap-4">
           <button
             type="button"
-            onClick={() => navigate(`/manage/${InventoryId}/categories`)}
+            onClick={() => navigate(`/manage/${InventoryId}/suppliers`)}
             className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
           >
             Cancel
@@ -143,7 +173,7 @@ function AddCategory() {
             ) : (
               <>
                 <FiSave className="mr-2" />
-                Save Category
+                Save Supplier
               </>
             )}
           </button>
@@ -153,4 +183,4 @@ function AddCategory() {
   );
 }
 
-export default AddCategory;
+export default AddSupplier;

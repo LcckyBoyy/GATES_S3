@@ -1,59 +1,89 @@
 import React, { useState } from "react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import cuid from "cuid";
 import { useNavigate } from "react-router-dom";
+
+const MySwal = withReactContent(Swal);
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isRegister, setIsRegister] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields.");
+    if (!email || !username || !password || !confirmPassword) {
+      MySwal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please fill in all fields.",
+      });
+      return;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
+      MySwal.fire({
+        icon: "error",
+        title: "Invalid Email",
+        text: "Please enter a valid email address.",
+      });
+      return;
     } else if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-    } else {
-      setError("");
-      setIsLoading(true);
-      const userId = cuid();
-      fetch("/user/registration", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: userId,
-          username: username,
-          email: email,
-          passwordSalt: password,
-        }),
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          console.log(data);
-          setIsLoading(false);
-          if (data.result == true) {
-            setIsRegister("Successful register.");
-            navigate("/login/");
-          } else setError("Error registering.");
-        })
-        .catch((error) => {
-          console.error(error);
-          setIsLoading(false);
-
-          setError("Error registering.");
-        });
+      MySwal.fire({
+        icon: "error",
+        title: "Password Mismatch",
+        text: "Passwords do not match.",
+      });
+      return;
     }
+
+    setIsLoading(true);
+    const userId = cuid();
+
+    fetch("/user/registration", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+        username: username,
+        email: email,
+        passwordSalt: password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setIsLoading(false);
+        if (data.result === true) {
+          MySwal.fire({
+            icon: "success",
+            title: "Registration Successful",
+            text: "Redirecting to login page...",
+            timer: 1500,
+            showConfirmButton: false,
+          }).then(() => {
+            navigate("/login");
+          });
+        } else {
+          MySwal.fire({
+            icon: "error",
+            title: "Registration Error",
+            text: data.message || "Error registering.",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+        MySwal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An error occurred while registering. Please try again later.",
+        });
+      });
   };
 
   return (
@@ -66,25 +96,19 @@ const RegisterForm = () => {
           </p>
         </div>
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-        {isRegister && (
-          <p className="text-green-500 text-sm text-center">{error}</p>
-        )}
-
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-4">
             <div>
               <label
-                htmlFor="Username"
+                htmlFor="username"
                 className="block text-sm font-medium text-gray-700"
               >
                 Username
               </label>
               <input
-                id="Username"
-                name="Username"
+                id="username"
+                name="username"
                 type="text"
-                required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="mt-1 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -103,7 +127,6 @@ const RegisterForm = () => {
                 id="email"
                 name="email"
                 type="email"
-                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-1 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -122,7 +145,6 @@ const RegisterForm = () => {
                 id="password"
                 name="password"
                 type="password"
-                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="mt-1 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -141,7 +163,6 @@ const RegisterForm = () => {
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="mt-1 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -180,6 +201,7 @@ const RegisterForm = () => {
                 href="/login"
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
+                {" "}
                 Sign in
               </a>
             </p>

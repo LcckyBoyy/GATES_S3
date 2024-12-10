@@ -15,22 +15,19 @@ import {
   FiTruck,
   FiSettings,
 } from "react-icons/fi";
+
 import Navbar from "./Navbar";
 import Products from "./Products/Products";
 import AddProduct from "./Products/AddProduct";
-import ProductDetails from "./Products/ProductDetails";
-import Home from "../components/Dashboard/Home";
+import Home from "./Dashboard/Home";
 import AddCategory from "./Category/AddCategory";
 import Categories from "./Category/Categories";
 import EditCategory from "./Category/EditCategory";
-
-
-const StockLevelsContent = () => (
-  <div className="p-6 bg-white rounded-lg shadow-md">
-    <h1 className="text-2xl font-bold mb-4">Stock Levels</h1>
-    <p>Monitor and track current inventory stock levels.</p>
-  </div>
-);
+import Suppliers from "./Supplier/Suppliers";
+import AddSupplier from "./Supplier/AddSupplier";
+import EditSupplier from "./Supplier/EditSupplier";
+import ProductManagement from "./Products/ProductManagement";
+import EditProduct from "./Products/EditProduct";
 
 const UsersContent = () => (
   <div className="p-6 bg-white rounded-lg shadow-md">
@@ -53,7 +50,7 @@ const SettingsContent = () => (
   </div>
 );
 
-const Tes = () => {
+const MainPage = () => {
   const [openDropdown, setOpenDropdown] = useState({});
 
   const navigate = useNavigate();
@@ -84,9 +81,9 @@ const Tes = () => {
           path: `/manage/${InventoryId}/categories`,
         },
         {
-          label: "Stock Levels",
-          id: "stock",
-          path: `/manage/${InventoryId}/stock`,
+          label: "Suppliers",
+          id: "suppliers",
+          path: `/manage/${InventoryId}/suppliers`,
         },
       ],
     },
@@ -199,11 +196,23 @@ const Tes = () => {
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
-            <Route path="/products/:Productid" element={<ProductDetails />} />
+            <Route
+              path="/products/:Productid"
+              element={<ProductManagement />}
+            />
+            <Route path="/products/:Productid/edit" element={<EditProduct />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/categories/new" element={<AddCategory />} />
-            <Route path="/categories/:categoryId" element={<EditCategory />} />
-            <Route path="/stock" element={<StockLevelsContent />} />
+            <Route
+              path="/categories/:categoryId/edit"
+              element={<EditCategory />}
+            />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/suppliers/new" element={<AddSupplier />} />
+            <Route
+              path="/suppliers/:supplierId/edit"
+              element={<EditSupplier />}
+            />
             <Route path="/users" element={<UsersContent />} />
             <Route path="/shipments" element={<ShipmentsContent />} />
             <Route path="/settings" element={<SettingsContent />} />
@@ -214,4 +223,4 @@ const Tes = () => {
   );
 };
 
-export default Tes;
+export default MainPage;

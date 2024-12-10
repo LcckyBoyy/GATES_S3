@@ -1,10 +1,10 @@
 import AuthorizeView from "../components/AuthorizeView.jsx";
-import Tes from "../components/Tes.jsx";
+import MainPage from "../components/MainPage.jsx";
 
 function Dashboard() {
   return (
     <AuthorizeView>
-      <Tes />
+      <MainPage />
     </AuthorizeView>
   );
 }

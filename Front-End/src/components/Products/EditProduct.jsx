@@ -2,27 +2,26 @@ import cuid from "cuid";
 import React, { useEffect, useState } from "react";
 import { FiSave } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
 
-function AddProduct() {
-  const { InventoryId } = useParams();
+function EditProduct() {
+  const { InventoryId, Productid } = useParams();
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [productData, setProductData] = useState({
-    name: "",
-    category: "",
-    price: "",
-    stock: "",
-    sku: "",
-    minimumStock: "",
-    description: "",
-    unitOfMeasure: "", // Added unit of measure field
-  });
-
+    name: '',
+    category: '',
+    price: '',
+    stock: '',
+    sku: '',
+    minimumStock: '',
+    description: '',
+    unitMeasure: ''
+});
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -45,6 +44,37 @@ function AddProduct() {
     fetchCategories();
   }, []);
 
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `/Product/get?inventoryId=${InventoryId}&productId=${Productid}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch product");
+        }
+        const data = await response.json();
+        setProductData({
+          name: data.result.productName,
+          category: data.result.categoryId,
+          price: data.result.unitPrice,
+          stock: data.result.currentStock,
+          sku: data.result.sku,
+          minimumStock: data.result.minimumStock,
+          description: data.result.description,
+          unitMeasure: data.result.unitMeasure,
+        });
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [Productid]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProductData((prev) => ({
@@ -59,20 +89,22 @@ function AddProduct() {
 
     try {
       const productToSubmit = {
-        productId: cuid(),
-        categoryId: categories.find((category) => category.name === productData.category)?.id || "",
+        productId: Productid,
+        categoryId:
+          categories.find((category) => category.name === productData.category)
+            ?.id || "",
         inventoryId: InventoryId,
         productName: productData.name,
         description: productData.description,
         sku: productData.sku,
-        unitPrice: parseFloat(productData.price),
-        currentStock: parseInt(productData.stock, 10),
-        minimumStock: parseInt(productData.minimumStock, 10) || 0,
-        unitMeasure: productData.unitOfMeasure,
+        unitPrice: productData.price,
+        currentStock: productData.stock ,
+        minimumStock: productData.minimumStock  || 0,
+        unitMeasure: productData.unitMeasure,
       };
 
-      const response = await fetch("/Product/create", {
-        method: "POST",
+      const response = await fetch("/Product/update", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -80,45 +112,42 @@ function AddProduct() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create product");
+        throw new Error("Failed to update product");
       }
-
-      const data = await response.json();
-      console.log("Product Created:", data);
-
+      console.log(response)
       MySwal.fire({
-        title: 'Success!',
-        text: 'Product created successfully.',
-        icon: 'success',
-        confirmButtonColor: '#3085d6',
+        title: "Success!",
+        text: "Product updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
       }).then(() => {
         navigate(`/manage/${InventoryId}/products`);
       });
-      
     } catch (error) {
-      console.error("Error adding product:", error);
-      
+      console.error("Error updating product:", error);
+
       MySwal.fire({
-        title: 'Error!',
-        text: error.message || "An error occurred while creating the product.",
-        icon: 'error',
-        confirmButtonColor: '#d33',
+        title: "Error!",
+        text: error.message || "An error occurred while updating the product.",
+        icon: "error",
+        confirmButtonColor: "#d33",
       });
-      
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 xl:mb-0 mb-16">
-      <h1 className="text-2xl font-bold mb-4">Add New Product</h1>
-      
-      <form onSubmit={handleSubmit} className="">
+    <div className="bg-white shadow-md rounded-lg p-6">
+      <h1 className="text-2xl font-bold mb-4">Edit Product</h1>
+
+      <form onSubmit={handleSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Product Name </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                Product Name
+              </label>
               <input
                 type="text"
                 name="name"
@@ -131,7 +160,9 @@ function AddProduct() {
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Category </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                Category
+              </label>
               <select
                 name="category"
                 value={productData.category}
@@ -149,7 +180,9 @@ function AddProduct() {
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Price </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                Price
+              </label>
               <input
                 type="number"
                 name="price"
@@ -162,11 +195,13 @@ function AddProduct() {
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Unit of Measure </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                Unit of Measure
+              </label>
               <input
                 type="text"
-                name="unitOfMeasure"
-                value={productData.unitOfMeasure}
+                name="unitMeasure"
+                value={productData.unitMeasure}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 required
@@ -176,7 +211,9 @@ function AddProduct() {
 
           <div>
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Stock Quantity </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                Stock Quantity
+              </label>
               <input
                 type="number"
                 name="stock"
@@ -188,7 +225,7 @@ function AddProduct() {
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> SKU </label>
+              <label className="block text-gray-700 font-bold mb-2">SKU</label>
               <input
                 type="text"
                 name="sku"
@@ -200,7 +237,9 @@ function AddProduct() {
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Minimum Stock </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                Minimum Stock
+              </label>
               <input
                 type="number"
                 name="minimumStock"
@@ -213,7 +252,9 @@ function AddProduct() {
         </div>
 
         <div className="mb-2">
-          <label className="block text-gray-700 font-bold mb-2"> Description </label>
+          <label className="block text-gray-700 font-bold mb-2">
+            Description
+          </label>
           <textarea
             name="description"
             value={productData.description}
@@ -227,7 +268,9 @@ function AddProduct() {
         <div className="flex justify-end space-x-4">
           <button
             type="button"
-            onClick={() => navigate(`/manage/${InventoryId}/products`)}
+            onClick={() =>
+              navigate(`/manage/${InventoryId}/products/${Productid}`)
+            }
             className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
           >
             Cancel
@@ -235,19 +278,23 @@ function AddProduct() {
           <button
             type="submit"
             className={`group relative items-center flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
-              isLoading ? "bg-gray-400 text-gray-200 cursor-not-allowed" : "text-white bg-blue-600 hover:bg-blue-700"
+              isLoading
+                ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                : "text-white bg-blue-600 hover:bg-blue-700"
             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
             disabled={isLoading}
           >
             {isLoading ? (
               <span className="flex ">
                 <span className="animate-pulse">Loading</span>
-                <span className="animate-bounce ml-1 inline-block font-bold">. . .</span>
+                <span className="animate-bounce ml-1 inline-block font-bold">
+                  . . .
+                </span>
               </span>
             ) : (
               <>
                 <FiSave className="mr-2" />
-                Save Product
+                Save Changes
               </>
             )}
           </button>
@@ -257,4 +304,4 @@ function AddProduct() {
   );
 }
 
-export default AddProduct;
+export default EditProduct;
