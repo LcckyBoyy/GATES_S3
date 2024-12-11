@@ -37,5 +37,22 @@ namespace GATES.API.Controllers
 			}
 			
 		}
-	}
+
+        [HttpGet]
+        [Route("read")]
+        public IActionResult Read()
+        {
+            try
+            {
+                var result = daSupplier.GetList();
+                return new JsonResult(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new JsonResult(new { Result = new {}, Message = ex.Message });
+            }
+
+        }
+    }
 }

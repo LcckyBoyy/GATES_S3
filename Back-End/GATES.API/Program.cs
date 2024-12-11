@@ -2,7 +2,6 @@ using GATES.DA.Interface;
 using GATES.DA;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using GATES.API.Middleware;
-using GATES.DA.ServicesModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
