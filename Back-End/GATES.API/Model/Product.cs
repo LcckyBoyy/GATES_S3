@@ -14,6 +14,9 @@ namespace GATES.API.Model
         public string InventoryId { get; set; } = null!;
 
         [Required]
+        public string SupplierId { get; set; } = null!;
+
+        [Required]
         public string ProductName { get; set; } = null!;
 
         public string? Description { get; set; }
@@ -41,6 +44,9 @@ namespace GATES.API.Model
 
         [Required]
         public string InventoryId { get; set; } = null!;
+
+        [Required]
+        public string SupplierId { get; set; } = null!;
 
         [Required]
         public string ProductName { get; set; } = null!;

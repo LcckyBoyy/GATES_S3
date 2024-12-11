@@ -11,8 +11,8 @@ namespace GATES.DA
             var response = new BaseResponse<bool>();
             using (GatesContext server= new())
             {
-                var db = (from i in server.MtCategories
-                         where i.Name == ""
+                var db = (from i in server.PCategories
+                         where i.Name == req.Name && i.InventoryId == req.InventoryId
                        select i).FirstOrDefault();
 
                 if (db != null)
@@ -21,9 +21,10 @@ namespace GATES.DA
                     return response;
                 }
 
-                server.MtCategories.Add(new MtCategory()
+                server.PCategories.Add(new PCategory()
                 {
                     CategoryId = req.CategoryId,
+                    InventoryId = req.InventoryId,
                     Name = req.Name,
                     Description = req.Description
                 });
@@ -35,15 +36,17 @@ namespace GATES.DA
             return response;
         }
 
-        public BaseResponse<List<daGetListCategory>> GetList()
+        public BaseResponse<List<daGetListCategory>> GetList(string inventoryId)
         {
             var response = new BaseResponse<List<daGetListCategory>>();
             using (GatesContext server= new())
             {
-                var db = from i in server.MtCategories
+                var db = from i in server.PCategories
+                         where i.InventoryId == inventoryId
                          select new daGetListCategory
                          {
                              CategoryId = i.CategoryId,
+                             InventoryId = i.InventoryId,
                              Name = i.Name,
                              Description = i.Description
                          };
@@ -54,13 +57,13 @@ namespace GATES.DA
             return response;
         }
 
-        public BaseResponse<daUpdateCategory> GetCategory(string categoryId)
+        public BaseResponse<daUpdateCategory> GetCategory(string categoryId, string inventoryId)
         {
             var response = new BaseResponse<daUpdateCategory>();
             using (GatesContext server = new())
             {
-                var cateogry = (from i in server.MtCategories
-                          where i.CategoryId == categoryId
+                var cateogry = (from i in server.PCategories
+                          where i.CategoryId == categoryId && i.InventoryId == inventoryId
                           select i).FirstOrDefault();
 
                 if (cateogry == null)
@@ -72,6 +75,7 @@ namespace GATES.DA
                 response.Result = new daUpdateCategory()
                 {
                     CategoryId = cateogry.CategoryId,
+                    InventoryId = cateogry.InventoryId,
                     Description = cateogry.Description,
                     Name = cateogry.Name,
                 };
@@ -86,8 +90,8 @@ namespace GATES.DA
             var response = new BaseResponse<bool>();
             using (GatesContext server= new())
             {
-                var db = (from i in server.MtCategories
-                         where i.CategoryId == req.CategoryId
+                var db = (from i in server.PCategories
+                         where i.CategoryId == req.CategoryId && i.InventoryId == req.InventoryId
                        select i).FirstOrDefault();
 
                 if (db == null)
@@ -112,7 +116,7 @@ namespace GATES.DA
             var response = new BaseResponse<bool>();
             using (GatesContext server = new())
             {
-                var db = (from i in server.MtCategories
+                var db = (from i in server.PCategories
                           where i.CategoryId == categoryId
                           select i).FirstOrDefault();
 
@@ -122,7 +126,7 @@ namespace GATES.DA
                     return response;
                 }
 
-                server.MtCategories.Remove(db);
+                server.PCategories.Remove(db);
                 server.SaveChanges();
 
                 response.Result = true;

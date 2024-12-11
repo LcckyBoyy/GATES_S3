@@ -11,6 +11,8 @@ public partial class PProduct
 
     public string InventoryId { get; set; } = null!;
 
+    public string SupplierId { get; set; } = null!;
+
     public string ProductName { get; set; } = null!;
 
     public string? Description { get; set; }
@@ -31,15 +33,11 @@ public partial class PProduct
 
     public bool IsActive { get; set; }
 
-    public virtual MtCategory Category { get; set; } = null!;
+    public virtual PCategory Category { get; set; } = null!;
 
     public virtual PInventory Inventory { get; set; } = null!;
 
-    public virtual ICollection<PProductHistory> PProductHistories { get; set; } = new List<PProductHistory>();
-
-    public virtual ICollection<PProductImage> PProductImages { get; set; } = new List<PProductImage>();
-
-    public virtual ICollection<PProductSupplier> PProductSuppliers { get; set; } = new List<PProductSupplier>();
-
     public virtual ICollection<PStockMovement> PStockMovements { get; set; } = new List<PStockMovement>();
+
+    public virtual PSupplier Supplier { get; set; } = null!;
 }

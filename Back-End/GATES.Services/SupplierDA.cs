@@ -11,23 +11,16 @@ namespace GATES.DA
 			var response = new BaseResponse<bool>();
 			using (GatesContext server = new())
 			{
-				var entity = (from i in server.MtSuppliers
-							  where i.SupplierName == req.SupplierName
+				var entity = (from i in server.PSuppliers
+							  where i.SupplierName == req.SupplierName && i.InventoryId == req.InventoryId
 							  select i).FirstOrDefault();
 
 				if (entity != null) { response.Message = "Supplier exist"; return response; }
 
-				MtSupplier a = new()
-				{
-					SupplierId = DateTime.UtcNow.ToString(),
-					
-					SupplierName = req.SupplierName,
-					IsActive = true,
-				};
-
-				server.MtSuppliers.Add(new MtSupplier()
+				server.PSuppliers.Add(new PSupplier()
                 {
-                    SupplierId = DateTime.UtcNow.ToString(),
+                    SupplierId = req.SupplierId,
+                    InventoryId = req.InventoryId,
                     SupplierName = req.SupplierName,
 					ContactPerson = req.ContactPerson,
 					Email = req.Email,
@@ -44,14 +37,14 @@ namespace GATES.DA
 			}
 		}
         
-		public BaseResponse<List<daGetListSupplier>> GetList()
+		public BaseResponse<List<daGetListSupplier>> GetList(string inventoryId)
         {
             var response = new BaseResponse<List<daGetListSupplier>>();
 
             using (GatesContext server = new())
             {
-                var db = (from i in server.MtSuppliers
-                          where i.IsActive == true
+                var db = (from i in server.PSuppliers
+                          where i.IsActive == true && i.InventoryId == inventoryId
                           select new daGetListSupplier
                           {
                               SupplierId = i.SupplierId,
@@ -73,7 +66,7 @@ namespace GATES.DA
 			var response = new BaseResponse<bool>();
 			using (GatesContext server = new())
 			{
-				var db = (from i in server.MtSuppliers
+				var db = (from i in server.PSuppliers
 						  where i.SupplierId == supplierId && i.IsActive == true
                           select i).FirstOrDefault();
 
@@ -83,7 +76,7 @@ namespace GATES.DA
 					return response;
 				}
 
-				server.MtSuppliers.Remove(db);
+				server.PSuppliers.Remove(db);
 				server.SaveChanges(true);
 
 				response.Result = true;

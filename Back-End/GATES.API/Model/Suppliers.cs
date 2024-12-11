@@ -4,7 +4,13 @@ namespace GATES.API.Model
 {
 	public class blCreateSupplier
 	{
-		[Required]
+        [Required]
+        public string SupplierId { get; set; } = null!;
+
+        [Required]
+        public string InventoryId { get; set; } = null!;
+
+        [Required]
 		public string SupplierName { get; set; } = null!;
 
 		public string? ContactPerson { get; set; }

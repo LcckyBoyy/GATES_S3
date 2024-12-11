@@ -10,6 +10,8 @@ namespace GATES.DA.ServicesModel
     {
         public string CategoryId { get; set; } = null!;
 
+        public string InventoryId { get; set; } = null!;
+
         public string Name { get; set; } = null!;
 
         public string? Description { get; set; }
@@ -19,6 +21,8 @@ namespace GATES.DA.ServicesModel
     {
         public string CategoryId { get; set; } = null!;
 
+        public string InventoryId { get; set; } = null!;
+
         public string Name { get; set; } = null!;
 
         public string? Description { get; set; }
@@ -27,6 +31,8 @@ namespace GATES.DA.ServicesModel
     public class daUpdateCategory
     {
         public string CategoryId { get; set; } = null!;
+
+        public string InventoryId { get; set; } = null!;
 
         public string Name { get; set; } = null!;
 

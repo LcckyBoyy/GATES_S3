@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,11 @@ namespace GATES.DA.ServicesModel
 {
 	public class daInsertSupplier
 	{
-		public string SupplierName { get; set; } = null!;
+        public string SupplierId { get; set; } = null!;
+
+        public string InventoryId { get; set; } = null!;
+
+        public string SupplierName { get; set; } = null!;
 
 		public string? ContactPerson { get; set; }
 

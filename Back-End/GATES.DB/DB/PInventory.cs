@@ -19,7 +19,11 @@ public partial class PInventory
 
     public virtual MtUser Owner { get; set; } = null!;
 
+    public virtual ICollection<PCategory> PCategories { get; set; } = new List<PCategory>();
+
     public virtual ICollection<PInventoryAccess> PInventoryAccesses { get; set; } = new List<PInventoryAccess>();
 
     public virtual ICollection<PProduct> PProducts { get; set; } = new List<PProduct>();
+
+    public virtual ICollection<PSupplier> PSuppliers { get; set; } = new List<PSupplier>();
 }
