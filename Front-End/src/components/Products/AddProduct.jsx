@@ -20,7 +20,7 @@ function AddProduct() {
     sku: "",
     minimumStock: "",
     description: "",
-    unitOfMeasure: "", // Added unit of measure field
+    unitOfMeasure: "", 
   });
 
   useEffect(() => {

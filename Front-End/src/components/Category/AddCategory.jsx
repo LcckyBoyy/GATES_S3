@@ -12,6 +12,7 @@ function AddCategory() {
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState({
     categoryId: "",
+    inventoryId: InventoryId,
     name: "",
     description: "",
   });
@@ -37,6 +38,7 @@ function AddCategory() {
         },
         body: JSON.stringify({
           categoryId: cuid(),
+          inventoryId: category.inventoryId,
           name: category.name,
           description: category.description,
         }),

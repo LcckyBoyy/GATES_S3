@@ -1,34 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { FiPlus } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
+import Loading from "../Loading";
 
 function Suppliers() {
   const navigate = useNavigate();
   const { InventoryId } = useParams();
   const [suppliers, setSuppliers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchSuppliers = async () => {
       try {
-        const response = await fetch("/Supplier/read");
+        const response = await fetch(`/Supplier/read?inventoryId=${InventoryId}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        const formattedSuppliers = data.map((supplier) => ({
+        const formattedSuppliers = data.result.map((supplier) => ({
           id: supplier.supplierId,
-          name: supplier.name,
-          contact: supplier.contact,
+          name: supplier.supplierName,
+          contact: supplier.contactPerson,
           email: supplier.email,
         }));
         setSuppliers(formattedSuppliers);
+        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch suppliers:", error);
+        setLoading(false);
       }
     };
 
     fetchSuppliers();
   }, []);
+
+  if (loading)
+    return (
+      <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+        <Loading
+          count={4}
+          size="w-6 h-6"
+          baseColor="bg-white/30"
+          activeColor="bg-white"
+        />
+      </div>
+    );
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16">
@@ -56,7 +72,7 @@ function Suppliers() {
               key={supplier.id}
               className="border-b hover:bg-gray-100 cursor-pointer"
               onClick={() =>
-                navigate(`/manage/${InventoryId}/suppliers/${supplier.id}`)
+                navigate(`/manage/${InventoryId}/suppliers/${supplier.id}/edit`)
               }
             >
               <td className="p-3">{supplier.name}</td>

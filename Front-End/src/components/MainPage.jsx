@@ -7,15 +7,8 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import {
-  FiHome,
-  FiTriangle,
-  FiBox,
-  FiUsers,
-  FiTruck,
-  FiSettings,
-} from "react-icons/fi";
-
+import { FiHome, FiTriangle, FiBox, FiSettings } from "react-icons/fi";
+import { MdOutlineInventory } from "react-icons/md";
 import Navbar from "./Navbar";
 import Products from "./Products/Products";
 import AddProduct from "./Products/AddProduct";
@@ -28,20 +21,8 @@ import AddSupplier from "./Supplier/AddSupplier";
 import EditSupplier from "./Supplier/EditSupplier";
 import ProductManagement from "./Products/ProductManagement";
 import EditProduct from "./Products/EditProduct";
-
-const UsersContent = () => (
-  <div className="p-6 bg-white rounded-lg shadow-md">
-    <h1 className="text-2xl font-bold mb-4">User Management</h1>
-    <p>Manage user accounts and permissions.</p>
-  </div>
-);
-
-const ShipmentsContent = () => (
-  <div className="p-6 bg-white rounded-lg shadow-md">
-    <h1 className="text-2xl font-bold mb-4">Shipments</h1>
-    <p>Track and manage your shipments.</p>
-  </div>
-);
+import Stocks from "./Stock/Stocks";
+import StockForm from "./Stock/StockForm";
 
 const SettingsContent = () => (
   <div className="p-6 bg-white rounded-lg shadow-md">
@@ -57,7 +38,6 @@ const MainPage = () => {
   const location = useLocation();
   const { InventoryId } = useParams();
 
-  // Sidebar menu items configuration
   const menuItems = [
     {
       id: "home",
@@ -89,16 +69,10 @@ const MainPage = () => {
     },
 
     {
-      id: "users",
-      label: "Users",
-      icon: FiUsers,
-      path: `/manage/${InventoryId}/users`,
-    },
-    {
-      id: "shipments",
-      label: "Shipments",
-      icon: FiTruck,
-      path: `/manage/${InventoryId}/shipments`,
+      id: "stock",
+      label: "Stock",
+      icon: MdOutlineInventory,
+      path: `/manage/${InventoryId}/stock`,
     },
     {
       id: "settings",
@@ -114,7 +88,6 @@ const MainPage = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      {/* Navbar */}
       <div className="fixed top-0 left-0 right-0 z-50 h-16 ">
         <Navbar />
       </div>
@@ -213,8 +186,8 @@ const MainPage = () => {
               path="/suppliers/:supplierId/edit"
               element={<EditSupplier />}
             />
-            <Route path="/users" element={<UsersContent />} />
-            <Route path="/shipments" element={<ShipmentsContent />} />
+            <Route path="/stock" element={<Stocks />} />
+            <Route path="/stock/new" element={<StockForm />} />
             <Route path="/settings" element={<SettingsContent />} />
           </Routes>
         </div>

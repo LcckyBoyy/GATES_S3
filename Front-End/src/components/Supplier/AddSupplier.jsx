@@ -12,7 +12,9 @@ function AddSupplier() {
   const [isLoading, setIsLoading] = useState(false);
   const [supplier, setSupplier] = useState({
     supplierId: "",
+    InventoryId: InventoryId,
     name: "",
+    contactPerson: "",
     contact: "",
     email: "",
     address: "",
@@ -39,9 +41,11 @@ function AddSupplier() {
         },
         body: JSON.stringify({
           supplierId: cuid(),
-          name: supplier.name,
-          contact: supplier.contact,
+          inventoryId: supplier.InventoryId,
+          supplierName: supplier.name,
+          contactPerson: supplier.contactPerson,
           email: supplier.email,
+          phone: supplier.contact,
           address: supplier.address,
         }),
       });
@@ -92,6 +96,20 @@ function AddSupplier() {
                 type="text"
                 name="name"
                 value={supplier.name}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Enter supplier name"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">
+                Contact Person
+              </label>
+              <input
+                type="text"
+                name="contactPerson"
+                value={supplier.contactPerson}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 placeholder="Enter supplier name"

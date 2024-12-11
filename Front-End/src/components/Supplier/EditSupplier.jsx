@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FaSave } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaRegTrashAlt } from "react-icons/fa";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+const MySwal = withReactContent(Swal);
 
 function EditSupplier() {
   const { InventoryId, supplierId } = useParams();
@@ -14,7 +17,6 @@ function EditSupplier() {
   });
   const navigate = useNavigate();
 
-  // Fetch supplier data when the component mounts
   useEffect(() => {
     const fetchSupplier = async () => {
       setIsLoading(true);
@@ -78,34 +80,55 @@ function EditSupplier() {
   };
 
   const handleDelete = async () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this supplier?"
-    );
-    if (!confirmDelete) return;
+    const result = await MySwal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
 
-    setIsLoading(true);
+    if (result.isConfirmed) {
+      setIsLoading(true);
 
-    try {
-      const response = await fetch(
-        `/Supplier/delete?supplierId=${supplierId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
+      try {
+        const response = await fetch(
+          `/Supplier/delete?supplierId=${supplierId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete Supplier");
         }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to delete supplier");
+        MySwal.fire({
+          title: "Deleted!",
+          text: "The Supplier has been deleted successfully.",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          navigate(`/manage/${InventoryId}/suppliers`);
+        });
+      } catch (error) {
+        console.error("Error:", error);
+
+        MySwal.fire({
+          title: "Error!",
+          text:
+            error.message || "An error occurred while deleting the supplier.",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
+      } finally {
+        setIsLoading(false);
       }
-
-      console.log("Supplier Deleted");
-      navigate(`/manage/${InventoryId}/suppliers`);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -181,6 +204,7 @@ function EditSupplier() {
 
         <div className="flex justify-between gap-4">
           <button
+            type="button"
             onClick={handleDelete}
             className={`flex items-center justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
               isLoading

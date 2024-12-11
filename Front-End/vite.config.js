@@ -97,10 +97,6 @@ export default defineConfig({
         target: "https://localhost:7156/",
         secure: false,
       },
-      "^/Product/get": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
       "^/Product/update": {
         target: "https://localhost:7156/",
         secure: false,
@@ -122,6 +118,18 @@ export default defineConfig({
         secure: false,
       },
       "^/Category/update": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Supplier/read": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Supplier/create": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Supplier/delete": {
         target: "https://localhost:7156/",
         secure: false,
       },

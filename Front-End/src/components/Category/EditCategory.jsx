@@ -21,7 +21,7 @@ function EditCategory() {
     const fetchCategory = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/Category/get?categoryId=${categoryId}`);
+        const response = await fetch(`/Category/get?categoryId=${categoryId}&inventoryId=${InventoryId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch category");
         }
@@ -60,6 +60,7 @@ function EditCategory() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          inventoryId: InventoryId,
           categoryId: categoryId,
           name: category.name,
           description: category.description,
