@@ -15,6 +15,8 @@ namespace GATES.DA.ServicesModel
 
         public string InventoryId { get; set; } = null!;
 
+        public string SupplierId { get; set; } = null!;
+
         public string ProductName { get; set; } = null!;
 
         public string? Description { get; set; }
@@ -53,7 +55,9 @@ namespace GATES.DA.ServicesModel
 
         public string CategoryId { get; set; } = null!;
 
-        public string InventoryId { get; set; } = null!;
+        public string InventoryId { get; set; } = null!; 
+
+        public string SupplierId { get; set; } = null!;
 
         public string ProductName { get; set; } = null!;
 

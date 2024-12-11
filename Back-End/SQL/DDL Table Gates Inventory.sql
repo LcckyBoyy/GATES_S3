@@ -1,3 +1,5 @@
+use dbInventories
+
 CREATE TABLE mtUsers(
 	user_id VARCHAR(30) NOT NULL,
 	username VARCHAR(50) NOT NULL,
@@ -11,13 +13,7 @@ CREATE TABLE mtUsers(
 	CONSTRAINT PK_mtUser PRIMARY KEY (user_id)
 )
 
-CREATE TABLE mtCategory(
-	category_id VARCHAR(30) NOT NULL,
-	name VARCHAR(20) NOT NULL,
-	description VARCHAR(255) NULL,
 
-	CONSTRAINT PK_mtCategories PRIMARY KEY (category_id)
-)
 
 CREATE TABLE pInventory(
 	inventory_id VARCHAR(30) NOT NULL,
@@ -46,11 +42,42 @@ CREATE TABLE pInventoryAccess(
 	CONSTRAINT FK_pInventoryAccess_pInventory FOREIGN KEY (inventory_id) REFERENCES pInventory (inventory_id)
 	ON DELETE NO ACTION 
 )
+
+-- # Category
+CREATE TABLE pCategory(
+	category_id VARCHAR(30) NOT NULL,
+	inventory_id VARCHAR(30) NOT NULL,
+	name VARCHAR(20) NOT NULL,
+	description VARCHAR(255) NULL,
+
+	CONSTRAINT PK_mtCategories PRIMARY KEY (category_id),
+	CONSTRAINT FK_pCategory_pInventory FOREIGN KEY (inventory_id) REFERENCES pInventory (inventory_id)
+	ON DELETE CASCADE
+)
+
+-- # Supliers
+CREATE TABLE pSuppliers(
+	supplier_id VARCHAR(30) NOT NULL,
+	inventory_id VARCHAR(30) NOT NULL,
+
+	supplier_name VARCHAR(30) NOT NULL,
+	contact_person VARCHAR(20) NULL,
+	email VARCHAR(50) NULL,
+	phone VARCHAR(20) NULL,
+	address VARCHAR(255) NULL,
+	is_active BIT NOT NULL,
+
+	CONSTRAINT PK_mtSuppliers PRIMARY KEY (supplier_id),
+	CONSTRAINT FK_mtSuppliers_pInventory FOREIGN KEY (inventory_id) REFERENCES pInventory (inventory_id)
+	ON DELETE CASCADE
+)
+
 -- # Products
 CREATE TABLE pProducts(
 	product_id VARCHAR(30) NOT NULL,
 	category_id VARCHAR(30) NOT NULL,
 	inventory_id VARCHAR(30) NOT NULL,
+	supplier_id VARCHAR(30) NOT NULL,
 
 	product_name VARCHAR(30) NOT NULL,
 	description VARCHAR(255) NULL,
@@ -64,70 +91,9 @@ CREATE TABLE pProducts(
 	is_active BIT NOT NULL,
 
 	CONSTRAINT PK_pProducts PRIMARY KEY (product_id),
-	CONSTRAINT FK_pProducts_mtCategory FOREIGN KEY (category_id) REFERENCES mtCategory (category_id)
-	ON DELETE CASCADE,
-	CONSTRAINT FK_pProducts_pInventory FOREIGN KEY (inventory_id) REFERENCES pInventory (inventory_id)
-	ON DELETE CASCADE
-)
-
-CREATE TABLE pProductImages(
-	image_id VARCHAR(30) NOT NULL,
-	product_id VARCHAR(30) NOT NULL,
-	image_url VARCHAR(255) NOT NULL,
-	image_type VARCHAR(10) NOT NULL,
-	is_priamary BIT NOT NULL,
-	uploded_at DATETIME NOT NULL,
-
-	CONSTRAINT PK_pProductImages PRIMARY KEY (image_id),
-	CONSTRAINT FK_pProductImages_pProducts FOREIGN KEY (product_id) REFERENCES pProducts (product_id)
-	ON DELETE CASCADE
-)
-
--- # Supliers
-CREATE TABLE mtSuppliers(
-	supplier_id VARCHAR(30) NOT NULL,
-	supplier_name VARCHAR(30) NOT NULL,
-	contact_person VARCHAR(20) NULL,
-	email VARCHAR(50) NULL,
-	phone VARCHAR(20) NULL,
-	address VARCHAR(255) NULL,
-	is_active BIT NOT NULL,
-
-	CONSTRAINT PK_mtSuppliers PRIMARY KEY (supplier_id),
-)
-
-CREATE TABLE pProductSuppliers(
-	productSuppliers_id VARCHAR(30) NOT NULL,
-	supplier_id VARCHAR(30) NOT NULL,
-	product_id VARCHAR(30) NOT NULL,
-	
-
-	email VARCHAR(50) NULL,
-	phone VARCHAR(20) NULL,
-	address VARCHAR(255) NULL,
-	is_active BIT NOT NULL,
-
-	CONSTRAINT PK_pProductSuppliers PRIMARY KEY (productSuppliers_id),
-	CONSTRAINT FK_pProductSuppliers_mtSuppliers FOREIGN KEY (supplier_id) REFERENCES mtSuppliers (supplier_id)
-	ON DELETE CASCADE,
-	CONSTRAINT FK_pProductSuppliers_pProducts FOREIGN KEY (product_id) REFERENCES pProducts (product_id)
-	ON DELETE CASCADE
-)
-
--- # Logs
-CREATE TABLE pProductHistory (
-	history_id VARCHAR(30) NOT NULL,
-	product_id VARCHAR(30) NOT NULL,
-	
-	old_price DECIMAL(10,2) NOT NULL,
-	new_price DECIMAL(10,2) NOT NULL,
-	changed_at DATETIME NOT NULL,
-	changed_by VARCHAR(30) NOT NULL,
-
-	CONSTRAINT PK_pProductHistory PRIMARY KEY (history_id),
-	CONSTRAINT FK_pProductHistory_pProducts FOREIGN KEY (product_id) REFERENCES pProducts (product_id)
-	ON DELETE CASCADE
-	
+	CONSTRAINT FK_pProducts_mtCategory FOREIGN KEY (category_id) REFERENCES pCategory (category_id),
+	CONSTRAINT FK_pProducts_pInventory FOREIGN KEY (inventory_id) REFERENCES pInventory (inventory_id),
+	CONSTRAINT FK_pProducts_pSupplier FOREIGN KEY (supplier_id) REFERENCES pSuppliers (supplier_id) ON DELETE CASCADE,
 )
 
 CREATE TABLE pStockMovements (

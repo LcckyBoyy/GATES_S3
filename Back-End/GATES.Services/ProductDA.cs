@@ -18,9 +18,10 @@ namespace GATES.DA
                 server.PProducts.Add(new PProduct()
                 {
                     ProductId = req.ProductId,
-                    ProductName = req.ProductName,
                     CategoryId = req.CategoryId,
                     InventoryId = req.InventoryId,
+                    SupplierId = req.SupplierId,
+                    ProductName = req.ProductName,
                     Description = req.Description,
                     UnitPrice = req.UnitPrice,
                     UnitMeasure = req.UnitMeasure,
@@ -40,7 +41,7 @@ namespace GATES.DA
             return response;
         }
     
-        public BaseResponse<List<daGetlistProduct>> GetList(string userId, string InventoryId)
+        public BaseResponse<List<daGetlistProduct>> GetList(string InventoryId)
         {
             var response = new BaseResponse<List<daGetlistProduct>>();
 
@@ -55,9 +56,9 @@ namespace GATES.DA
                         CurrentStock = i.CurrentStock,
                         UnitMeasure = i.UnitMeasure,
                         UnitPrice = i.UnitPrice,
-                    }).ToList();
+                    });
 
-                response.Result = products;
+                response.Result = products.ToList();
             }
 
             return response;
@@ -112,6 +113,7 @@ namespace GATES.DA
                 }
 
                 db.CategoryId = req.CategoryId;
+                db.SupplierId = req.SupplierId;
                 db.ProductName = req.ProductName;
                 db.Description = req.Description;
                 db.Sku = req.Sku;

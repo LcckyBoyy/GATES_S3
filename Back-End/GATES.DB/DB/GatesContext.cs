@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 
 namespace GATES.DB.DB;
 
@@ -16,13 +15,11 @@ public partial class GatesContext : DbContext
     {
     }
 
-    public virtual DbSet<MtCategory> MtCategories { get; set; }
-
-    public virtual DbSet<MtSupplier> MtSuppliers { get; set; }
-
     public virtual DbSet<MtUser> MtUsers { get; set; }
 
     public virtual DbSet<PAuditLog> PAuditLogs { get; set; }
+
+    public virtual DbSet<PCategory> PCategories { get; set; }
 
     public virtual DbSet<PInventory> PInventories { get; set; }
 
@@ -30,72 +27,16 @@ public partial class GatesContext : DbContext
 
     public virtual DbSet<PProduct> PProducts { get; set; }
 
-    public virtual DbSet<PProductHistory> PProductHistories { get; set; }
-
-    public virtual DbSet<PProductImage> PProductImages { get; set; }
-
-    public virtual DbSet<PProductSupplier> PProductSuppliers { get; set; }
-
     public virtual DbSet<PStockMovement> PStockMovements { get; set; }
 
+    public virtual DbSet<PSupplier> PSuppliers { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["GATES"].ConnectionString);
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=LCCKY-BOY\\SQL24;User ID=sa;Password=sasa;Database=dbInventories;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<MtCategory>(entity =>
-        {
-            entity.HasKey(e => e.CategoryId).HasName("PK_mtCategories");
-
-            entity.ToTable("mtCategory");
-
-            entity.Property(e => e.CategoryId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("category_id");
-            entity.Property(e => e.Description)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("description");
-            entity.Property(e => e.Name)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("name");
-        });
-
-        modelBuilder.Entity<MtSupplier>(entity =>
-        {
-            entity.HasKey(e => e.SupplierId);
-
-            entity.ToTable("mtSuppliers");
-
-            entity.Property(e => e.SupplierId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("supplier_id");
-            entity.Property(e => e.Address)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("address");
-            entity.Property(e => e.ContactPerson)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("contact_person");
-            entity.Property(e => e.Email)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("email");
-            entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.Phone)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("phone");
-            entity.Property(e => e.SupplierName)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("supplier_name");
-        });
-
         modelBuilder.Entity<MtUser>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PK_mtUser");
@@ -181,6 +122,34 @@ public partial class GatesContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.PAuditLogs)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_pAuditLogs_mtUsers");
+        });
+
+        modelBuilder.Entity<PCategory>(entity =>
+        {
+            entity.HasKey(e => e.CategoryId).HasName("PK_mtCategories");
+
+            entity.ToTable("pCategory");
+
+            entity.Property(e => e.CategoryId)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("category_id");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            entity.Property(e => e.InventoryId)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("inventory_id");
+            entity.Property(e => e.Name)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("name");
+
+            entity.HasOne(d => d.Inventory).WithMany(p => p.PCategories)
+                .HasForeignKey(d => d.InventoryId)
+                .HasConstraintName("FK_pCategory_pInventory");
         });
 
         modelBuilder.Entity<PInventory>(entity =>
@@ -287,6 +256,10 @@ public partial class GatesContext : DbContext
                 .HasMaxLength(225)
                 .IsUnicode(false)
                 .HasColumnName("SKU");
+            entity.Property(e => e.SupplierId)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("supplier_id");
             entity.Property(e => e.UnitMeasure)
                 .HasMaxLength(30)
                 .IsUnicode(false)
@@ -300,117 +273,17 @@ public partial class GatesContext : DbContext
 
             entity.HasOne(d => d.Category).WithMany(p => p.PProducts)
                 .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_pProducts_mtCategory");
 
             entity.HasOne(d => d.Inventory).WithMany(p => p.PProducts)
                 .HasForeignKey(d => d.InventoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_pProducts_pInventory");
-        });
 
-        modelBuilder.Entity<PProductHistory>(entity =>
-        {
-            entity.HasKey(e => e.HistoryId);
-
-            entity.ToTable("pProductHistory");
-
-            entity.Property(e => e.HistoryId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("history_id");
-            entity.Property(e => e.ChangedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("changed_at");
-            entity.Property(e => e.ChangedBy)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("changed_by");
-            entity.Property(e => e.NewPrice)
-                .HasColumnType("decimal(10, 2)")
-                .HasColumnName("new_price");
-            entity.Property(e => e.OldPrice)
-                .HasColumnType("decimal(10, 2)")
-                .HasColumnName("old_price");
-            entity.Property(e => e.ProductId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("product_id");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.PProductHistories)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_pProductHistory_pProducts");
-        });
-
-        modelBuilder.Entity<PProductImage>(entity =>
-        {
-            entity.HasKey(e => e.ImageId);
-
-            entity.ToTable("pProductImages");
-
-            entity.Property(e => e.ImageId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("image_id");
-            entity.Property(e => e.ImageType)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("image_type");
-            entity.Property(e => e.ImageUrl)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("image_url");
-            entity.Property(e => e.IsPriamary).HasColumnName("is_priamary");
-            entity.Property(e => e.ProductId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("product_id");
-            entity.Property(e => e.UplodedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("uploded_at");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.PProductImages)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_pProductImages_pProducts");
-        });
-
-        modelBuilder.Entity<PProductSupplier>(entity =>
-        {
-            entity.HasKey(e => e.ProductSuppliersId);
-
-            entity.ToTable("pProductSuppliers");
-
-            entity.Property(e => e.ProductSuppliersId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("productSuppliers_id");
-            entity.Property(e => e.Address)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("address");
-            entity.Property(e => e.Email)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("email");
-            entity.Property(e => e.IsActive).HasColumnName("is_active");
-            entity.Property(e => e.Phone)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("phone");
-            entity.Property(e => e.ProductId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("product_id");
-            entity.Property(e => e.SupplierId)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("supplier_id");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.PProductSuppliers)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_pProductSuppliers_pProducts");
-
-            entity.HasOne(d => d.Supplier).WithMany(p => p.PProductSuppliers)
+            entity.HasOne(d => d.Supplier).WithMany(p => p.PProducts)
                 .HasForeignKey(d => d.SupplierId)
-                .HasConstraintName("FK_pProductSuppliers_mtSuppliers");
+                .HasConstraintName("FK_pProducts_pSupplier");
         });
 
         modelBuilder.Entity<PStockMovement>(entity =>
@@ -451,6 +324,47 @@ public partial class GatesContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.PStockMovements)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_pStockMovements_pProducts");
+        });
+
+        modelBuilder.Entity<PSupplier>(entity =>
+        {
+            entity.HasKey(e => e.SupplierId).HasName("PK_mtSuppliers");
+
+            entity.ToTable("pSuppliers");
+
+            entity.Property(e => e.SupplierId)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("supplier_id");
+            entity.Property(e => e.Address)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("address");
+            entity.Property(e => e.ContactPerson)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("contact_person");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("email");
+            entity.Property(e => e.InventoryId)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("inventory_id");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.Phone)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("phone");
+            entity.Property(e => e.SupplierName)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("supplier_name");
+
+            entity.HasOne(d => d.Inventory).WithMany(p => p.PSuppliers)
+                .HasForeignKey(d => d.InventoryId)
+                .HasConstraintName("FK_mtSuppliers_pInventory");
         });
 
         OnModelCreatingPartial(modelBuilder);

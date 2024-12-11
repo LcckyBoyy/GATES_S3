@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace GATES.DB.DB;
 
-public partial class MtSupplier
+public partial class PSupplier
 {
     public string SupplierId { get; set; } = null!;
+
+    public string InventoryId { get; set; } = null!;
 
     public string SupplierName { get; set; } = null!;
 
@@ -19,5 +21,7 @@ public partial class MtSupplier
 
     public bool IsActive { get; set; }
 
-    public virtual ICollection<PProductSupplier> PProductSuppliers { get; set; } = new List<PProductSupplier>();
+    public virtual PInventory Inventory { get; set; } = null!;
+
+    public virtual ICollection<PProduct> PProducts { get; set; } = new List<PProduct>();
 }

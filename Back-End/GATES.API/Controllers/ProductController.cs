@@ -34,6 +34,7 @@ namespace GATES.API.Controllers
                     ProductId = request.ProductId,
                     ProductName = request.ProductName,
                     CategoryId = request.CategoryId,
+                    SupplierId = request.SupplierId,
                     InventoryId = request.InventoryId,
                     Description = request.Description,
                     CurrentStock = request.CurrentStock,
@@ -60,7 +61,7 @@ namespace GATES.API.Controllers
                 var check = daHelper.CheckAccess(User.Id(), inventoryId);
                 if (!check) return new JsonResult(new { Result = new { }, Message = "You dont have the access for this inventory" });
 
-                var result = daProduct.GetList(User.Id(), inventoryId);
+                var result = daProduct.GetList(inventoryId);
                 return new JsonResult(result.Result);
             }
             catch(Exception ex)
@@ -101,6 +102,7 @@ namespace GATES.API.Controllers
                     InventoryId = request.InventoryId,
                     ProductId = request.ProductId,
                     CategoryId = request.CategoryId,
+                    SupplierId = request.SupplierId,
                     ProductName = request.ProductName,
                     Description = request.Description,
                     Sku = request.Sku,

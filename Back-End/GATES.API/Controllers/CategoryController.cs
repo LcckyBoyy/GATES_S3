@@ -22,9 +22,9 @@ namespace GATES.API.Controllers
                 var result = daCategory.Insert(new daInsertCategory()
                 {
                     CategoryId = req.CategoryId,
+                    InventoryId = req.InventoryId,
                     Name = req.Name,
                     Description = req.Description 
-
                 });
 
                 return new JsonResult(result);
@@ -39,11 +39,11 @@ namespace GATES.API.Controllers
 
         [HttpGet]
         [Route("read")]
-        public JsonResult Read()
+        public JsonResult Read(string inventoryId)
         {
             try
             {
-                var result = daCategory.GetList();
+                var result = daCategory.GetList(inventoryId);
                 return new JsonResult(result.Result);
             }
             catch (Exception ex)
@@ -54,11 +54,11 @@ namespace GATES.API.Controllers
 
         [HttpGet]
         [Route("get")]
-        public JsonResult Get(string categoryId)
+        public JsonResult Get(string categoryId, string inventoryId)
         {
             try
             {
-                var result = daCategory.GetCategory(categoryId);
+                var result = daCategory.GetCategory(categoryId, inventoryId);
                 return new JsonResult(result);
             }
             catch (Exception ex)
@@ -76,6 +76,7 @@ namespace GATES.API.Controllers
                 var result = daCategory.Set(new daUpdateCategory()
                 {
                     CategoryId = req.CategoryId,
+                    InventoryId = req.InventoryId,
                     Name = req.Name,
                     Description = req.Description
                 });
