@@ -99,10 +99,32 @@ namespace GATES.DA
         public BaseResponse<bool> Set(daUpdateProduct req)
         {
             var response = new BaseResponse<bool>();
-
             using (GatesContext server = new())
             {
-                
+                var db = (from i in server.PProducts
+                         where i.InventoryId == req.InventoryId && i.ProductId == req.ProductId
+                         select i).FirstOrDefault();
+
+                if (db == null)
+                {
+                    response.Message = "Product not found!";
+                    return response;
+                }
+
+                db.CategoryId = req.CategoryId;
+                db.ProductName = req.ProductName;
+                db.Description = req.Description;
+                db.Sku = req.Sku;
+                db.UnitPrice = req.UnitPrice;
+                db.CurrentStock = req.CurrentStock;
+                db.MinimumStock = req.MinimumStock;
+                db.UnitMeasure = req.UnitMeasure;
+
+                server.SaveChanges();
+
+                response.Result = true;
+                response.Message = "Success";
+
             }
 
             return response;

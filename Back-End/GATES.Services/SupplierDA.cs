@@ -43,5 +43,54 @@ namespace GATES.DA
 				return response;
 			}
 		}
-	}
+        
+		public BaseResponse<List<daGetListSupplier>> GetList()
+        {
+            var response = new BaseResponse<List<daGetListSupplier>>();
+
+            using (GatesContext server = new())
+            {
+                var db = (from i in server.MtSuppliers
+                          where i.IsActive == true
+                          select new daGetListSupplier
+                          {
+                              SupplierId = i.SupplierId,
+                              SupplierName = i.SupplierName,
+                              ContactPerson = i.ContactPerson,
+                              Email = i.Email,
+                              Phone = i.Phone,
+                              Address = i.Address,
+                          });
+                response.Result = [.. db];
+                response.Message = "Success";
+            }
+
+            return response;
+        }
+        
+		public BaseResponse<bool> Remove(string supplierId)
+		{
+			var response = new BaseResponse<bool>();
+			using (GatesContext server = new())
+			{
+				var db = (from i in server.MtSuppliers
+						  where i.SupplierId == supplierId && i.IsActive == true
+                          select i).FirstOrDefault();
+
+				if (db == null)
+				{
+					response.Message = "Supplier not found!";
+					return response;
+				}
+
+				server.MtSuppliers.Remove(db);
+				server.SaveChanges(true);
+
+				response.Result = true;
+				response.Message = "Success";
+			}
+
+			return response;
+		}
+    }
 }

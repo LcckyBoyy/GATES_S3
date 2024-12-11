@@ -1,4 +1,4 @@
-﻿using GATES.DA.ServicesModel;
+﻿using GATES.DA.Interface;
 using GATES.DB.DB;
 
 namespace GATES.DA
