@@ -95,8 +95,10 @@ function ProductSidebar() {
               }
               className={`text-blue-500 cursor-pointer border-b-2 py-2 px-4 hover:bg-gray-100 ${
                 location.pathname ===
-                `/manage/${InventoryId}/products/${product.productId}`
-                  ? "bg-gray-200 "
+                  `/manage/${InventoryId}/products/${product.productId}` ||
+                location.pathname ===
+                  `/manage/${InventoryId}/products/${product.productId}/history`
+                  ? "bg-gray-200"
                   : ""
               }`}
             >

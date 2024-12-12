@@ -7,7 +7,12 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import { FiHome, FiTriangle, FiBox, FiSettings, FiMenu, FiX } from "react-icons/fi";
+import {
+  FiHome,
+  FiTriangle,
+  FiBox,
+  FiSettings,
+} from "react-icons/fi";
 import { MdOutlineInventory } from "react-icons/md";
 import Navbar from "./Navbar";
 import Products from "./Products/Products";
@@ -23,6 +28,7 @@ import ProductManagement from "./Products/ProductManagement";
 import EditProduct from "./Products/EditProduct";
 import Stocks from "./Stock/Stocks";
 import StockForm from "./Stock/StockForm";
+import EditStock from "./Stock/EditStock";
 
 const SettingsContent = () => (
   <div className="p-6 bg-white rounded-lg shadow-md">
@@ -39,7 +45,6 @@ const MainPage = () => {
   const location = useLocation();
   const { InventoryId } = useParams();
 
-  // Close sidebar when route changes
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [location.pathname]);
@@ -92,7 +97,6 @@ const MainPage = () => {
   };
 
   const toggleSidebar = (e) => {
-    // Prevent event from propagating
     if (e) {
       e.stopPropagation();
     }
@@ -102,34 +106,32 @@ const MainPage = () => {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <div className="fixed top-0 left-0 right-0 z-50 h-16">
-        <Navbar 
-          onToggleSidebar={toggleSidebar} 
-          isSidebarOpen={isSidebarOpen} 
-        />
+        <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       </div>
 
       {/* Main content area */}
       <div className="flex pt-16 z-0 relative">
         {/* Overlay for mobile sidebar */}
         {isSidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
             onClick={toggleSidebar}
           />
         )}
 
         {/* Sidebar */}
-        <div 
+        <div
           className={`
             fixed left-0 top-16 bottom-0 z-40 w-56 bg-[#DFE8FA] overflow-y-auto 
             transition-all duration-300 ease-in-out
             md:static md:block
-            ${isSidebarOpen 
-              ? 'translate-x-0 shadow-2xl' 
-              : '-translate-x-full md:translate-x-0'
+            ${
+              isSidebarOpen
+                ? "translate-x-0 shadow-2xl"
+                : "-translate-x-full md:translate-x-0"
             }
           `}
-        >          
+        >
           {menuItems.map((item) => (
             <div key={item.id}>
               {item.subItems ? (
@@ -166,7 +168,7 @@ const MainPage = () => {
                       <button
                         onClick={() => {
                           navigate(sub.path);
-                          toggleSidebar(); // Close sidebar on mobile after navigation
+                          toggleSidebar();
                         }}
                         key={sub.id}
                         className={`w-full text-left px-14 py-1 ${
@@ -184,13 +186,13 @@ const MainPage = () => {
                 <button
                   onClick={() => {
                     navigate(item.path);
-                    toggleSidebar(); // Close sidebar on mobile after navigation
+                    toggleSidebar();
                   }}
                   className={`w-full text-left px-6 py-2 flex items-center ${
                     location.pathname === `/manage/${InventoryId}` &&
                     item.path === `/manage/${InventoryId}`
                       ? "bg-[#26487E] text-white rounded-b-xl"
-                      : location.pathname === item.path
+                      : location.pathname === item.path || location.pathname === item.path + "/new"
                       ? "bg-[#26487E] text-white rounded-xl"
                       : "hover:bg-gray-200"
                   }`}
@@ -204,7 +206,7 @@ const MainPage = () => {
         </div>
 
         {/* Main content area */}
-        <div 
+        <div
           className={`
             flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10 custom-scrollbar 
             transition-all duration-300 ease-in-out
@@ -216,10 +218,11 @@ const MainPage = () => {
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
             <Route
-              path="/products/:Productid"
+              path="/products/:Productid/*"
               element={<ProductManagement />}
             />
             <Route path="/products/:Productid/edit" element={<EditProduct />} />
+            
             <Route path="/categories" element={<Categories />} />
             <Route path="/categories/new" element={<AddCategory />} />
             <Route
@@ -234,6 +237,7 @@ const MainPage = () => {
             />
             <Route path="/stock" element={<Stocks />} />
             <Route path="/stock/new" element={<StockForm />} />
+            <Route path="/stock/:movementId/edit" element={<EditStock />} />
             <Route path="/settings" element={<SettingsContent />} />
           </Routes>
         </div>

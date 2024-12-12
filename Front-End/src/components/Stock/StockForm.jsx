@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import cuid from "cuid";
 import { FiSave } from "react-icons/fi";
 import Swal from "sweetalert2";
@@ -11,12 +11,14 @@ const MySwal = withReactContent(Swal);
 function StockForm() {
   const navigate = useNavigate();
   const { InventoryId } = useParams();
+  const dropdownRef = useRef(null);
+
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
+  const [noProductFound, setNoProductFound] = useState(false);
   const [stockData, setStockData] = useState({
     productId: "",
     movementType: "",
@@ -27,78 +29,109 @@ function StockForm() {
     status: "",
   });
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const response = await fetch(
-          `/Product/read?inventoryId=${InventoryId}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
+  const fetchProducts = async (searchTerm) => {
+    try {
+      setLoading(true);
+      setNoProductFound(false);
+
+      const response = await fetch(
+        `/Product/read?inventoryId=${InventoryId}&productName=${searchTerm}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`
         );
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(
-            `HTTP error! status: ${response.status}, message: ${errorText}`
-          );
-        }
-
-        const data = await response.json();
-
-        if (data.message == "You dont have the access for this inventory") {
-          window.location.href = "/no-access";
-          return;
-        }
-
-        setProducts(data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Fetch Error:", err);
-        setError(err.message);
-        setLoading(false);
       }
-    }
 
-    fetchProducts();
-  }, []);
+      const data = await response.json();
 
-  useEffect(() => {
-    const handleSearch = () => {
-      if (!searchInput.trim()) {
-        setSearchResults([]);
+      if (data.message === "You don't have access for this inventory") {
+        window.location.href = "/no-access";
         return;
       }
 
-      const filtered = products.filter((product) =>
-        product.productName.toLowerCase().includes(searchInput.toLowerCase())
-      );
+      if (data.length === 0) {
+        setNoProductFound(true);
+      }
 
+      setProducts(data);
+      setIsSearching(true);
+    } catch (err) {
+      console.error("Fetch Error:", err);
+      setProducts([]);
+      setNoProductFound(true);
+      setIsSearching(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "searchInput") {
       if (
-        filtered.length === 1 &&
-        filtered[0].productName.toLowerCase() === searchInput.toLowerCase()
+        value === "" ||
+        (stockData.productId && value.length < searchInput.length)
       ) {
-        setSearchResults([]);
-      } else {
-        setSearchResults(filtered);
+        setSearchInput("");
+        setStockData((prev) => ({ ...prev, productId: "" }));
+        setProducts([]);
+        setIsSearching(false);
+        setNoProductFound(false);
+      } else if (!stockData.productId) {
+        setSearchInput(value);
+        if (value.trim()) {
+          fetchProducts(value);
+        } else {
+          setProducts([]);
+          setIsSearching(false);
+          setNoProductFound(false);
+        }
+      }
+    } else {
+      setStockData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleProductSelect = (product) => {
+    setStockData((prev) => ({
+      ...prev,
+      productId: product.productId,
+    }));
+    setSearchInput(product.productName);
+    setIsSearching(false);
+    setProducts([]);
+    setNoProductFound(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        if (products.length > 0 && !stockData.productId) {
+          setSearchInput("");
+        }
+        setIsSearching(false);
+        setProducts([]);
+        setNoProductFound(false);
       }
     };
 
-    const debounceTimer = setTimeout(handleSearch, 300);
-    return () => clearTimeout(debounceTimer);
-  }, [searchInput, products]);
-
-  const handleInputChange = (e) => {
-    setSearchInput(e.target.value);
-    setIsSearching(true);
-    const { name, value } = e.target;
-    setStockData((prev) => ({ ...prev, [name]: value }));
-  };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [products, stockData.productId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -123,14 +156,28 @@ function StockForm() {
       }
 
       const data = await response.json();
-      MySwal.fire({
-        title: "Success!",
-        text: "Stock movement created successfully.",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-      }).then(() => {
-        navigate("/manage/stocks");
-      });
+
+      if (data.result == true) {
+        MySwal.fire({
+          title: "Success!",
+          text: "Stock movement created successfully.",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          navigate(`/manage/${InventoryId}/stock`);
+        });
+      }
+
+      if (data.result == false) {
+        MySwal.fire({
+          title: "Error!",
+          text:
+            data.message ||
+            "An error occurred while creating the stock movement.",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
+      }
     } catch (error) {
       console.error("Error adding stock:", error);
       MySwal.fire({
@@ -146,53 +193,63 @@ function StockForm() {
     }
   };
 
-  if (loading)
-    return (
-      <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-        <Loading
-          count={4}
-          size="w-6 h-6"
-          baseColor="bg-white/30"
-          activeColor="bg-white"
-        />
-      </div>
-    );
-
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-16">
       <h1 className="text-2xl font-bold mb-4">Add New Stock Movement</h1>
       <form onSubmit={handleSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <div className="mb-2">
+          <div className="mb-2">
+            <div className="mb-2 relative" ref={dropdownRef}>
               <label className="block text-gray-700 font-bold mb-2">
-                Product
+                Product {stockData.productId}
               </label>
-              <input
-                type="text"
-                value={searchInput}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-md"
-                placeholder="Search for a product"
-              />
-              {isLoading && (
-                <p className="text-sm text-gray-500">Loading products...</p>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="searchInput"
+                  value={searchInput}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Search for a product"
+                  autocomplete="off"
+                />
+                {stockData.productId && (
+                  <button
+                    type="button"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    onClick={() => {
+                      setSearchInput("");
+                      setStockData((prev) => ({ ...prev, productId: "" }));
+                      setProducts([]);
+                      setIsSearching(false);
+                      setNoProductFound(false);
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              {loading && (
+                <div className="absolute z-10 w-full border rounded-md mt-1 p-2 bg-white text-center">
+                  Loading...
+                </div>
               )}
-              {isSearching && searchResults.length > 0 && (
-                <ul className="border rounded-md mt-2 max-h-40 overflow-auto">
-                  {searchResults.map((product) => (
+              {noProductFound && !loading && (
+                <div className="absolute z-10 w-full border rounded-md mt-1 p-2 bg-white text-center text-red-500">
+                  Product not found
+                </div>
+              )}
+              {isSearching && products.length > 0 && (
+                <ul
+                  className="absolute z-10 w-full border rounded-md mt-1 max-h-40 overflow-auto 
+                       bg-white shadow-lg"
+                >
+                  {products.map((product) => (
                     <li
                       key={product.productId}
-                      onClick={() => {
-                        setIsSearching(false); 
-                        setStockData((prev) => ({
-                          ...prev,
-                          productId: product.productId,
-                        }));
-                        console.log(stockData.productId);
-                        setSearchInput(product.productName); 
-                      }}
-                      className="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                      onClick={() => handleProductSelect(product)}
+                      className="px-3 py-2 cursor-pointer hover:bg-gray-100 
+                         first:rounded-t-md last:rounded-b-md"
                     >
                       {product.productName}
                     </li>
@@ -204,15 +261,17 @@ function StockForm() {
               <label className="block text-gray-700 font-bold mb-2">
                 Movement Type
               </label>
-              <input
-                type="text"
+              <select
                 name="movementType"
                 value={stockData.movementType}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
-                placeholder="Enter movement type"
                 required
-              />
+              >
+                <option value="">Select Movement Type</option>
+                <option value="IN">IN</option>
+                <option value="OUT">OUT</option>
+              </select>
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold mb-2">
