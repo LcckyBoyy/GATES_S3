@@ -6,6 +6,10 @@ export default {
       fontFamily: {
         sans: ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
+      screens: {
+        'max-md': { 'max': '767px' },
+        'md': '768px',
+      },
     },
   },
   plugins: [],

@@ -133,6 +133,18 @@ export default defineConfig({
         target: "https://localhost:7156/",
         secure: false,
       },
+      "^/Supplier/update": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Supplier/get": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/api/StockMovement/create": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
     },
     port: 5173,
     https: {

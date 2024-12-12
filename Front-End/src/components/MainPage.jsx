@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,7 +7,7 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import { FiHome, FiTriangle, FiBox, FiSettings } from "react-icons/fi";
+import { FiHome, FiTriangle, FiBox, FiSettings, FiMenu, FiX } from "react-icons/fi";
 import { MdOutlineInventory } from "react-icons/md";
 import Navbar from "./Navbar";
 import Products from "./Products/Products";
@@ -33,10 +33,16 @@ const SettingsContent = () => (
 
 const MainPage = () => {
   const [openDropdown, setOpenDropdown] = useState({});
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
   const { InventoryId } = useParams();
+
+  // Close sidebar when route changes
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   const menuItems = [
     {
@@ -67,7 +73,6 @@ const MainPage = () => {
         },
       ],
     },
-
     {
       id: "stock",
       label: "Stock",
@@ -86,16 +91,45 @@ const MainPage = () => {
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
+  const toggleSidebar = (e) => {
+    // Prevent event from propagating
+    if (e) {
+      e.stopPropagation();
+    }
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <div className="fixed top-0 left-0 right-0 z-50 h-16 ">
-        <Navbar />
+      <div className="fixed top-0 left-0 right-0 z-50 h-16">
+        <Navbar 
+          onToggleSidebar={toggleSidebar} 
+          isSidebarOpen={isSidebarOpen} 
+        />
       </div>
 
       {/* Main content area */}
-      <div className="flex pt-16 h-[calc(100vh-4rem)] z-0">
+      <div className="flex pt-16 z-0 relative">
+        {/* Overlay for mobile sidebar */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+            onClick={toggleSidebar}
+          />
+        )}
+
         {/* Sidebar */}
-        <div className="fixed left-0 top-16 bottom-0 z-20 w-56 bg-[#DFE8FA] overflow-y-auto">
+        <div 
+          className={`
+            fixed left-0 top-16 bottom-0 z-40 w-56 bg-[#DFE8FA] overflow-y-auto 
+            transition-all duration-300 ease-in-out
+            md:static md:block
+            ${isSidebarOpen 
+              ? 'translate-x-0 shadow-2xl' 
+              : '-translate-x-full md:translate-x-0'
+            }
+          `}
+        >          
           {menuItems.map((item) => (
             <div key={item.id}>
               {item.subItems ? (
@@ -130,7 +164,10 @@ const MainPage = () => {
                   >
                     {item.subItems.map((sub) => (
                       <button
-                        onClick={() => navigate(sub.path)}
+                        onClick={() => {
+                          navigate(sub.path);
+                          toggleSidebar(); // Close sidebar on mobile after navigation
+                        }}
                         key={sub.id}
                         className={`w-full text-left px-14 py-1 ${
                           location.pathname.startsWith(sub.path)
@@ -145,7 +182,10 @@ const MainPage = () => {
                 </>
               ) : (
                 <button
-                  onClick={() => navigate(item.path)}
+                  onClick={() => {
+                    navigate(item.path);
+                    toggleSidebar(); // Close sidebar on mobile after navigation
+                  }}
                   className={`w-full text-left px-6 py-2 flex items-center ${
                     location.pathname === `/manage/${InventoryId}` &&
                     item.path === `/manage/${InventoryId}`
@@ -164,7 +204,13 @@ const MainPage = () => {
         </div>
 
         {/* Main content area */}
-        <div className="ml-56 flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10 custom-scrollbar ">
+        <div 
+          className={`
+            flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10 custom-scrollbar 
+            transition-all duration-300 ease-in-out
+            md:ml-0
+          `}
+        >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />

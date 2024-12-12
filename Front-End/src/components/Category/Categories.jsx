@@ -25,7 +25,6 @@ function Categories() {
         setCategories(formattedCategories);
         setLoading(false);
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
         setLoading(false);
       }
     };

@@ -10,8 +10,9 @@ function EditSupplier() {
   const { InventoryId, supplierId } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [supplier, setSupplier] = useState({
-    name: "",
-    contact: "",
+    supplierName: "",
+    contactPerson: "",
+    phone: "",
     email: "",
     address: "",
   });
@@ -21,12 +22,14 @@ function EditSupplier() {
     const fetchSupplier = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/Supplier/read?supplierId=${supplierId}`);
+        const response = await fetch(
+          `/Supplier/get?&inventoryId=${InventoryId}&supplierId=${supplierId}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch supplier");
         }
         const data = await response.json();
-        setSupplier(data);
+        setSupplier(data.result);
       } catch (error) {
         console.error("Error fetching supplier:", error);
       } finally {
@@ -57,8 +60,10 @@ function EditSupplier() {
         },
         body: JSON.stringify({
           supplierId: supplierId,
-          name: supplier.name,
-          contact: supplier.contact,
+          inventoryId: InventoryId,
+          supplierName: supplier.supplierName,
+          contactPerson: supplier.contactPerson,
+          phone: supplier.phone,
           email: supplier.email,
           address: supplier.address,
         }),
@@ -69,11 +74,21 @@ function EditSupplier() {
       }
 
       const data = await response.json();
-      console.log("Supplier Updated:", data);
-
-      navigate(`/manage/${InventoryId}/suppliers`);
+      MySwal.fire({
+        title: "Success!",
+        text: "Supplier updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      }).then(() => {
+        navigate(`/manage/${InventoryId}/suppliers`);
+      });
     } catch (error) {
-      console.error("Error:", error);
+      MySwal.fire({
+        title: "Error!",
+        text: error.message || "An error occurred while updating the Supplier.",
+        icon: "error",
+        confirmButtonColor: "#d33",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -133,9 +148,9 @@ function EditSupplier() {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-8">
+    <div className="bg-white shadow-md rounded-lg p-8 mb-16">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">
-        Edit Supplier: {supplier.name}
+        Edit Supplier: {supplier.supplierName}
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
@@ -146,11 +161,26 @@ function EditSupplier() {
               </label>
               <input
                 type="text"
-                name="name"
-                value={supplier.name}
+                name="supplierName"
+                value={supplier.supplierName}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter supplier name"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">
+                Contact Person
+              </label>
+              <input
+                type="text"
+                name="contactPerson"
+                value={supplier.contactPerson}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                placeholder="Enter Contact Person"
                 required
               />
             </div>
@@ -161,8 +191,8 @@ function EditSupplier() {
               </label>
               <input
                 type="text"
-                name="contact"
-                value={supplier.contact}
+                name="phone"
+                value={supplier.phone}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter contact number"

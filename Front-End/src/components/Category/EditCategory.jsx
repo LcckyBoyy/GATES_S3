@@ -72,7 +72,6 @@ function EditCategory() {
       }
 
       const data = await response.json();
-      console.log("Category Updated:", data);
 
       MySwal.fire({
         title: "Success!",
