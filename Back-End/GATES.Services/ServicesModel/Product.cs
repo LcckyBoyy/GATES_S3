@@ -34,19 +34,19 @@ namespace GATES.DA.ServicesModel
 
 	public class daGetlistProduct
     {
+        public string ProductId { get; set; } = null!;
+
         public string ProductName { get; set; } = null!;
 
-        public string ProductId { get; set; } = null!;
+        public string CategoryName { get; set; } = null!;
+
+        public string SupplierName { get; set; } = null!;
 
         public int CurrentStock { get; set; }
 
-        public string? UnitMeasure { get; set; }
-
-        public string CategoryId { get; set; } = null!;
-
         public decimal UnitPrice { get; set; }
 
-
+        public string? UnitMeasure { get; set; }
     }
 
     public class daUpdateProduct
