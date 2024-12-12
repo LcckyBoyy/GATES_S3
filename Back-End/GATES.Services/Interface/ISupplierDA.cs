@@ -7,6 +7,8 @@ namespace GATES.DA.Interface
 	{
 		public BaseResponse<bool> Insert(daInsertSupplier req);
 		public BaseResponse<List<daGetListSupplier>> GetList(string inventoryId);
-		public BaseResponse<bool> Remove(string supplierId);
+		public BaseResponse<daUpdateSupplier> GetSupplier(string inventoryId, string supplierId);
+        public BaseResponse<bool> Set(daUpdateSupplier req);
+        public BaseResponse<bool> Remove(string supplierId);
 	}
 }
