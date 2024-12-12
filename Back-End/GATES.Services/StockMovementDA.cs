@@ -21,10 +21,17 @@ namespace GATES.DA
                     response.Message = "Product not found";
                     return response;
                 }
+                int stock = product.CurrentStock;
 
                 if (req.MovementType == HelperDA.MOVEMENT_TYPE_IN) product.CurrentStock = product.CurrentStock + req.Quantity;
                 else if(req.MovementType == HelperDA.MOVEMENT_TYPE_OUT) product.CurrentStock = product.CurrentStock - req.Quantity;
                 product.UpdatedAt = DateTime.UtcNow;
+
+                if (product.CurrentStock < product.MinimumStock)
+                {
+                    response.Message = $"Invalid stock, stock cannot be less than {product.MinimumStock}. Stock Left : {stock} {product.UnitMeasure}";
+                    return response;
+                }
 
                 server.PStockMovements.Add(new PStockMovement()
                 {
@@ -122,6 +129,7 @@ namespace GATES.DA
                     response.Message = "Product not found";
                     return response;
                 }
+                int stock = product.CurrentStock;
 
                 if (movement.Quantity != req.Quantity)
                 {
@@ -149,6 +157,12 @@ namespace GATES.DA
 
                     else if (req.MovementType == HelperDA.MOVEMENT_TYPE_OUT)
                         product.CurrentStock = product.CurrentStock - movement.Quantity - movement.Quantity;
+                }
+
+                if (product.CurrentStock < product.MinimumStock)
+                {
+                    response.Message = $"Invalid stock, stock cannot be less than {product.MinimumStock}. Stock Left : {stock} {product.UnitMeasure}";
+                    return response;
                 }
 
                 movement.MovementId = req.MovementId;
