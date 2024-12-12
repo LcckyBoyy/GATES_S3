@@ -52,10 +52,11 @@ namespace GATES.DA
                     {
                         ProductId = i.ProductId,
                         ProductName = i.ProductName,
-                        CategoryId = i.CategoryId,
+                        CategoryName = i.Category.Name,
+                        SupplierName = i.Supplier.SupplierName,
                         CurrentStock = i.CurrentStock,
                         UnitMeasure = i.UnitMeasure,
-                        UnitPrice = i.UnitPrice,
+                        UnitPrice = i.UnitPrice
                     });
 
                 response.Result = products.ToList();
@@ -83,6 +84,7 @@ namespace GATES.DA
                     ProductId = product.ProductId,
                     CategoryId = product.CategoryId,
                     InventoryId = product.InventoryId,
+                    SupplierId = product.SupplierId,
                     ProductName = product.ProductName,
                     Description = product.Description,
                     Sku = product.Sku,

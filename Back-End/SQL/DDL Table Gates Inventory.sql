@@ -13,8 +13,6 @@ CREATE TABLE mtUsers(
 	CONSTRAINT PK_mtUser PRIMARY KEY (user_id)
 )
 
-
-
 CREATE TABLE pInventory(
 	inventory_id VARCHAR(30) NOT NULL,
 	inventory_name VARCHAR(30) NOT NULL,
