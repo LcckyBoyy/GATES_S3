@@ -18,5 +18,8 @@ namespace GATES.DA
                 else return true;
             }
         }
+
+        public static readonly string MOVEMENT_TYPE_IN = "IN";
+        public static readonly string MOVEMENT_TYPE_OUT = "OUT";
     }
 }

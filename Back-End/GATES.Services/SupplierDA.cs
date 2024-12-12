@@ -56,6 +56,7 @@ namespace GATES.DA
                               Phone = i.Phone,
                               Address = i.Address,
                           });
+
                 response.Result = [.. db];
                 response.Message = "Success";
             }
