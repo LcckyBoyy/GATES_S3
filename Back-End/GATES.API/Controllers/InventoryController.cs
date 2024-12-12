@@ -1,5 +1,6 @@
 ﻿using GATES.API.Helper;
 using GATES.API.Model;
+using GATES.DA;
 using GATES.DA.Interface;
 using GATES.DA.ServicesModel;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,47 @@ namespace GATES.API.Controllers
             }
 		}
 
+        [HttpPut]
+        [Route("update")]
+        public JsonResult Update(blUpdateInventory request)
+		{
+            try
+            {
+                var result = daInventory.Set(new daUpdateInventory()
+				{
+                    InventoryId = request.InventoryId,
+					InventoryName = request.InventoryName,
+					Description = request.Description,
+					OwnerId = User.Id(),
+                });
+
+                return new JsonResult(result);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+		[Route("delete")]
+		public JsonResult Delete(string inventoryId)
+		{
+			try
+			{
+                var result = daInventory.Delete(inventoryId, User.Id());
+                return new JsonResult(result);
+
+            }
+			catch(Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+				return new JsonResult(new {Result = false, Message = ex.Message});
+			}
+		}
+
 		[HttpPost]
 		[Route("give-access")]
 		public JsonResult GiveAccess(string email, string InventoryId)
@@ -68,22 +110,38 @@ namespace GATES.API.Controllers
 			}
 		}
 
-		[HttpDelete]
-		[Route("delete")]
-		public JsonResult Delete(string inventoryId)
+        [HttpGet]
+		[Route("get-access")]
+		public JsonResult GetAccess(string inventoryId)
 		{
-			try
-			{
-                var result = daInventory.Delete(inventoryId, User.Id());
+            try
+            {
+                var result = daInventory.GetListAccess(inventoryId);
                 return new JsonResult(result);
 
             }
-			catch(Exception ex)
-			{
-				Console.WriteLine(ex.Message);
-				return new JsonResult(new {Result = false, Message = ex.Message});
-			}
-		}
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
+        }
 
+        [HttpDelete]
+		[Route("remove-access")]
+		public JsonResult DeleteAcces(string inventoryId, string ownerId)
+		{
+            try
+            {
+                var result = daInventory.RemoveAccess(inventoryId, ownerId);
+				return new JsonResult(result);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
+        }
     }
 }

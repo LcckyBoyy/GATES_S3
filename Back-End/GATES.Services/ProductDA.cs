@@ -41,13 +41,14 @@ namespace GATES.DA
             return response;
         }
     
-        public BaseResponse<List<daGetlistProduct>> GetList(string InventoryId)
+        public BaseResponse<List<daGetlistProduct>> GetList(string InventoryId, string? productName)
         {
             var response = new BaseResponse<List<daGetlistProduct>>();
 
             using (GatesContext server = new())
             {
-                var products = server.PProducts.Where(i => i.InventoryId.Contains(InventoryId) && i.IsActive == true)
+                var products = server.PProducts.Where(i => i.InventoryId.Contains(InventoryId) && i.IsActive == true
+                && (string.IsNullOrEmpty(productName) || i.ProductName.Contains(productName)))
                     .Select(i => new daGetlistProduct()
                     {
                         ProductId = i.ProductId,

@@ -53,14 +53,6 @@ function Products() {
     fetchProducts();
   }, []);
 
-  const truncateDescription = (description, maxLength = 50) => {
-    if (!description || typeof description !== "string") {
-      return "";
-    }
-    if (description.length <= maxLength) return description;
-    return description.substring(0, maxLength) + "...";
-  };
-
   if (loading)
     return (
       <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
