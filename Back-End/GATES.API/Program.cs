@@ -50,4 +50,5 @@ void ConfigureService(ConfigurationManager config, IServiceCollection services)
 	services.AddTransient<IProductDA, ProductDA>();
 	services.AddTransient<ICategoryDA, CategoryDA>();
 	services.AddTransient<IHelperDA, HelperDA>();
+	services.AddTransient<IStockMovementDA, StockMovementDA>();
 }

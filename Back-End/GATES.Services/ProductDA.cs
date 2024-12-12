@@ -123,6 +123,7 @@ namespace GATES.DA
                 db.CurrentStock = req.CurrentStock;
                 db.MinimumStock = req.MinimumStock;
                 db.UnitMeasure = req.UnitMeasure;
+                db.UpdatedAt = DateTime.UtcNow;
 
                 server.SaveChanges();
 
