@@ -52,8 +52,8 @@ namespace GATES.DA
 					.Where(i => i.Email == email && i.IsActive == true)
 					.FirstOrDefault();
 
-				if (user == null) { res.Message = "Failed"; return res; }
-				if (password != user.PasswordSalt) { res.Message = "Failed"; return res; }
+				if (user == null) { res.Message = "Email not found"; return res; }
+				if (password != user.PasswordSalt) { res.Message = "Worng password!"; return res; }
 
 				res.Result = new daUserCookie
 				{
