@@ -1,6 +1,8 @@
 ﻿using GATES.DA.Interface;
 using GATES.DA.ServicesModel;
 using GATES.DB.DB;
+using System.Net;
+using System.Numerics;
 
 namespace GATES.DA
 {
@@ -11,11 +13,11 @@ namespace GATES.DA
 			var response = new BaseResponse<bool>();
 			using (GatesContext server = new())
 			{
-				var entity = (from i in server.PSuppliers
+				var db = (from i in server.PSuppliers
 							  where i.SupplierName == req.SupplierName && i.InventoryId == req.InventoryId
 							  select i).FirstOrDefault();
 
-				if (entity != null) { response.Message = "Supplier exist"; return response; }
+				if (db != null) { response.Message = "Supplier exist"; return response; }
 
 				server.PSuppliers.Add(new PSupplier()
                 {
@@ -60,8 +62,60 @@ namespace GATES.DA
 
             return response;
         }
+
+        public BaseResponse<daUpdateSupplier> GetSupplier(string inventoryId, string supplierId)
+        {
+            var response = new BaseResponse<daUpdateSupplier>();
+            using (GatesContext server = new())
+            {
+                var db = (from i in server.PSuppliers
+                          where i.SupplierId == supplierId && i.InventoryId == inventoryId
+                          select i).FirstOrDefault();
+
+                if (db == null) { response.Message = "Supplier not found"; return response; }
+
+                response.Result = new daUpdateSupplier
+                {
+                    SupplierId = db.SupplierId,
+                    InventoryId = db.InventoryId,
+                    SupplierName = db.SupplierName,
+                    ContactPerson = db.ContactPerson,
+                    Email = db.Email,
+                    Phone = db.Phone,
+                    Address = db.Address,
+                };
+
+                response.Message = "Success";
+                return response;
+            }
+        }
         
-		public BaseResponse<bool> Remove(string supplierId)
+        public BaseResponse<bool> Set(daUpdateSupplier req)
+        {
+            var response = new BaseResponse<bool>();
+            using (GatesContext server = new())
+            {
+                var db = (from i in server.PSuppliers
+                              where i.SupplierId == req.SupplierId && i.InventoryId == req.InventoryId
+                              select i).FirstOrDefault();
+
+                if (db == null) { response.Message = "Supplier not found"; return response; }
+
+                db.SupplierName = req.SupplierName;
+                db.ContactPerson = req.ContactPerson;
+                db.Email = req.Email;
+                db.Phone = req.Phone;
+                db.Address = req.Address;
+
+                server.SaveChanges();
+
+                response.Result = true;
+                response.Message = "Success";
+                return response;
+            }
+        }
+
+        public BaseResponse<bool> Remove(string supplierId)
 		{
 			var response = new BaseResponse<bool>();
 			using (GatesContext server = new())

@@ -38,4 +38,21 @@ namespace GATES.DA.ServicesModel
 
         public string? Address { get; set; }
     }
+
+    public class daUpdateSupplier
+    {
+        public string SupplierId { get; set; } = null!;
+
+        public string InventoryId { get; set; } = null!;
+
+        public string SupplierName { get; set; } = null!;
+
+        public string? ContactPerson { get; set; }
+
+        public string? Email { get; set; }
+
+        public string? Phone { get; set; }
+
+        public string? Address { get; set; }
+    }
 }
