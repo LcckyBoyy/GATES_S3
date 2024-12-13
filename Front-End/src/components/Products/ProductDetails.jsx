@@ -113,7 +113,7 @@ function ProductDetails() {
   const isHistory = location.pathname.endsWith("/history");
 
   return (
-    <div className="w-3/4 p-4 bg-white rounded-r-xl shadow-lg">
+    <div className="w-3/4 p-4 bg-white rounded-r-xl shadow-lg  max-md:w-full max-md:rounded-xl">
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">{product.name}</h1>
       </div>

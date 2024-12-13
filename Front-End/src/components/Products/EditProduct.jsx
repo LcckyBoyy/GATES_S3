@@ -120,13 +120,9 @@ function EditProduct() {
     try {
       const productToSubmit = {
         productId: Productid,
-        categoryId:
-          categories.find((category) => category.name === productData.category)
-            ?.id || "",
+        categoryId: productData.category,
         inventoryId: InventoryId,
-        supplierId:
-          suppliers.find((supplier) => supplier.name === productData.supplier)
-            ?.id || "",
+        supplierId: productData.supplier,
         productName: productData.name,
         description: productData.description,
         sku: productData.sku,
@@ -143,7 +139,7 @@ function EditProduct() {
         },
         body: JSON.stringify(productToSubmit),
       });
-
+      console.log(productToSubmit);
       if (!response.ok) {
         throw new Error("Failed to update product");
       }
@@ -172,7 +168,9 @@ function EditProduct() {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-16">
-      <h1 className="text-2xl font-bold mb-4">Edit Product</h1>
+      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">
+        Product Edit
+      </h1>
 
       <form onSubmit={handleSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
@@ -211,7 +209,6 @@ function EditProduct() {
                 ))}
               </select>
             </div>
-
             <div className="mb-2">
               <label className="block text-gray-700 font-bold mb-2">
                 Price
@@ -250,33 +247,31 @@ function EditProduct() {
               <input
                 type="number"
                 name="stock"
+                disabled={true}
                 value={productData.stock}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md cursor-not-allowed"
                 required
               />
             </div>
-            <div>
-              <div className="mb-2">
-                <label className="block text-gray-700 font-bold mb-2">
-                  {" "}
-                  Supplier{" "}
-                </label>
-                <select
-                  name="supplier"
-                  value={productData.supplier}
-                  onChange={(e) => handleInputChange(e)}
-                  className="w-full px-3 py-2 border rounded-md"
-                  required
-                >
-                  <option value="">Select Supplier</option>
-                  {suppliers.map((supplier) => (
-                    <option key={supplier.id} value={supplier.id}>
-                      {supplier.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 font-bold mb-2">
+                Supplier
+              </label>
+              <select
+                name="supplier"
+                value={productData.supplier}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              >
+                <option value="">Select Supplier</option>
+                {suppliers.map((supplier) => (
+                  <option key={supplier.id} value={supplier.id}>
+                    {supplier.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="mb-2">

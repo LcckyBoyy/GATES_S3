@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./AuthorizeView";
-import { IoIosSearch, IoIosNotificationsOutline } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
-import { CiSettings } from "react-icons/ci";
-import { MdOutlineAddBox, MdOutlineLogout } from "react-icons/md";
+import { MdOutlineLogout } from "react-icons/md";
 import { FiUser, FiMenu } from "react-icons/fi";
 
 function Navbar({ onToggleSidebar, isSidebarOpen }) {
@@ -45,32 +43,37 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
   };
 
   return (
-    <div className="h-full bg-[#26487E] flex items-center shadow-md">
+    <div className="h-full bg-[#fbfbfb] flex items-center max-lg:border-b-2">
       <div className="flex items-center w-full">
-        <div className="w-[279px] h-[6rem] flex items-center justify-center bg-[#223658] max-lg:bg-[#26487E] max-lg:w-auto max-lg:pr-4 ">
-          <span className="text-white text-xl font-bold max-lg:hidden">
-            Inventory
-          </span>
-          <button
-            className="lg:hidden text-white ml-4"
-            onClick={onToggleSidebar}
+        <div className="w-[279px] h-[6rem] flex items-center justify-center bg-white border-r-2 max-lg:border-r-0 max-lg:bg-[#fbfbfb] max-lg:w-auto transition-all duration-300 ease-in-out">
+          <a
+            href="#"
+            className="text-white text-lg font-semibold max-lg:hidden py-4 px-8 bg-[#002ecf] rounded-md"
           >
-            <FiMenu size={24} />
-          </button>
+            Inventory
+          </a>
         </div>
 
-        <div className="flex-1 flex justify-end px-6 items-center">
-          <div className="flex flex-row-reverse text-white items-center gap-6 max-md:gap-4">
+        <div className="flex-1 flex ml-6 mr-8 py-4 justify-between items-center border-b-2 max-lg:border-0">
+          <div className="flex items-center ml-2">
+            <button
+              className="lg:hidden text-gray-500"
+              onClick={onToggleSidebar}
+            >
+              <FiMenu size={24} />
+            </button>
+          </div>
+          <div className="flex text-gray-500 items-center gap-6 max-lg:gap-4">
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="hover:bg-[#1a325a] p-1 rounded-full transition-colors duration-200"
+                className="hover:bg-[#dedddd] hover:text-gray-400 p-1 rounded-full transition-colors duration-200"
               >
                 <CgProfile size={36} />
               </button>
 
               {isProfileOpen && (
-                <div className="absolute right-0 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
+                <div className="absolute right-0 w-48 bg-white rounded-lg shadow-lg py-1 z-30">
                   <div className="px-4 py-3 border-b border-gray-200">
                     <p className="text-sm font-medium text-gray-900">
                       {user?.username}
@@ -96,7 +99,6 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       </div>

@@ -195,7 +195,7 @@ function StockForm() {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-16">
-      <h1 className="text-2xl font-bold mb-4">Add New Stock Movement</h1>
+      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">Stock Management</h1>
       <form onSubmit={handleSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="mb-2">

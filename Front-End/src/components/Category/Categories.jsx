@@ -12,7 +12,9 @@ function Categories() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`/Category/read?inventoryId=${InventoryId}`);
+        const response = await fetch(
+          `/Category/read?inventoryId=${InventoryId}`
+        );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -45,42 +47,45 @@ function Categories() {
     );
 
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16">
-      <div className="flex justify-between items-center p-4 bg-white border-b-[1px]">
-        <h2 className="text-xl font-bold">Product Category</h2>
-        <button
-          onClick={() => navigate(`/manage/${InventoryId}/categories/new`)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md flex items-center hover:bg-blue-600 transition"
-        >
-          <FiPlus className="mr-2" /> Add Category
-        </button>
-      </div>
-
-      <table className="w-full">
-        <thead className="bg-white border-b-[1px]">
-          <tr>
-            <th className="p-3 text-left">Name</th>
-            <th className="p-3 text-left">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((category) => (
-            <tr
-              key={category.id}
-              className="border-b hover:bg-gray-100 cursor-pointer"
-              onClick={() =>
-                navigate(
-                  `/manage/${InventoryId}/categories/${category.id}/edit`
-                )
-              }
+    <>
+    <h1 className="text-base font-semibold ">Categories</h1>
+    <h1 className="text-gray-400 font-semibold text-xs mb-4">List</h1>
+      <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16">
+        <div className="flex justify-between items-center p-4 bg-white border-b-[1px]">
+          <button
+            onClick={() => navigate(`/manage/${InventoryId}/categories/new`)}
+            className="bg-[#dfffea] text-[#31c653] p-2 gap-2 rounded-md flex items-center hover:bg-[#17c653] hover:text-white transition"
             >
-              <td className="p-3">{category.name}</td>
-              <td className="p-3">{category.description}</td>
+              Add <FiPlus />
+          </button>
+        </div>
+
+        <table className="w-full">
+          <thead className="bg-white border-b-[1px]">
+            <tr>
+              <th className="p-3 text-left">Name</th>
+              <th className="p-3 text-left">Description</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {categories.map((category) => (
+              <tr
+                key={category.id}
+                className="border-b hover:bg-gray-100 cursor-pointer"
+                onClick={() =>
+                  navigate(
+                    `/manage/${InventoryId}/categories/${category.id}/edit`
+                  )
+                }
+              >
+                <td className="p-3">{category.name}</td>
+                <td className="p-3">{category.description}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 

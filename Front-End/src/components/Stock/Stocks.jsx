@@ -68,12 +68,11 @@ function Stocks() {
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16">
       <div className="flex justify-between items-center p-4 bg-white border-b-[1px]">
-        <h2 className="text-xl font-bold">Stocks</h2>
         <button
           onClick={() => navigate(`/manage/${InventoryId}/stock/new`)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md flex items-center hover:bg-blue-600 transition"
-        >
-          <FiPlus className="mr-2" /> Add Stocks
+          className="bg-[#dfffea] text-[#31c653] p-2 gap-2 rounded-md flex items-center hover:bg-[#17c653] hover:text-white transition"
+            >
+              Add <FiPlus />
         </button>
       </div>
 
