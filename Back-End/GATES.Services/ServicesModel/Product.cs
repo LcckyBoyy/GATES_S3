@@ -47,6 +47,7 @@ namespace GATES.DA.ServicesModel
         public decimal UnitPrice { get; set; }
 
         public string? UnitMeasure { get; set; }
+        public int MinimumStock { get; internal set; }
     }
 
     public class daUpdateProduct

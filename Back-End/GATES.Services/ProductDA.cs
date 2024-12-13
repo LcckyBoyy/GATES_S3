@@ -56,6 +56,7 @@ namespace GATES.DA
                         CategoryName = i.Category.Name,
                         SupplierName = i.Supplier.SupplierName,
                         CurrentStock = i.CurrentStock,
+                        MinimumStock = i.MinimumStock,
                         UnitMeasure = i.UnitMeasure,
                         UnitPrice = i.UnitPrice
                     });

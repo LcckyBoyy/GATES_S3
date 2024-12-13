@@ -63,9 +63,9 @@ function StockMovementHistories() {
               className={`
           px-2 py-1 rounded-full text-xs font-medium
           ${
-            history.status === "Completed"
+            history.status === "completed"
               ? "bg-green-100 text-green-800"
-              : history.status === "Pending"
+              : history.status === "pending"
               ? "bg-yellow-100 text-yellow-800"
               : "bg-red-100 text-red-800"
           }

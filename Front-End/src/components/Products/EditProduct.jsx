@@ -4,6 +4,7 @@ import { FiSave } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const MySwal = withReactContent(Swal);
 
@@ -178,6 +179,56 @@ function EditProduct() {
     }
   };
 
+  const handleDelete = async () => {
+    const result = await MySwal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      setIsLoading(true);
+
+      try {
+        const response = await fetch(`/Product?inventoryId=${InventoryId}&productId=${Productid}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to delete Product");
+        }
+
+        MySwal.fire({
+          title: "Deleted!",
+          text: "The Product has been deleted successfully.",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          navigate(`/manage/${InventoryId}/products`);
+        });
+      } catch (error) {
+        console.error("Error:", error);
+
+        MySwal.fire({
+          title: "Error!",
+          text:
+            error.message || "An error occurred while deleting the [product].",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-16">
       <h1 className="text-xl font-semibold mb-6 text-black border-b-2">
@@ -327,27 +378,19 @@ function EditProduct() {
           ></textarea>
         </div>
 
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-between space-x-4">
           <button
             type="button"
-            onClick={() =>
-              navigate(`/manage/${InventoryId}/products/${Productid}`)
-            }
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className={`group relative items-center flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
+            onClick={handleDelete}
+            className={`flex items-center justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
               isLoading
                 ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                : "text-white bg-blue-600 hover:bg-blue-700"
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
+                : "bg-red-500 hover:bg-red-600 text-white font-bold"
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out`}
             disabled={isLoading}
           >
             {isLoading ? (
-              <span className="flex ">
+              <span className="flex">
                 <span className="animate-pulse">Loading</span>
                 <span className="animate-bounce ml-1 inline-block font-bold">
                   . . .
@@ -355,11 +398,45 @@ function EditProduct() {
               </span>
             ) : (
               <>
-                <FiSave className="mr-2" />
-                Save Changes
+                <FaRegTrashAlt size={20} className="mr-2" />
+                Delete
               </>
             )}
           </button>
+          <div className="flex flex-row gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                navigate(`/manage/${InventoryId}/products/${Productid}`)
+              }
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`group relative items-center flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
+                isLoading
+                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : "text-white bg-blue-600 hover:bg-blue-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="flex ">
+                  <span className="animate-pulse">Loading</span>
+                  <span className="animate-bounce ml-1 inline-block font-bold">
+                    . . .
+                  </span>
+                </span>
+              ) : (
+                <>
+                  <FiSave className="mr-2" />
+                  Save Changes
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </form>
     </div>

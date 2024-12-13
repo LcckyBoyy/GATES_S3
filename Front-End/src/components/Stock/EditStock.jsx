@@ -191,7 +191,11 @@ function EditStock() {
         text: "Stock movement updated successfully.",
         icon: "success",
         confirmButtonColor: "#3085d6",
-      }).then(() => navigate(`/manage/${InventoryId}/stock`));
+      }).then(() =>
+        navigate(`/manage/${InventoryId}/products/${queryParams.get(
+          "product"
+        )}/history`)
+      );
     } catch (error) {
       console.error("Error updating stock:", error);
       MySwal.fire({
@@ -449,7 +453,13 @@ function EditStock() {
           <div className="flex items-center flex-row gap-4">
             <button
               type="button"
-              onClick={() => navigate(`/manage/${InventoryId}/products/${queryParams.get("product")}/history`)}
+              onClick={() =>
+                navigate(
+                  `/manage/${InventoryId}/products/${queryParams.get(
+                    "product"
+                  )}/history`
+                )
+              }
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
             >
               Cancel
