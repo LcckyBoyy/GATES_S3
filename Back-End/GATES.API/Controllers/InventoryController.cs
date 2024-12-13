@@ -16,7 +16,7 @@ namespace GATES.API.Controllers
 		private readonly IInventoryDA daInventory = inventoryDA;
 
 		[HttpPost]
-		[Route("create")]
+		//[Route("create")]
 		public JsonResult Create(blCreateInventory request)
 		{
 			try
@@ -38,7 +38,7 @@ namespace GATES.API.Controllers
 		}
 
 		[HttpGet]
-		[Route("read")]
+		//[Route("read")]
 		public IActionResult Read()
 		{
 			try
@@ -53,7 +53,7 @@ namespace GATES.API.Controllers
 		}
 
         [HttpPut]
-        [Route("update")]
+        //[Route("update")]
         public JsonResult Update(blUpdateInventory request)
 		{
             try
@@ -77,7 +77,7 @@ namespace GATES.API.Controllers
         }
 
         [HttpDelete]
-		[Route("delete")]
+		//[Route("delete")]
 		public JsonResult Delete(string inventoryId)
 		{
 			try
@@ -94,7 +94,7 @@ namespace GATES.API.Controllers
 		}
 
 		[HttpPost]
-		[Route("give-access")]
+		[Route("access")]
 		public JsonResult GiveAccess(string email, string InventoryId)
 		{
             try
@@ -111,7 +111,7 @@ namespace GATES.API.Controllers
 		}
 
         [HttpGet]
-		[Route("get-access")]
+		[Route("access")]
 		public JsonResult GetAccess(string inventoryId)
 		{
             try
@@ -128,7 +128,7 @@ namespace GATES.API.Controllers
         }
 
         [HttpDelete]
-		[Route("remove-access")]
+		[Route("access")]
 		public JsonResult DeleteAcces(string inventoryId, string email)
 		{
             try

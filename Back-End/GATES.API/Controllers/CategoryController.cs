@@ -14,7 +14,7 @@ namespace GATES.API.Controllers
         ICategoryDA daCategory = cateogryDa;
 
         [HttpPost]
-        [Route("create")]
+        //[Route("create")]
         public JsonResult Create(blCreateCategory req)
         {
             try
@@ -38,7 +38,7 @@ namespace GATES.API.Controllers
         }
 
         [HttpGet]
-        [Route("read")]
+        //[Route("read")]
         public JsonResult Read(string inventoryId)
         {
             try
@@ -68,7 +68,7 @@ namespace GATES.API.Controllers
         }
 
         [HttpPut]
-        [Route("update")]
+        //[Route("update")]
         public JsonResult Update(blUpdateCategory req)
         {
             try
@@ -90,7 +90,7 @@ namespace GATES.API.Controllers
         }
 
         [HttpDelete]
-        [Route("delete")]
+        //[Route("delete")]
         public JsonResult Delete(string categoryId)
         {
             try 

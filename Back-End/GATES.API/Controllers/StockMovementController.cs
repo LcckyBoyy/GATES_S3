@@ -5,14 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GATES.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class StockMovementController(IStockMovementDA stockMovement) : ControllerBase
     {
         IStockMovementDA daStockMovement = stockMovement;
 
         [HttpPost]
-        [Route("create")]
         public JsonResult Create(blInsertStockMovement request)
         {
             try
@@ -43,7 +42,6 @@ namespace GATES.API.Controllers
         }
 
         [HttpGet]
-        [Route("read")]
         public JsonResult Read(string productId)
         {
             try
@@ -83,7 +81,6 @@ namespace GATES.API.Controllers
         }
 
         [HttpPut]
-        [Route("update")]
         public JsonResult Update(blUpdateStockMovement request)
         {
             try
@@ -114,7 +111,6 @@ namespace GATES.API.Controllers
         }
 
         [HttpDelete]
-        [Route("delete")]
         public JsonResult Delete(string movementId)
         {
             try

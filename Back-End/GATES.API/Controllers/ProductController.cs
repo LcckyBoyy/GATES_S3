@@ -21,7 +21,6 @@ namespace GATES.API.Controllers
         IHelperDA daHelper = helperDa;
 
         [HttpPost]
-        [Route("create")]
         public JsonResult Create(blCreateProduct request)
         {
             try
@@ -53,7 +52,6 @@ namespace GATES.API.Controllers
         }
 
         [HttpGet]
-        [Route("read")]
         public JsonResult Read(string inventoryId, string? productName)
         {
             try
@@ -89,7 +87,6 @@ namespace GATES.API.Controllers
         }
 
         [HttpPut]
-        [Route("update")]
         public JsonResult Update(blUpdateProduct request)
         {
             try
@@ -121,7 +118,6 @@ namespace GATES.API.Controllers
         }
 
         [HttpDelete]
-        [Route("delete")]
         public JsonResult Delete(string inventoryId, string productId)
         {
             try

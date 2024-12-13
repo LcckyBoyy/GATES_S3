@@ -27,7 +27,7 @@ app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseMiddleware<Middleware1>();
+//app.UseMiddleware<Middleware1>();
 app.MapControllers();
 
 app.Run();

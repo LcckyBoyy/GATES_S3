@@ -97,7 +97,7 @@ namespace GATES.Controllers
         }
 		
         [HttpGet]
-        [Route("pingauth")]
+        //[Route("pingauth")]
         public JsonResult PingAuth()
         {
             try

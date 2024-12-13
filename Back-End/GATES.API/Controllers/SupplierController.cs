@@ -19,7 +19,7 @@ namespace GATES.API.Controllers
 		ISupplierDA daSupplier = supplierDA;
 
 		[HttpPost]
-		[Route("create")]
+		//[Route("create")]
 		public IActionResult Create(blCreateSupplier request)
 		{
 			try
@@ -51,7 +51,7 @@ namespace GATES.API.Controllers
 		}
 
         [HttpGet]
-        [Route("read")]
+        //[Route("read")]
         public IActionResult Read(string inventoryId)
         {
             try
@@ -88,7 +88,7 @@ namespace GATES.API.Controllers
         }
 
         [HttpPut]
-        [Route("update")]
+        //[Route("update")]
         public IActionResult Update(blUpdateSupplier request)
         {
             try
@@ -119,7 +119,7 @@ namespace GATES.API.Controllers
         }
 
         [HttpDelete]
-        [Route("delete")]
+        //[Route("delete")]
         public JsonResult Delete(string supplierId)
         {
             try
