@@ -213,7 +213,7 @@ namespace GATES.DA
 
                 if (db.Inventory.OwnerId != ownerId)
                 {
-                    response.Message = "Access not found";
+                    response.Message = "Only the owner of this inventory can remove this access";
                     return response;
                 }
                 server.PInventoryAccesses.Remove(db);
