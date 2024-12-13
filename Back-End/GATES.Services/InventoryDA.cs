@@ -195,28 +195,44 @@ namespace GATES.DA
             return response;
         }
 
-        public BaseResponse<bool> RemoveAccess(string inventoryId, string ownerId, string userId)
+        public BaseResponse<bool> RemoveAccess(string inventoryId, string ownerId, string email)
         {
             var response = new BaseResponse<bool>();
             using (GatesContext server = new GatesContext())
             {
-                var db = (from i in server.PInventoryAccesses
-                          where i.InventoryId == inventoryId
-                          && i.UserId == userId
-                          select i).FirstOrDefault();
+                var user = (from i in server.MtUsers
+                            where i.Email == email
+                            select i.UserId).FirstOrDefault();
 
-                if (db == null)
+                var access = (from i in server.PInventoryAccesses
+                              where i.InventoryId == inventoryId
+                              && i.UserId == user
+                              select i).FirstOrDefault();
+
+                if (access == null)
                 {
                     response.Message = "Access not found";
                     return response;
                 }
 
-                if (db.Inventory.OwnerId != ownerId)
+                var inventory = (from i in server.PInventories
+                                 where i.InventoryId == access.InventoryId
+                                 && i.OwnerId == ownerId
+                                 select i).FirstOrDefault();
+
+                if (inventory == null)
+                {
+                    response.Message = "Inventory not found";
+                    return response;
+                }
+
+                if (inventory.OwnerId != ownerId)
                 {
                     response.Message = "Only the owner of this inventory can remove this access";
                     return response;
                 }
-                server.PInventoryAccesses.Remove(db);
+                 
+                server.PInventoryAccesses.Remove(access);
                 server.SaveChanges();
 
                 response.Result = true;
