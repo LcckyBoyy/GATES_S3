@@ -11,8 +11,10 @@ namespace GATES.DA.Interface
 	{
 		public BaseResponse<bool> Insert(daInsertInventory req);
 		public BaseResponse<List<daGetlistInventory>> GetList(string id);
-		public BaseResponse<bool> GiveAccessTo(string userId, string InventoryId, string ownerId);
-
+		public BaseResponse<bool> Set(daUpdateInventory req);
         public BaseResponse<bool> Delete(string id, string ownerId);
-	}
+        public BaseResponse<bool> GiveAccessTo(string userId, string InventoryId, string ownerId);
+        public BaseResponse<List<daGetListAccess>> GetListAccess(string inventoryId);
+        public BaseResponse<bool> RemoveAccess(string inventoryId, string accessId);
+    }
 }

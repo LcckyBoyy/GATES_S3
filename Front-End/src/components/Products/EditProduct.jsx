@@ -12,20 +12,24 @@ function EditProduct() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   const [productData, setProductData] = useState({
-    name: '',
-    category: '',
-    price: '',
-    stock: '',
-    sku: '',
-    minimumStock: '',
-    description: '',
-    unitMeasure: ''
-});
+    name: "",
+    category: "",
+    supplier: "",
+    price: "",
+    stock: "",
+    sku: "",
+    minimumStock: "",
+    description: "",
+    unitMeasure: "",
+  });
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/Category/read");
+        const response = await fetch(
+          `/Category/read?inventoryId=${InventoryId}`
+        );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -41,7 +45,32 @@ function EditProduct() {
       }
     };
 
+    const fetchSuppliers = async () => {
+      try {
+        const response = await fetch(
+          `/Supplier/read?inventoryId=${InventoryId}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+
+        if (Array.isArray(data.result)) {
+          const formattedSuppliers = data.result.map((supplier) => ({
+            id: supplier.supplierId,
+            name: supplier.supplierName,
+          }));
+          setSuppliers(formattedSuppliers);
+        } else {
+          console.error("Unexpected data format:", data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch suppliers:", error);
+      }
+    };
+
     fetchCategories();
+    fetchSuppliers();
   }, []);
 
   useEffect(() => {
@@ -58,6 +87,7 @@ function EditProduct() {
         setProductData({
           name: data.result.productName,
           category: data.result.categoryId,
+          supplier: data.result.supplierId,
           price: data.result.unitPrice,
           stock: data.result.currentStock,
           sku: data.result.sku,
@@ -94,12 +124,15 @@ function EditProduct() {
           categories.find((category) => category.name === productData.category)
             ?.id || "",
         inventoryId: InventoryId,
+        supplierId:
+          suppliers.find((supplier) => supplier.name === productData.supplier)
+            ?.id || "",
         productName: productData.name,
         description: productData.description,
         sku: productData.sku,
         unitPrice: productData.price,
-        currentStock: productData.stock ,
-        minimumStock: productData.minimumStock  || 0,
+        currentStock: productData.stock,
+        minimumStock: productData.minimumStock || 0,
         unitMeasure: productData.unitMeasure,
       };
 
@@ -114,7 +147,7 @@ function EditProduct() {
       if (!response.ok) {
         throw new Error("Failed to update product");
       }
-      console.log(response)
+      console.log(response);
       MySwal.fire({
         title: "Success!",
         text: "Product updated successfully.",
@@ -138,7 +171,7 @@ function EditProduct() {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
+    <div className="bg-white shadow-md rounded-lg p-6 mb-16">
       <h1 className="text-2xl font-bold mb-4">Edit Product</h1>
 
       <form onSubmit={handleSubmit}>
@@ -172,7 +205,7 @@ function EditProduct() {
               >
                 <option value="">Select Category</option>
                 {categories.map((category) => (
-                  <option key={category.id} value={category.name}>
+                  <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
                 ))}
@@ -222,6 +255,28 @@ function EditProduct() {
                 className="w-full px-3 py-2 border rounded-md"
                 required
               />
+            </div>
+            <div>
+              <div className="mb-2">
+                <label className="block text-gray-700 font-bold mb-2">
+                  {" "}
+                  Supplier{" "}
+                </label>
+                <select
+                  name="supplier"
+                  value={productData.supplier}
+                  onChange={(e) => handleInputChange(e)}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                >
+                  <option value="">Select Supplier</option>
+                  {suppliers.map((supplier) => (
+                    <option key={supplier.id} value={supplier.id}>
+                      {supplier.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="mb-2">

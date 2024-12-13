@@ -9,17 +9,8 @@ function ProductSidebar() {
   const location = useLocation();
   const [selectedFilter, setSelectedFilter] = useState("All Items");
   const [products, setProducts] = useState([]);
+  const [filters, setFilters] = useState(["All Items"]);
   const navigate = useNavigate();
-
-  const filters = [
-    "All Items",
-    "Active",
-    "Inactive",
-    "Work",
-    "Personal",
-    "Shopping",
-    "Urgent",
-  ];
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -31,7 +22,13 @@ function ProductSidebar() {
           throw new Error("Failed to fetch products");
         }
         const data = await response.json();
-        setProducts(data); 
+        setProducts(data);
+
+        const uniqueCategories = [
+          ...new Set(data.map((product) => product.categoryName)),
+        ];
+
+        setFilters(["All Items", ...uniqueCategories]);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -40,13 +37,18 @@ function ProductSidebar() {
     fetchProducts();
   }, [InventoryId]);
 
+  const filteredProducts = products.filter((product) => {
+    if (selectedFilter === "All Items") return true;
+    return product.categoryName === selectedFilter;
+  });
+
   return (
-    <div className="w-1/4 bg-white border-r border-gray-300 rounded-l-lg p-2 shadow-lg ">
-      <div className="border-b-2 p-4 flex items-center flex-row justify-between">
+    <div className="w-1/4 bg-white border-r border-gray-300 rounded-l-lg p-2 shadow-lg">
+      <div className="border-b-2 p-2 flex items-center flex-row justify-between">
         <div className="relative">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center flex-row gap-2 font-bold text-lg"
+            className="flex items-center flex-row gap-2 font-bold text-lg max-md:text-sm"
           >
             {selectedFilter}
             <FaChevronRight
@@ -76,16 +78,16 @@ function ProductSidebar() {
 
         <button
           onClick={() => navigate(`/manage/${InventoryId}/products/new`)}
-          className="px-2 py-1 bg-blue-500 text-white rounded flex items-center flex-row gap-1"
+          className="px-2 py-1 bg-blue-500 text-white rounded flex items-center flex-row gap-1 max-md:hidden"
         >
           <GoPlus size={20} />
           New
         </button>
       </div>
 
-      <ul className="bg-white custom-scrollbar overflow-y-auto">
-        {products.length > 0 ? (
-          products.map((product) => (
+      <ul className="bg-white custom-scrollbar overflow-y-auto sm:h-96 h-max">
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
             <li
               key={product.productId}
               onClick={() =>
@@ -93,7 +95,9 @@ function ProductSidebar() {
               }
               className={`text-blue-500 cursor-pointer border-b-2 py-2 px-4 hover:bg-gray-100 ${
                 location.pathname ===
-                `/manage/${InventoryId}/products/${product.productId}`
+                  `/manage/${InventoryId}/products/${product.productId}` ||
+                location.pathname ===
+                  `/manage/${InventoryId}/products/${product.productId}/history`
                   ? "bg-gray-200"
                   : ""
               }`}
@@ -109,4 +113,4 @@ function ProductSidebar() {
   );
 }
 
-export default ProductSidebar; 
+export default ProductSidebar;

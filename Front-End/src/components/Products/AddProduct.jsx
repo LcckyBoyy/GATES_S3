@@ -2,8 +2,8 @@ import cuid from "cuid";
 import React, { useEffect, useState } from "react";
 import { FiSave } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
 
@@ -11,22 +11,26 @@ function AddProduct() {
   const { InventoryId } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [productData, setProductData] = useState({
     name: "",
     category: "",
+    supplier: "",
     price: "",
     stock: "",
     sku: "",
     minimumStock: "",
     description: "",
-    unitOfMeasure: "", 
+    unitOfMeasure: "",
   });
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("/Category/read");
+        const response = await fetch(
+          `/Category/read?inventoryId=${InventoryId}`
+        );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -42,7 +46,32 @@ function AddProduct() {
       }
     };
 
+    const fetchSuppliers = async () => {
+      try {
+        const response = await fetch(
+          `/Supplier/read?inventoryId=${InventoryId}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+
+        if (Array.isArray(data.result)) {
+          const formattedSuppliers = data.result.map((supplier) => ({
+            id: supplier.supplierId,
+            name: supplier.supplierName,
+          }));
+          setSuppliers(formattedSuppliers);
+        } else {
+          console.error("Unexpected data format:", data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch suppliers:", error);
+      }
+    };
+
     fetchCategories();
+    fetchSuppliers();
   }, []);
 
   const handleInputChange = (e) => {
@@ -60,8 +89,13 @@ function AddProduct() {
     try {
       const productToSubmit = {
         productId: cuid(),
-        categoryId: categories.find((category) => category.name === productData.category)?.id || "",
+        categoryId:
+          categories.find((category) => category.name === productData.category)
+            ?.id || "",
         inventoryId: InventoryId,
+        supplierId:
+          suppliers.find((supplier) => supplier.name === productData.supplier)
+            ?.id || "",
         productName: productData.name,
         description: productData.description,
         sku: productData.sku,
@@ -87,24 +121,22 @@ function AddProduct() {
       console.log("Product Created:", data);
 
       MySwal.fire({
-        title: 'Success!',
-        text: 'Product created successfully.',
-        icon: 'success',
-        confirmButtonColor: '#3085d6',
+        title: "Success!",
+        text: "Product created successfully.",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
       }).then(() => {
         navigate(`/manage/${InventoryId}/products`);
       });
-      
     } catch (error) {
       console.error("Error adding product:", error);
-      
+
       MySwal.fire({
-        title: 'Error!',
+        title: "Error!",
         text: error.message || "An error occurred while creating the product.",
-        icon: 'error',
-        confirmButtonColor: '#d33',
+        icon: "error",
+        confirmButtonColor: "#d33",
       });
-      
     } finally {
       setIsLoading(false);
     }
@@ -113,12 +145,15 @@ function AddProduct() {
   return (
     <div className="bg-white shadow-md rounded-lg p-6 xl:mb-0 mb-16">
       <h1 className="text-2xl font-bold mb-4">Add New Product</h1>
-      
+
       <form onSubmit={handleSubmit} className="">
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Product Name </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                {" "}
+                Product Name{" "}
+              </label>
               <input
                 type="text"
                 name="name"
@@ -131,7 +166,10 @@ function AddProduct() {
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Category </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                {" "}
+                Category{" "}
+              </label>
               <select
                 name="category"
                 value={productData.category}
@@ -149,7 +187,10 @@ function AddProduct() {
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Price </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                {" "}
+                Price{" "}
+              </label>
               <input
                 type="number"
                 name="price"
@@ -157,12 +198,14 @@ function AddProduct() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 step="0.01"
-                required
               />
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Unit of Measure </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                {" "}
+                Unit of Measure{" "}
+              </label>
               <input
                 type="text"
                 name="unitOfMeasure"
@@ -176,7 +219,10 @@ function AddProduct() {
 
           <div>
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Stock Quantity </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                {" "}
+                Stock Quantity{" "}
+              </label>
               <input
                 type="number"
                 name="stock"
@@ -187,20 +233,48 @@ function AddProduct() {
               />
             </div>
 
+            <div>
+              <div className="mb-2">
+                <label className="block text-gray-700 font-bold mb-2">
+                  {" "}
+                  Supplier{" "}
+                </label>
+                <select
+                  name="supplier"
+                  value={productData.supplier}
+                  onChange={(e) => handleInputChange(e)}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                >
+                  <option value="">Select Supplier</option>
+                  {suppliers.map((supplier) => (
+                    <option key={supplier.id} value={supplier.name}>
+                      {supplier.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> SKU </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                {" "}
+                SKU{" "}
+              </label>
               <input
                 type="text"
                 name="sku"
                 value={productData.sku}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
-                required
               />
             </div>
 
             <div className="mb-2">
-              <label className="block text-gray-700 font-bold mb-2"> Minimum Stock </label>
+              <label className="block text-gray-700 font-bold mb-2">
+                {" "}
+                Minimum Stock{" "}
+              </label>
               <input
                 type="number"
                 name="minimumStock"
@@ -213,14 +287,16 @@ function AddProduct() {
         </div>
 
         <div className="mb-2">
-          <label className="block text-gray-700 font-bold mb-2"> Description </label>
+          <label className="block text-gray-700 font-bold mb-2">
+            {" "}
+            Description{" "}
+          </label>
           <textarea
             name="description"
             value={productData.description}
             onChange={handleInputChange}
             className="w-full px-3 py-2 border rounded-md"
             rows="4"
-            required
           ></textarea>
         </div>
 
@@ -235,14 +311,18 @@ function AddProduct() {
           <button
             type="submit"
             className={`group relative items-center flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
-              isLoading ? "bg-gray-400 text-gray-200 cursor-not-allowed" : "text-white bg-blue-600 hover:bg-blue-700"
+              isLoading
+                ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                : "text-white bg-blue-600 hover:bg-blue-700"
             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
             disabled={isLoading}
           >
             {isLoading ? (
               <span className="flex ">
                 <span className="animate-pulse">Loading</span>
-                <span className="animate-bounce ml-1 inline-block font-bold">. . .</span>
+                <span className="animate-bounce ml-1 inline-block font-bold">
+                  . . .
+                </span>
               </span>
             ) : (
               <>

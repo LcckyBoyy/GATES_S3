@@ -54,14 +54,14 @@ namespace GATES.API.Controllers
 
         [HttpGet]
         [Route("read")]
-        public JsonResult Read(string inventoryId)
+        public JsonResult Read(string inventoryId, string? productName)
         {
             try
             {
                 var check = daHelper.CheckAccess(User.Id(), inventoryId);
                 if (!check) return new JsonResult(new { Result = new { }, Message = "You dont have the access for this inventory" });
 
-                var result = daProduct.GetList(inventoryId);
+                var result = daProduct.GetList(inventoryId, productName);
                 return new JsonResult(result.Result);
             }
             catch(Exception ex)

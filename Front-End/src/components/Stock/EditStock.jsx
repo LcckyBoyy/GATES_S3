@@ -1,25 +1,29 @@
 import React, { useEffect, useState, useRef } from "react";
-import cuid from "cuid";
 import { FiSave } from "react-icons/fi";
 import Swal from "sweetalert2";
+import { FaRegTrashAlt } from "react-icons/fa";
 import withReactContent from "sweetalert2-react-content";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../Loading";
+import { useLocation } from "react-router-dom";
 
 const MySwal = withReactContent(Swal);
 
-function StockForm() {
+function EditStock() {
   const navigate = useNavigate();
-  const { InventoryId } = useParams();
+  const { InventoryId, movementId } = useParams();
   const dropdownRef = useRef(null);
-
+  const searchTimeoutRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [noProductFound, setNoProductFound] = useState(false);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
   const [stockData, setStockData] = useState({
+    movementId: movementId,
     productId: "",
     movementType: "",
     quantity: "",
@@ -29,11 +33,53 @@ function StockForm() {
     status: "",
   });
 
+  const fetchStockData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `/api/StockMovement/get?productId=${queryParams.get(
+          "product"
+        )}&movementId=${movementId}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch stock data");
+      }
+      const data = await response.json();
+      setStockData({
+        movementId: data.movementId || movementId,
+        productId: data.result.productId || "",
+        movementType: data.result.movementType || "",
+        quantity: data.result.quantity || "",
+        referenceNo: data.result.referenceNo || "",
+        movementDate: data.result.movementDate || "",
+        notes: data.result.notes || "",
+        status: data.result.status || "",
+      });
+      setSearchInput("Current Product (Click × to change)");
+    } catch (error) {
+      console.error("Error fetching stock data:", error);
+      MySwal.fire({
+        title: "Error!",
+        text: error.message || "An error occurred while fetching stock data.",
+        icon: "error",
+        confirmButtonColor: "#d33",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const fetchProducts = async (searchTerm) => {
     try {
       setLoading(true);
       setNoProductFound(false);
-
       const response = await fetch(
         `/Product/read?inventoryId=${InventoryId}&productName=${searchTerm}`,
         {
@@ -45,25 +91,13 @@ function StockForm() {
           },
         }
       );
-
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-
-      if (data.message === "You don't have access for this inventory") {
-        window.location.href = "/no-access";
-        return;
-      }
-
       if (data.length === 0) {
         setNoProductFound(true);
       }
-
       setProducts(data);
       setIsSearching(true);
     } catch (err) {
@@ -78,7 +112,6 @@ function StockForm() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "searchInput") {
       if (
         value === "" ||
@@ -92,7 +125,12 @@ function StockForm() {
       } else if (!stockData.productId) {
         setSearchInput(value);
         if (value.trim()) {
-          fetchProducts(value);
+          if (searchTimeoutRef.current) {
+            clearTimeout(searchTimeoutRef.current);
+          }
+          searchTimeoutRef.current = setTimeout(() => {
+            fetchProducts(value);
+          }, 500);
         } else {
           setProducts([]);
           setIsSearching(false);
@@ -103,18 +141,13 @@ function StockForm() {
       setStockData((prev) => ({ ...prev, [name]: value }));
     }
   };
-
-  const handleProductSelect = (product) => {
-    setStockData((prev) => ({
-      ...prev,
-      productId: product.productId,
-    }));
-    setSearchInput(product.productName);
-    setIsSearching(false);
-    setProducts([]);
-    setNoProductFound(false);
-  };
-
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -133,58 +166,39 @@ function StockForm() {
     };
   }, [products, stockData.productId]);
 
+  const handleProductSelect = (product) => {
+    setStockData((prev) => ({ ...prev, productId: product.productId }));
+    setSearchInput(product.productName);
+    setIsSearching(false);
+    setProducts([]);
+    setNoProductFound(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
-      const stockToSubmit = {
-        movementId: cuid(),
-        ...stockData,
-      };
-
-      const response = await fetch("/api/StockMovement/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(stockToSubmit),
+      const response = await fetch(`/api/StockMovement/update/`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(stockData),
       });
-
       if (!response.ok) {
-        throw new Error("Failed to create stock movement");
+        throw new Error("Failed to update stock movement");
       }
-
-      const data = await response.json();
-
-      if (data.result == true) {
-        MySwal.fire({
-          title: "Success!",
-          text: "Stock movement created successfully.",
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-        }).then(() => {
-          navigate(`/manage/${InventoryId}/stock`);
-        });
-      }
-
-      if (data.result == false) {
-        MySwal.fire({
-          title: "Error!",
-          text:
-            data.message ||
-            "An error occurred while creating the stock movement.",
-          icon: "error",
-          confirmButtonColor: "#d33",
-        });
-      }
+      MySwal.fire({
+        title: "Success!",
+        text: "Stock movement updated successfully.",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      }).then(() => navigate(`/manage/${InventoryId}/stock`));
     } catch (error) {
-      console.error("Error adding stock:", error);
+      console.error("Error updating stock:", error);
       MySwal.fire({
         title: "Error!",
         text:
           error.message ||
-          "An error occurred while creating the stock movement.",
+          "An error occurred while updating the stock movement.",
         icon: "error",
         confirmButtonColor: "#d33",
       });
@@ -193,15 +207,72 @@ function StockForm() {
     }
   };
 
+  useEffect(() => {
+    fetchStockData();
+  }, []);
+  const handleDelete = async () => {
+    const result = await MySwal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      setIsLoading(true);
+
+      try {
+        const response = await fetch(
+          `/api/StockMovement/delete?movementId=${movementId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete category");
+        }
+
+        console.log("Category Deleted");
+
+        MySwal.fire({
+          title: "Deleted!",
+          text: "The Stock has been deleted successfully.",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          navigate(`/manage/${InventoryId}/stock`);
+        });
+      } catch (error) {
+        console.error("Error:", error);
+
+        MySwal.fire({
+          title: "Error!",
+          text: error.message || "An error occurred while deleting the Stock.",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-16">
-      <h1 className="text-2xl font-bold mb-4">Add New Stock Movement</h1>
+      <h1 className="text-2xl font-bold mb-4">Edit Stock Movement</h1>
       <form onSubmit={handleSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="mb-2">
             <div className="mb-2 relative" ref={dropdownRef}>
               <label className="block text-gray-700 font-bold mb-2">
-                Product {stockData.productId}
+                Product Name
               </label>
               <div className="relative">
                 <input
@@ -211,7 +282,7 @@ function StockForm() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Search for a product"
-                  autocomplete="off"
+                  autoComplete="off"
                 />
                 {stockData.productId && (
                   <button
@@ -231,7 +302,12 @@ function StockForm() {
               </div>
               {loading && (
                 <div className="absolute z-10 w-full border rounded-md mt-1 p-2 bg-white text-center">
-                  Loading...
+                  <span className="flex justify-center">
+                    <span className="animate-pulse">Loading</span>
+                    <span className="animate-bounce ml-1 inline-block font-bold">
+                      . . .
+                    </span>
+                  </span>{" "}
                 </div>
               )}
               {noProductFound && !loading && (
@@ -240,16 +316,12 @@ function StockForm() {
                 </div>
               )}
               {isSearching && products.length > 0 && (
-                <ul
-                  className="absolute z-10 w-full border rounded-md mt-1 max-h-40 overflow-auto 
-                       bg-white shadow-lg"
-                >
+                <ul className="absolute z-10 w-full border rounded-md mt-1 max-h-40 overflow-auto bg-white shadow-lg">
                   {products.map((product) => (
                     <li
                       key={product.productId}
                       onClick={() => handleProductSelect(product)}
-                      className="px-3 py-2 cursor-pointer hover:bg-gray-100 
-                         first:rounded-t-md last:rounded-b-md"
+                      className="px-3 py-2 cursor-pointer hover:bg-gray-100 first:rounded-t-md last:rounded-b-md"
                     >
                       {product.productName}
                     </li>
@@ -259,7 +331,8 @@ function StockForm() {
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold mb-2">
-                Movement Type
+                {" "}
+                Movement Type{" "}
               </label>
               <select
                 name="movementType"
@@ -275,7 +348,8 @@ function StockForm() {
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold mb-2">
-                Quantity
+                {" "}
+                Quantity{" "}
               </label>
               <input
                 type="number"
@@ -290,7 +364,8 @@ function StockForm() {
           <div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold mb-2">
-                Reference No
+                {" "}
+                Reference No{" "}
               </label>
               <input
                 type="text"
@@ -303,7 +378,8 @@ function StockForm() {
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold mb-2">
-                Movement Date
+                {" "}
+                Movement Date{" "}
               </label>
               <input
                 type="date"
@@ -315,7 +391,8 @@ function StockForm() {
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold mb-2">
-                Notes
+                {" "}
+                Notes{" "}
               </label>
               <textarea
                 name="notes"
@@ -327,7 +404,8 @@ function StockForm() {
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 font-bold mb-2">
-                Status
+                {" "}
+                Status{" "}
               </label>
               <select
                 name="status"
@@ -336,42 +414,73 @@ function StockForm() {
                 className="w-full px-3 py-2 border rounded-md"
               >
                 <option value="">Select Status</option>
-                <option value="completed">Completed</option>
-                <option value="pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Pending">Pending</option>
               </select>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-between space-x-4">
           <button
             type="button"
-            onClick={() => navigate(`/manage/${InventoryId}/stock`)}
-            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className={`group relative items-center flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
+            onClick={handleDelete}
+            className={`flex items-center justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
               isLoading
                 ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                : "text-white bg-blue-600 hover:bg-blue-700"
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
+                : "bg-red-500 hover:bg-red-600 text-white font-bold"
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 ease-in-out`}
             disabled={isLoading}
           >
             {isLoading ? (
-              <>Loading...</>
+              <span className="flex">
+                <span className="animate-pulse">Loading</span>
+                <span className="animate-bounce ml-1 inline-block font-bold">
+                  . . .
+                </span>
+              </span>
             ) : (
               <>
-                <FiSave className="mr-2" /> Save Stock Movement
+                <FaRegTrashAlt size={20} className="mr-2" />
+                Delete
               </>
             )}
           </button>
+          <div className="flex items-center flex-row gap-4">
+            <button
+              type="button"
+              onClick={() => navigate(`/manage/${InventoryId}/stock`)}
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`group relative items-center flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md ${
+                isLoading
+                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  : "text-white bg-blue-600 hover:bg-blue-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out`}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="flex">
+                  <span className="animate-pulse">Loading</span>
+                  <span className="animate-bounce ml-1 inline-block font-bold">
+                    . . .
+                  </span>
+                </span>
+              ) : (
+                <>
+                  <FiSave className="mr-2" /> Save Stock
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </form>
     </div>
   );
 }
 
-export default StockForm;
+export default EditStock;

@@ -53,14 +53,6 @@ function Products() {
     fetchProducts();
   }, []);
 
-  const truncateDescription = (description, maxLength = 50) => {
-    if (!description || typeof description !== "string") {
-      return "";
-    }
-    if (description.length <= maxLength) return description;
-    return description.substring(0, maxLength) + "...";
-  };
-
   if (loading)
     return (
       <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
@@ -86,42 +78,40 @@ function Products() {
         </button>
       </div>
 
-      <table className="w-full">
-        <thead className="bg-white border-b-[1px]">
-          <tr>
-            <th className="p-3 text-left">Name</th>
-            <th className="p-3 text-left">Category</th>
-            <th className="p-3 text-left">Price</th>
-            <th className="p-3 text-left">Stock</th>
-            <th className="p-3 text-left">SKU</th>
-            <th className="p-3 text-left">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr
-              key={product.productId}
-              className="border-b hover:bg-gray-100 cursor-pointer"
-              onClick={() =>
-                navigate(`/manage/${InventoryId}/products/${product.productId}`)
-              }
-            >
-              <td className="p-3">
-                <div className="flex items-center space-x-3">
-                  <span>{product.productName}</span>
-                </div>
-              </td>
-              <td className="p-3">{product.categoryId}</td>
-              <td className="p-3">${product.unitPrice}</td>
-              <td className="p-3">{product.currentStock}</td>
-              <td className="p-3">{product.sku}</td>
-              <td className="p-3" title={product.description}>
-                {truncateDescription(product.description)}
-              </td>
+      <div className="overflow-x-auto custom-scrollbar">
+        <table className="min-w-full">
+          <thead className="bg-white border-b-[1px]">
+            <tr>
+              <th className="p-3 text-left">Name</th>
+              <th className="p-3 text-left">Category</th>
+              <th className="p-3 text-left">Supplier</th>
+              <th className="p-3 text-left">Price</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr
+                key={product.productId}
+                className="border-b hover:bg-gray-100 cursor-pointer"
+                onClick={() =>
+                  navigate(
+                    `/manage/${InventoryId}/products/${product.productId}`
+                  )
+                }
+              >
+                <td className="p-3">
+                  <div className="flex items-center space-x-3">
+                    <span>{product.productName}</span>
+                  </div>
+                </td>
+                <td className="p-3">{product.categoryName}</td>
+                <td className="p-3">{product.supplierName}</td>
+                <td className="p-3">${product.unitPrice}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

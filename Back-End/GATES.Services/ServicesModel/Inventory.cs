@@ -17,7 +17,18 @@ namespace GATES.DA.ServicesModel
 		public string OwnerId { get; set; } = null!;
 	}
 
-	public class daGetlistInventory
+	public class daUpdateInventory
+	{
+		public string InventoryId { get; set; } = null!;
+
+		public string InventoryName { get; set; } = null!;
+
+		public string? Description { get; set; }
+
+        public string OwnerId { get; set; } = null!;
+    }
+
+    public class daGetlistInventory
 	{
 		public string InventoryId { get; set; } = null!;
 
@@ -26,5 +37,12 @@ namespace GATES.DA.ServicesModel
 		public string? Description { get; set; }
 
 		public string OwnerId { get; set; } = null!;
+	}
+
+	public class daGetListAccess
+	{
+		public string Username { get; set; } = null!;
+
+		public string Email { get; set; } = null!;
 	}
 }

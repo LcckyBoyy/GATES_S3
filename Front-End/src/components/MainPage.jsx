@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -23,6 +23,7 @@ import ProductManagement from "./Products/ProductManagement";
 import EditProduct from "./Products/EditProduct";
 import Stocks from "./Stock/Stocks";
 import StockForm from "./Stock/StockForm";
+import EditStock from "./Stock/EditStock";
 
 const SettingsContent = () => (
   <div className="p-6 bg-white rounded-lg shadow-md">
@@ -33,10 +34,15 @@ const SettingsContent = () => (
 
 const MainPage = () => {
   const [openDropdown, setOpenDropdown] = useState({});
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
   const { InventoryId } = useParams();
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   const menuItems = [
     {
@@ -67,7 +73,6 @@ const MainPage = () => {
         },
       ],
     },
-
     {
       id: "stock",
       label: "Stock",
@@ -86,16 +91,42 @@ const MainPage = () => {
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
+  const toggleSidebar = (e) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <div className="fixed top-0 left-0 right-0 z-50 h-16 ">
-        <Navbar />
+      <div className="fixed top-0 left-0 right-0 z-50 h-24">
+        <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       </div>
 
       {/* Main content area */}
-      <div className="flex pt-16 h-[calc(100vh-4rem)] z-0">
+      <div className="flex pt-24 z-0 relative">
+        {/* Overlay for mobile sidebar */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+            onClick={toggleSidebar}
+          />
+        )}
+
         {/* Sidebar */}
-        <div className="fixed left-0 top-16 bottom-0 z-20 w-56 bg-[#DFE8FA] overflow-y-auto">
+        <div
+          className={`
+            fixed left-0 top-24 bottom-0 z-40 w-[279px] bg-[#DFE8FA] overflow-y-auto 
+            transition-all duration-300 ease-in-out
+            lg:static lg:block max-lg:w-56
+            ${
+              isSidebarOpen
+                ? "translate-x-0 shadow-2xl"
+                : "-translate-x-full lg:translate-x-0"
+            }
+          `}
+        >
           {menuItems.map((item) => (
             <div key={item.id}>
               {item.subItems ? (
@@ -130,7 +161,10 @@ const MainPage = () => {
                   >
                     {item.subItems.map((sub) => (
                       <button
-                        onClick={() => navigate(sub.path)}
+                        onClick={() => {
+                          navigate(sub.path);
+                          toggleSidebar();
+                        }}
                         key={sub.id}
                         className={`w-full text-left px-14 py-1 ${
                           location.pathname.startsWith(sub.path)
@@ -145,12 +179,16 @@ const MainPage = () => {
                 </>
               ) : (
                 <button
-                  onClick={() => navigate(item.path)}
+                  onClick={() => {
+                    navigate(item.path);
+                    toggleSidebar();
+                  }}
                   className={`w-full text-left px-6 py-2 flex items-center ${
                     location.pathname === `/manage/${InventoryId}` &&
                     item.path === `/manage/${InventoryId}`
                       ? "bg-[#26487E] text-white rounded-b-xl"
-                      : location.pathname === item.path
+                      : location.pathname === item.path ||
+                        location.pathname === item.path + "/new"
                       ? "bg-[#26487E] text-white rounded-xl"
                       : "hover:bg-gray-200"
                   }`}
@@ -164,16 +202,23 @@ const MainPage = () => {
         </div>
 
         {/* Main content area */}
-        <div className="ml-56 flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10 custom-scrollbar ">
+        <div
+          className={`
+            flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10 custom-scrollbar 
+            transition-all duration-300 ease-in-out
+            lg:ml-0
+          `}
+        >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/new" element={<AddProduct />} />
             <Route
-              path="/products/:Productid"
+              path="/products/:Productid/*"
               element={<ProductManagement />}
             />
             <Route path="/products/:Productid/edit" element={<EditProduct />} />
+
             <Route path="/categories" element={<Categories />} />
             <Route path="/categories/new" element={<AddCategory />} />
             <Route
@@ -188,6 +233,7 @@ const MainPage = () => {
             />
             <Route path="/stock" element={<Stocks />} />
             <Route path="/stock/new" element={<StockForm />} />
+            <Route path="/stock/:movementId/edit" element={<EditStock />} />
             <Route path="/settings" element={<SettingsContent />} />
           </Routes>
         </div>

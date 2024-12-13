@@ -57,7 +57,7 @@ namespace GATES.DA
 					.Select(i => i.InventoryId)
 					.ToList();
 
-				var db = server.PInventories.Where(i => acces.Contains(i.InventoryId)).Select(i => new daGetlistInventory
+				var db = server.PInventories.Where(i => acces.Contains(i.InventoryId) && i.IsActive == true).Select(i => new daGetlistInventory
 				{
 					 InventoryId = i.InventoryId,
 					 Description = i.Description,
@@ -70,52 +70,33 @@ namespace GATES.DA
 			return response;
 		}
 	
-		public BaseResponse<bool> GiveAccessTo(string email, string InventoryId, string ownerId)
-		{
-			var response = new BaseResponse<bool>();
-			using (GatesContext server = new())
-			{
-				var inventory = server.PInventories.Where(i => i.InventoryId == InventoryId).FirstOrDefault();
-
-				if (inventory == null)
-				{
-					response.Message = "Inventory doesn't exist!";
-					return response;
-				}
-				if (inventory.OwnerId != ownerId)
-				{
-                    response.Message = "Only the owner of this inventory can give the access!";
+        public BaseResponse<bool> Set(daUpdateInventory req)
+        {
+            var response = new BaseResponse<bool>();
+            using (GatesContext server = new())
+            {
+                var db = (from i in server.PInventories
+                          where i.InventoryId == req.InventoryId && i.IsActive == true
+                          select i).FirstOrDefault();
+                if (db == null)
+                {
+                    response.Message = "Inventory not found!";
+                    return response;
+                }
+                if (db.OwnerId != req.OwnerId)
+                {
+                    response.Message = "Only the owner of this inventory can edit";
                     return response;
                 }
 
-
-
-				string? user = (from i in server.MtUsers
-							   where i.Email == email
-							   select i.UserId).FirstOrDefault();
-				
-				if(string.IsNullOrEmpty(user))
-				{
-					response.Message = "User not found.";
-					return response;
-				}
-
-				server.PInventoryAccesses.Add(new PInventoryAccess
-				{
-					InventoryAccesId = DateTime.UtcNow.ToString(),
-					UserId = user ?? "",
-					InventoryId = InventoryId,
-					GrantedAt = DateTime.UtcNow,
-					ExpiredAt = DateTime.UtcNow.AddDays(30),
-					IsActive = true
-				});
-				server.SaveChanges();
-
-				response.Result = true;
-				response.Message = "Success";
-			}
-			return response;
-		}
+                db.InventoryName = req.InventoryName;
+                db.Description = req.Description;
+             
+                server.SaveChanges();
+                response.Result = true;response.Message = "Success";
+            }
+            return response;
+        }
 
         public BaseResponse<bool> Delete(string inventoryId, string ownerId)
         {
@@ -143,6 +124,100 @@ namespace GATES.DA
                 response.Result = true;
                 response.Message = "Sucess";
             }
+            return response;
+        }
+       
+        public BaseResponse<bool> GiveAccessTo(string email, string InventoryId, string ownerId)
+        {
+            var response = new BaseResponse<bool>();
+            using (GatesContext server = new())
+            {
+                var inventory = server.PInventories.Where(i => i.InventoryId == InventoryId).FirstOrDefault();
+
+                if (inventory == null)
+                {
+                    response.Message = "Inventory doesn't exist!";
+                    return response;
+                }
+                if (inventory.OwnerId != ownerId)
+                {
+                    response.Message = "Only the owner of this inventory can give the access!";
+                    return response;
+                }
+
+
+
+                string? user = (from i in server.MtUsers
+                                where i.Email == email
+                                select i.UserId).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(user))
+                {
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                server.PInventoryAccesses.Add(new PInventoryAccess
+                {
+                    InventoryAccesId = DateTime.UtcNow.ToString(),
+                    UserId = user ?? "",
+                    InventoryId = InventoryId,
+                    GrantedAt = DateTime.UtcNow,
+                    ExpiredAt = DateTime.UtcNow.AddDays(30),
+                    IsActive = true
+                });
+                server.SaveChanges();
+
+                response.Result = true;
+                response.Message = "Success";
+            }
+            return response;
+        }
+
+        public BaseResponse<List<daGetListAccess>> GetListAccess(string inventoryId)
+        {
+            var response = new BaseResponse<List<daGetListAccess>>();
+            using (GatesContext server = new GatesContext())
+            {
+                var db = (from i in server.PInventoryAccesses
+                          where i.InventoryId == inventoryId
+                          select new daGetListAccess
+
+                          {
+                              Username = i.User.Username,
+                              Email = i.User.Email,
+
+                          });
+
+                response.Result = db.ToList();
+                response.Message = "Success";
+            }
+            return response;
+        }
+
+        public BaseResponse<bool> RemoveAccess(string inventoryId, string userId)
+        {
+            var response = new BaseResponse<bool>();
+            using (GatesContext server = new GatesContext())
+            {
+                var db = (from i in server.PInventoryAccesses
+                          where i.InventoryId == inventoryId
+                          && i.UserId == userId
+                          select i).FirstOrDefault();
+
+                if (db == null)
+                {
+                    response.Message = "Access not found";
+                    return response;
+                }
+
+                server.PInventoryAccesses.Remove(db);
+                server.SaveChanges();
+
+                response.Result = true;
+                response.Message = "Success";
+            }
+
             return response;
         }
     }
