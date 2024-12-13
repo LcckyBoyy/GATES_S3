@@ -143,7 +143,7 @@ namespace GATES.DA
             using (GatesContext server = new())
             {
                 var db = (from i in server.PProducts
-                         where i.ProductId == productId && i.InventoryId == inventoryId
+                         where i.ProductId == productId
                          select i).FirstOrDefault();
                 
                 if (db == null)
