@@ -101,7 +101,7 @@ namespace GATES.DA
                     MovementType = movement.MovementType, 
                     Quantity = movement.Quantity, 
                     ReferenceNo = movement.ReferenceNo, 
-                    MovementDate = movement.MovementDate.ToString(),
+                    MovementDate = movement.MovementDate.ToString("yyyy-MM-dd"),
                     Notes = movement.Notes, 
                     Status = movement.Status
                 };
