@@ -75,7 +75,7 @@ function StockMovementHistories() {
             </span>
           </div>
           <div className="col-span-2 text-gray-600">
-            {new Date(history.date).toLocaleDateString()}
+          {history.movementDate ? new Date(history.movementDate).toLocaleDateString() : "Invalid Date"}
           </div>
         </div>
       ))}

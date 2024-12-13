@@ -3,20 +3,17 @@ import { FaEdit, FaTrash, FaPlus, FaUser } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import Loading from "../Loading";
 
 const MySwal = withReactContent(Swal);
 
 function Settings() {
   const { InventoryId } = useParams();
-  const [inventoryName, setInventoryName] = useState("My Inventory");
-  const [inventoryDescription, setInventoryDescription] = useState(
-    "Main inventory for warehouse operations"
-  );
-
+  const [inventoryName, setInventoryName] = useState("");
+  const [inventoryDescription, setInventoryDescription] = useState("");
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({
     name: "",
@@ -24,6 +21,39 @@ function Settings() {
   });
 
   useEffect(() => {
+    const fetchInventoryDetails = async () => {
+      try {
+        const response = await fetch(
+          `/Inventory/get?inventoryId=${InventoryId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch inventory details");
+        }
+
+        const data = await response.json();
+
+        if (data.result) {
+          setInventoryName(data.result.inventoryName);
+          setInventoryDescription(data.result.description);
+        }
+      } catch (err) {
+        setError(err.message);
+        MySwal.fire({
+          title: "Error!",
+          text: "Failed to fetch inventory details",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
+      }
+    };
+
     const fetchUsers = async () => {
       try {
         const response = await fetch(
@@ -56,8 +86,10 @@ function Settings() {
       }
     };
 
-    fetchUsers();
-  }, []);
+    Promise.all([fetchInventoryDetails(), fetchUsers()]).finally(() =>
+      setIsLoading(false)
+    );
+  }, [InventoryId]);
 
   const handleInventoryNameChange = (e) => {
     setInventoryName(e.target.value);
@@ -67,28 +99,91 @@ function Settings() {
     setInventoryDescription(e.target.value);
   };
 
-  const handleDeleteUser = async (userEmail) => {
-    try {
-      const response = await fetch(
-        `/Inventory/access?inventoryId=${InventoryId}&email=${userEmail}`,
-        {
-          method: "DELETE",
-          credentials: "include",
+  const handleSaveChanges = async () => {
+    const result = await MySwal.fire({
+      title: "Save Changes?",
+      text: "Are you sure you want to save these changes?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, save changes",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch("/Inventory", {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            inventoryId: InventoryId,
+            inventoryName: inventoryName,
+            description: inventoryDescription,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update inventory");
         }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to remove user access");
+
+        const data = await response.json();
+
+        MySwal.fire({
+          title: "Success!",
+          text: "Inventory details updated successfully",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        });
+      } catch (err) {
+        MySwal.fire({
+          title: "Error!",
+          text: "Failed to update inventory details",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
       }
-    } catch (err) {
-      console.error("Error removing user:", err);
-      alert("Failed to remove user. Please try again.");
     }
   };
 
   const handleShareAccess = async () => {
+    if (!newUser.email) {
+      MySwal.fire({
+        title: "Missing Email",
+        text: "Please enter an email address.",
+        icon: "warning",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+
+    const confirmResult = await MySwal.fire({
+      title: "Share Access?",
+      text: `Are you sure you want to grant access to ${newUser.email}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, grant access",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!confirmResult.isConfirmed) {
+      return;
+    }
+
+    MySwal.fire({
+      title: "Processing...",
+      text: "Please wait while we process your request.",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        MySwal.showLoading();
+      },
+    });
+
     try {
       const response = await fetch(
         `/Inventory/access?email=${newUser.email}&InventoryId=${InventoryId}`,
@@ -113,32 +208,104 @@ function Settings() {
         return;
       }
 
-      MySwal.fire({
-        title: "Access Granted!",
-        text: `The user (${newUser.email}) has been granted access to edit your inventory.`,
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-      });
+      if (data.result === true) {
+        const updatedUsersResponse = await fetch(
+          `/Inventory/access?inventoryId=${InventoryId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (updatedUsersResponse.ok) {
+          const updatedData = await updatedUsersResponse.json();
+          const formattedUsers = updatedData.result.map((user, index) => ({
+            id: index + 1,
+            name: user.username,
+            email: user.email,
+          }));
+          setUsers(formattedUsers);
+        }
+
+        MySwal.fire({
+          title: "Access Granted!",
+          text: `The user (${newUser.email}) has been granted access to edit your inventory.`,
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        });
+
+        setNewUser({ name: "", email: "" });
+        setIsAddUserModalOpen(false);
+        return;
+      }
     } catch (error) {
+      console.error("Share access error:", error);
       MySwal.fire({
         title: "Error!",
-        text: error.message || "An error occurred while sharing access.",
+        text: "An error occurred while sharing access. Please try again.",
         icon: "error",
         confirmButtonColor: "#d33",
       });
     }
   };
+  const handleDeleteUser = async (userEmail, userName) => {
+    const result = await MySwal.fire({
+      title: "Remove User Access?",
+      text: `Are you sure you want to remove ${userName}'s access to this inventory?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, remove access",
+      cancelButtonText: "Cancel",
+    });
 
-  // Render loading state
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(
+          `/Inventory/access?inventoryId=${InventoryId}&email=${userEmail}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to remove user access");
+        }
+
+        setUsers(users.filter((user) => user.email !== userEmail));
+
+        MySwal.fire({
+          title: "Removed!",
+          text: `${userName}'s access has been removed successfully.`,
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        });
+      } catch (err) {
+        MySwal.fire({
+          title: "Error!",
+          text: "Failed to remove user access. Please try again.",
+          icon: "error",
+          confirmButtonColor: "#d33",
+        });
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-6 text-center">
-        <p>Loading users...</p>
+        <Loading />
       </div>
     );
   }
 
-  // Render error state
   if (error) {
     return (
       <div className="p-6 text-red-500">
@@ -181,7 +348,10 @@ function Settings() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300">
+          <button
+            onClick={handleSaveChanges}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+          >
             Save Changes
           </button>
         </div>
@@ -219,7 +389,7 @@ function Settings() {
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">
                     <button
-                      onClick={() => handleDeleteUser(user.email)}
+                      onClick={() => handleDeleteUser(user.email, user.name)}
                       className="text-red-500 hover:text-red-700"
                     >
                       <FaTrash />

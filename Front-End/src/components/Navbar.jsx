@@ -45,10 +45,10 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
   return (
     <div className="h-full bg-[#fbfbfb] flex items-center max-lg:border-b-2">
       <div className="flex items-center w-full">
-        <div className="w-[279px] h-[6rem] flex items-center justify-center bg-white border-r-2 max-lg:border-r-0 max-lg:bg-[#fbfbfb] max-lg:w-auto transition-all duration-300 ease-in-out">
+        <div className="w-[279px] h-[5rem] flex items-center justify-center bg-white border-r-2 max-lg:border-r-0 max-lg:bg-[#fbfbfb] max-lg:w-auto transition-all duration-300 ease-in-out border-b-2">
           <a
             href="#"
-            className="text-white text-lg font-semibold max-lg:hidden py-4 px-8 bg-[#002ecf] rounded-md"
+            className="text-[#1565C0] text-lg font-semibold max-lg:hidden rounded-md"
           >
             Inventory
           </a>
@@ -80,15 +80,6 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
                     </p>
                     <p className="text-sm text-gray-500">{user?.email}</p>
                   </div>
-
-                  <a
-                    href="/profile"
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                  >
-                    <FiUser className="mr-2" size={16} />
-                    Profile
-                  </a>
-
                   <button
                     onClick={handleLogout}
                     className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer"

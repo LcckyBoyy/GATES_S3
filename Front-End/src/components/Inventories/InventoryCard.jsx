@@ -42,18 +42,13 @@ function InventoryCard({
   };
 
   const handleEditClick = () => {
-    onEdit({
-      invName,
-      createdDate,
-      invId,
-      userRole,
-    });
+    onEdit({});
     setIsOpen(false);
   };
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await fetch(`/Inventory/access?inventoryId=${invId}`, {
+      const response = await fetch(`/Inventory?inventoryId=${invId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
@@ -142,7 +137,7 @@ function InventoryCard({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 flex items-start justify-between w-[656px] mt-2">
+    <div className="bg-white rounded-lg shadow-md p-4 flex items-start justify-between mt-2">
       <div className="flex items-center">
         {logoUrl ? (
           <img
@@ -158,14 +153,7 @@ function InventoryCard({
         <div className="ml-4">
           <h2 className="text-xl font-bold text-gray-800">{invName}</h2>
           <p className="text-gray-500 text-sm">
-            Organization created on{" "}
-            <span className="font-bold">{createdDate}</span>
-          </p>
-          <p className="text-gray-500 text-sm">
-            Inventory Id: <span className="font-bold">{invId}</span>
-          </p>
-          <p className="text-gray-500 text-sm">
-            You are a {userRole} in this organization
+            You are <span className="font-bold">{userId !== ownerId ? "Accesed" : "Owner"} </span>in this Inventory
           </p>
         </div>
       </div>
@@ -215,12 +203,11 @@ function InventoryCard({
                   onClick={
                     userId !== ownerId ? undefined : handleDeleteInitiate
                   }
-                  className={`w-full text-left px-4 py-2 flex items-center text-red-500 
-                              ${
-                                userId !== ownerId
-                                  ? "text-gray-400 cursor-not-allowed opacity-50"
-                                  : "hover:bg-gray-100 text-gray-700 cursor-pointer hover:text-red-700"
-                              }`}
+                  className={`w-full text-left px-4 py-2 flex items-center text-red-500 ${
+                    userId !== ownerId
+                      ? "text-gray-400 cursor-not-allowed opacity-50"
+                      : "hover:bg-gray-100 text-gray-700 cursor-pointer hover:text-red-700"
+                  }`}
                 >
                   <CiTrash className="mr-2" /> Delete
                 </li>

@@ -7,7 +7,7 @@ function LogoutLink() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("/logout", {
+    fetch("/user/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,7 +27,7 @@ function LogoutLink() {
   return (
     <button
       onClick={handleSubmit}
-      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 cursor-pointer"
+      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-200/90 rounded-md cursor-pointer"
     >
       <MdOutlineLogout className="mr-2" size={16} />
       Logout

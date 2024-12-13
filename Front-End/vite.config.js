@@ -54,62 +54,63 @@ export default defineConfig({
   server: {
     proxy: {
       "^/user": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/user/login": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/registration": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
-      "^/logout": {
-        target: "https://localhost:7184/",
+      "^/user/logout": {
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/Inventory": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/Inventory/access": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/Product": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/Product/get": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/Category": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/Category/get": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/Supplier": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/Supplier/get": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/StockMovement": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
       "^/api/StockMovement/get": {
-        target: "https://localhost:7184/",
+        target: "https://localhost:7156/",
         secure: false,
       },
     },
+
     port: 5173,
     https: {
       key: fs.readFileSync(keyFilePath),

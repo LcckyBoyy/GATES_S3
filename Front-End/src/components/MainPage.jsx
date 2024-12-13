@@ -121,7 +121,6 @@ const MainPage = () => {
             }
           `}
         >
-          <div className="w-full h-1 mb-4 border-t-2 max-lg:hidden"></div>
           <div className="w-full h-4 hidden max-lg:block text-[11px] py-8 mb-4 border-b-2 text-gray-700 font-semibold">
             MENU
           </div>
@@ -202,7 +201,7 @@ const MainPage = () => {
         {/* Main content area */}
         <div
           className={`
-            flex-1 bg-[#fbfbfb] p-6 pb-16 overflow-y-auto h-screen z-10 custom-scrollbar 
+            flex-1 bg-[#fbfbfb] p-8 pb-16 overflow-y-auto h-screen z-10 custom-scrollbar 
             transition-all duration-300 ease-in-out
             lg:ml-0
           `}

@@ -1,6 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { FiPlus } from "react-icons/fi";
+import React, { useEffect, useState, useMemo } from "react";
+import { FiPlus, FiSearch } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  useTable,
+  usePagination,
+  useGlobalFilter,
+  useSortBy,
+} from "react-table";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaChevronUp,
+  FaChevronDown,
+} from "react-icons/fa";
+
 import Loading from "../Loading";
 
 function Stocks() {
@@ -8,23 +21,19 @@ function Stocks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
   const navigate = useNavigate();
-
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const response = await fetch(
-          `/Product?inventoryId=${InventoryId}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/Product?inventoryId=${InventoryId}`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -36,7 +45,7 @@ function Stocks() {
 
         const data = await response.json();
 
-        if (data.message == "You dont have the access for this inventory") {
+        if (data.message === "You dont have the access for this inventory") {
           window.location.href = "/no-access";
           return;
         }
@@ -51,7 +60,82 @@ function Stocks() {
     }
 
     fetchProducts();
-  }, []);
+  }, [InventoryId]);
+
+  // Prepare columns for react-table with more detailed configuration
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Product Name",
+        accessor: "productName",
+        Cell: ({ row }) => (
+          <div className="flex items-center space-x-3">
+            <span>{row.original.productName}</span>
+          </div>
+        ),
+      },
+      {
+        Header: "Measure",
+        accessor: "unitMeasure",
+      },
+      {
+        Header: "Stock",
+        accessor: "currentStock",
+        Cell: ({ value }) => `${value} ${value === 1 ? 'unit' : 'units'}`,
+      },
+    ],
+    []
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize, globalFilter },
+    setGlobalFilter,
+  } = useTable(
+    {
+      columns,
+      data: products,
+      initialState: { pageIndex: 0, pageSize: 10 },
+    },
+    useGlobalFilter,
+    useSortBy,
+    usePagination
+  );
+
+  const startIndex = pageIndex * pageSize + 1;
+  const endIndex = Math.min((pageIndex + 1) * pageSize, products.length);
+
+  // Generate page numbers
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    const halfVisiblePages = Math.floor(maxVisiblePages / 2);
+
+    let startPage = Math.max(0, pageIndex - halfVisiblePages);
+    let endPage = Math.min(pageCount - 1, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(0, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return pageNumbers;
+  };
 
   if (loading)
     return (
@@ -65,46 +149,153 @@ function Stocks() {
       </div>
     );
 
-  return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16">
-      <div className="flex justify-between items-center p-4 bg-white border-b-[1px]">
-        <button
-          onClick={() => navigate(`/manage/${InventoryId}/stock/new`)}
-          className="bg-[#dfffea] text-[#31c653] p-2 gap-2 rounded-md flex items-center hover:bg-[#17c653] hover:text-white transition"
-            >
-              Add <FiPlus />
-        </button>
-      </div>
+  if (error) return <div>Error: {error}</div>;
 
-      <table className="w-full">
-        <thead className="bg-white border-b-[1px]">
-          <tr>
-            <th className="p-3 text-left">Product Name</th>
-            <th className="p-3 text-left">Measure</th>
-            <th className="p-3 text-left">Stock</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr
-              key={product.productId}
-              className="border-b hover:bg-gray-100 cursor-pointer"
-              onClick={() =>
-                navigate(`/manage/${InventoryId}/products/${product.productId}/history`)
-              }
+  return (
+    <>
+      <h1 className="text-base font-semibold">Stocks</h1>
+      <h1 className="text-gray-400 font-semibold text-xs mb-4">List</h1>
+
+      <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16 p-3">
+        <div className="flex items-center justify-between p-4 bg-white border-b-[1px]">
+          <div className="flex items-center border rounded-md px-2">
+            <FiSearch className="text-gray-400 mr-2" />
+            <input
+              value={globalFilter || ""}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              placeholder="Search products..."
+              className="py-2 outline-none"
+            />
+          </div>
+          <button
+            onClick={() => navigate(`/manage/${InventoryId}/stock/new`)}
+            className="bg-[#dfffea] text-[#31c653] p-2 gap-2 rounded-md flex items-center hover:bg-[#17c653] hover:text-white transition"
+          >
+            Add <FiPlus />
+          </button>
+        </div>
+
+        <div className="overflow-x-auto custom-scrollbar">
+          <table {...getTableProps()} className="min-w-full">
+            <thead className="bg-white border-b-[1px]">
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
+                    <th
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      className="p-3 text-left cursor-pointer hover:bg-gray-100"
+                    >
+                      <div className="flex items-center">
+                        {column.render("Header")}
+                        <span className="ml-2">
+                          {column.isSorted ? (
+                            column.isSortedDesc ? (
+                              <FaChevronDown className="text-xs" />
+                            ) : (
+                              <FaChevronUp className="text-xs" />
+                            )
+                          ) : (
+                            ""
+                          )}
+                        </span>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {page.map((row) => {
+                prepareRow(row);
+                return (
+                  <tr
+                    {...row.getRowProps()}
+                    className="border-b hover:bg-gray-100 cursor-pointer"
+                    onClick={() =>
+                      navigate(
+                        `/manage/${InventoryId}/products/${row.original.productId}/history`
+                      )
+                    }
+                  >
+                    {row.cells.map((cell) => (
+                      <td {...cell.getCellProps()} className="p-3">
+                        {cell.render("Cell")}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex flex-col md:flex-row items-center justify-between p-3">
+          <div className="text-gray-600 text-sm mb-2 md:mb-0">
+            Showing {startIndex} to {endIndex} of {products.length} records
+          </div>
+          <div className="flex items-center space-x-2">
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+              }}
+              className="border rounded-md py-2 px-2 mr-4 text-sm"
             >
-              <td className="p-3">
-                <div className="flex items-center space-x-3">
-                  <span>{product.productName}</span>
-                </div>
-              </td>
-              <td className="p-3">{product.unitMeasure}</td>
-              <td className="p-3">{product.currentStock}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              {[5, 10, 20, 30].map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={() => gotoPage(0)}
+              disabled={!canPreviousPage}
+              className="p-2 border rounded disabled:opacity-50 text-sm"
+            >
+              First
+            </button>
+            <button
+              onClick={() => previousPage()}
+              disabled={!canPreviousPage}
+              className="p-2 border rounded disabled:opacity-50 text-sm"
+            >
+              <FaChevronLeft />
+            </button>
+
+            {generatePageNumbers().map((pageNumber) => (
+              <button
+                key={pageNumber}
+                onClick={() => gotoPage(pageNumber)}
+                className={`p-2 border rounded text-sm ${
+                  pageIndex === pageNumber
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700"
+                }`}
+              >
+                {pageNumber + 1}
+              </button>
+            ))}
+
+            <button
+              onClick={() => nextPage()}
+              disabled={!canNextPage}
+              className="p-2 border rounded disabled:opacity-50 text-sm"
+            >
+              <FaChevronRight />
+            </button>
+            <button
+              onClick={() => gotoPage(pageCount - 1)}
+              disabled={!canNextPage}
+              className="p-2 border rounded disabled:opacity-50 text-sm"
+            >
+              Last
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 

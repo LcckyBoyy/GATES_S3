@@ -449,7 +449,7 @@ function EditStock() {
           <div className="flex items-center flex-row gap-4">
             <button
               type="button"
-              onClick={() => navigate(`/manage/${InventoryId}/stock`)}
+              onClick={() => navigate(`/manage/${InventoryId}/products/${queryParams.get("product")}/history`)}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
             >
               Cancel

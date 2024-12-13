@@ -119,7 +119,7 @@ function ProductDetails() {
   const isHistory = location.pathname.endsWith("/history");
 
   return (
-    <div className="w-3/4 p-4 bg-white rounded-r-xl shadow-lg  max-md:w-full max-md:rounded-xl">
+    <div className="w-full p-4 bg-white rounded-xl shadow-lg">
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">{product.name}</h1>
       </div>
@@ -149,17 +149,29 @@ function ProductDetails() {
               onClick={() =>
                 navigate(`/manage/${InventoryId}/products/${Productid}/edit`)
               }
-              className="bg-[#D3D3D3] p-1.5 rounded-md border-2 border-[#c7c7c7]"
+              className={`bg-[#D3D3D3] p-1.5 rounded-md border-2 border-[#c7c7c7] ${
+                isHistory ? "hidden" : ""
+              }`}
             >
               <MdOutlineEdit />
             </button>
-            <div className="absolute z-10 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 top-full left-1/2 transform -translate-x-1/2 translate-y-1 pointer-events-none after:content-[''] after:absolute after:bottom-full after:left-1/2 after:border-4 after:border-transparent after:border-b-black">
+            <div
+              className="absolute z-10 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity 
+                duration-300 top-full left-1/2 transform -translate-x-1/2 translate-y-1 pointer-events-none after:content-[''] after:absolute 
+                after:bottom-full after:left-1/2 after:border-4 after:border-transparent after:border-b-black"
+            >
               Edit
             </div>
           </div>
 
           <button
-            onClick={() => navigate(`/manage/${InventoryId}/products`)}
+            onClick={() =>
+              navigate(
+                isHistory
+                  ? `/manage/${InventoryId}/stock`
+                  : `/manage/${InventoryId}/products`
+              )
+            }
             className="text-gray-600 hover:text-black"
           >
             <IoIosClose size={36} />

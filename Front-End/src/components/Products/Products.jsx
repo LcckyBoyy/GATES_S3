@@ -27,17 +27,14 @@ function Products() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const response = await fetch(
-          `/Product?inventoryId=${InventoryId}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/Product?inventoryId=${InventoryId}`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -95,7 +92,6 @@ function Products() {
     []
   );
 
-  // Table instance
   const {
     getTableProps,
     getTableBodyProps,
@@ -123,7 +119,6 @@ function Products() {
     usePagination
   );
 
-  // Calculate pagination details
   const startIndex = pageIndex * pageSize + 1;
   const endIndex = Math.min((pageIndex + 1) * pageSize, products.length);
 
@@ -166,7 +161,7 @@ function Products() {
       <h1 className="text-base font-semibold">Products</h1>
       <h1 className="text-gray-400 font-semibold text-xs mb-4">List</h1>
 
-      <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16">
+      <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16 p-3">
         <div className="flex items-center justify-between p-4 bg-white border-b-[1px]">
           <div className="flex items-center border rounded-md px-2">
             <FiSearch className="text-gray-400 mr-2" />
@@ -241,70 +236,69 @@ function Products() {
 
         {/* Pagination */}
         <div className="flex flex-col md:flex-row items-center justify-between p-3">
-  <div className="text-gray-600 text-sm mb-2 md:mb-0">
-    Showing {startIndex} to {endIndex} of {products.length} records
-  </div>
-  <div className="flex items-center space-x-2">
-    <select
-      value={pageSize}
-      onChange={(e) => {
-        setPageSize(Number(e.target.value));
-      }}
-      className="border rounded-md py-2 px-2 mr-4 text-sm"
-    >
-      {[5, 10, 20, 30].map((size) => (
-        <option key={size} value={size}>
-          {size}
-        </option>
-      ))}
-    </select>
+          <div className="text-gray-600 text-sm mb-2 md:mb-0">
+            Showing {startIndex} to {endIndex} of {products.length} records
+          </div>
+          <div className="flex items-center space-x-2">
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+              }}
+              className="border rounded-md py-2 px-2 mr-4 text-sm"
+            >
+              {[5, 10, 20, 30].map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
 
-    <button
-      onClick={() => gotoPage(0)}
-      disabled={!canPreviousPage}
-      className="p-2 border rounded disabled:opacity-50 text-sm"
-    >
-      First
-    </button>
-    <button
-      onClick={() => previousPage()}
-      disabled={!canPreviousPage}
-      className="p-2 border rounded disabled:opacity-50 text-sm"
-    >
-      <FaChevronLeft />
-    </button>
+            <button
+              onClick={() => gotoPage(0)}
+              disabled={!canPreviousPage}
+              className="p-2 border rounded disabled:opacity-50 text-sm"
+            >
+              First
+            </button>
+            <button
+              onClick={() => previousPage()}
+              disabled={!canPreviousPage}
+              className="p-2 border rounded disabled:opacity-50 text-sm"
+            >
+              <FaChevronLeft />
+            </button>
 
-    {generatePageNumbers().map((pageNumber) => (
-      <button
-        key={pageNumber}
-        onClick={() => gotoPage(pageNumber)}
-        className={`p-2 border rounded text-sm ${
-          pageIndex === pageNumber
-            ? "bg-blue-500 text-white"
-            : "bg-white text-gray-700"
-        }`}
-      >
-        {pageNumber + 1}
-      </button>
-    ))}
+            {generatePageNumbers().map((pageNumber) => (
+              <button
+                key={pageNumber}
+                onClick={() => gotoPage(pageNumber)}
+                className={`p-2 border rounded text-sm ${
+                  pageIndex === pageNumber
+                    ? "bg-blue-500 text-white"
+                    : "bg-white text-gray-700"
+                }`}
+              >
+                {pageNumber + 1}
+              </button>
+            ))}
 
-    <button
-      onClick={() => nextPage()}
-      disabled={!canNextPage}
-      className="p-2 border rounded disabled:opacity-50 text-sm"
-    >
-      <FaChevronRight />
-    </button>
-    <button
-      onClick={() => gotoPage(pageCount - 1)}
-      disabled={!canNextPage}
-      className="p-2 border rounded disabled:opacity-50 text-sm"
-    >
-      Last
-    </button>
-  </div>
-</div>
-
+            <button
+              onClick={() => nextPage()}
+              disabled={!canNextPage}
+              className="p-2 border rounded disabled:opacity-50 text-sm"
+            >
+              <FaChevronRight />
+            </button>
+            <button
+              onClick={() => gotoPage(pageCount - 1)}
+              disabled={!canNextPage}
+              className="p-2 border rounded disabled:opacity-50 text-sm"
+            >
+              Last
+            </button>
+          </div>
+        </div>
       </div>
     </>
   );
