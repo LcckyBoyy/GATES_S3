@@ -17,6 +17,13 @@ namespace GATES.DA.ServicesModel
 		public string OwnerId { get; set; } = null!;
 	}
 
+	public class daGetInventory
+	{
+        public string InventoryName { get; set; } = null!;
+
+        public string? Description { get; set; }
+    }
+
 	public class daUpdateInventory
 	{
 		public string InventoryId { get; set; } = null!;

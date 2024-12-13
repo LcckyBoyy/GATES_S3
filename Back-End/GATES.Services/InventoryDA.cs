@@ -70,6 +70,31 @@ namespace GATES.DA
 			return response;
 		}
 	
+        public BaseResponse<daGetInventory> GetInventory(string inventoryId)
+        {
+            var response = new BaseResponse<daGetInventory>();
+            using (GatesContext server = new())
+            {
+                var inventory = (from i in server.PInventories
+                                where i.InventoryId == inventoryId
+                                select i).FirstOrDefault();
+
+                if (inventory == null)
+                {
+                    response.Message = "Inventory not found";
+                    return response;
+                }
+
+                response.Result = new daGetInventory()
+                {
+                    InventoryName = inventory.InventoryName,
+                    Description = inventory.Description
+                };
+                response.Message = "Success";
+            }
+            return response;
+        }
+
         public BaseResponse<bool> Set(daUpdateInventory req)
         {
             var response = new BaseResponse<bool>();

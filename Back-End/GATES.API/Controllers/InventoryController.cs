@@ -52,6 +52,23 @@ namespace GATES.API.Controllers
             }
 		}
 
+        [HttpGet]
+		[Route("get")]
+		public JsonResult Get(string inventoryId)
+		{
+            try
+            {
+                var result = daInventory.GetInventory(inventoryId);
+                return new JsonResult(result);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new JsonResult(new { Result = false, Message = ex.Message });
+            }
+        }
+
         [HttpPut]
         //[Route("update")]
         public JsonResult Update(blUpdateInventory request)
