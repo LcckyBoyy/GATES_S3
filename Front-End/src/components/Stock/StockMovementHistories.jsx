@@ -44,7 +44,7 @@ function StockMovementHistories() {
         <div
           key={history.movementId}
           onClick={() => {
-            navigate(`/manage/${InventoryId}/stock/${history.movementId}/edit`);
+            navigate(`/manage/${InventoryId}/stock/${history.movementId}/edit?product=${Productid}`);
           }}
           className={`grid grid-cols-8 gap-4 items-center py-3 border-b border-gray-100 hover:cursor-pointer
         ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}

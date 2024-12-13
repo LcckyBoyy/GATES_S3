@@ -8,6 +8,7 @@ export default {
       },
       screens: {
         'max-md': { 'max': '767px' },
+        'max-lg': { 'max': '1024px' },
         'md': '768px',
       },
     },

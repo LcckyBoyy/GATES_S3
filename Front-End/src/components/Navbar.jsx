@@ -47,27 +47,19 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
   return (
     <div className="h-full bg-[#26487E] flex items-center shadow-md">
       <div className="flex items-center w-full">
-        <div className="w-56 h-[4rem] flex items-center justify-center bg-[#223658] max-md:bg-[#26487E] max-md:w-auto max-md:pr-4 ">
-          <span className="text-white text-xl font-bold max-md:hidden">Inventory</span>
-          <button 
-            className="md:hidden text-white ml-4"
+        <div className="w-[279px] h-[6rem] flex items-center justify-center bg-[#223658] max-lg:bg-[#26487E] max-lg:w-auto max-lg:pr-4 ">
+          <span className="text-white text-xl font-bold max-lg:hidden">
+            Inventory
+          </span>
+          <button
+            className="lg:hidden text-white ml-4"
             onClick={onToggleSidebar}
           >
             <FiMenu size={24} />
           </button>
         </div>
 
-        <div className="flex-1 flex justify-between px-6 items-center">
-          <div className="relative text-gray-600">
-            <input
-              className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-3xl text-sm focus:outline-none max-md:w-full"
-              name="search"
-              placeholder="Search"
-            />
-            <button type="submit" className="absolute right-0 top-0 mr-3 mt-2">
-              <IoIosSearch size={24} />
-            </button>
-          </div>
+        <div className="flex-1 flex justify-end px-6 items-center">
           <div className="flex flex-row-reverse text-white items-center gap-6 max-md:gap-4">
             <div className="relative" ref={dropdownRef}>
               <button
@@ -105,18 +97,6 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
               )}
             </div>
 
-            <CiSettings
-              size={32}
-              className="hover:bg-[#1a325a] p-1 rounded-full transition-colors duration-200 max-md:hidden"
-            />
-            <IoIosNotificationsOutline
-              size={28}
-              className="hover:bg-[#1a325a] p-1 rounded-full transition-colors duration-200 max-md:hidden"
-            />
-            <MdOutlineAddBox
-              size={28}
-              className="hover:bg-[#1a325a] p-1 rounded-full transition-colors duration-200 max-md:hidden"
-            />
           </div>
         </div>
       </div>

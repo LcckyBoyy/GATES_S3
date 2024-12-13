@@ -7,12 +7,7 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import {
-  FiHome,
-  FiTriangle,
-  FiBox,
-  FiSettings,
-} from "react-icons/fi";
+import { FiHome, FiTriangle, FiBox, FiSettings } from "react-icons/fi";
 import { MdOutlineInventory } from "react-icons/md";
 import Navbar from "./Navbar";
 import Products from "./Products/Products";
@@ -105,16 +100,16 @@ const MainPage = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <div className="fixed top-0 left-0 right-0 z-50 h-16">
+      <div className="fixed top-0 left-0 right-0 z-50 h-24">
         <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       </div>
 
       {/* Main content area */}
-      <div className="flex pt-16 z-0 relative">
+      <div className="flex pt-24 z-0 relative">
         {/* Overlay for mobile sidebar */}
         {isSidebarOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
             onClick={toggleSidebar}
           />
         )}
@@ -122,13 +117,13 @@ const MainPage = () => {
         {/* Sidebar */}
         <div
           className={`
-            fixed left-0 top-16 bottom-0 z-40 w-56 bg-[#DFE8FA] overflow-y-auto 
+            fixed left-0 top-24 bottom-0 z-40 w-[279px] bg-[#DFE8FA] overflow-y-auto 
             transition-all duration-300 ease-in-out
-            md:static md:block
+            lg:static lg:block max-lg:w-56
             ${
               isSidebarOpen
                 ? "translate-x-0 shadow-2xl"
-                : "-translate-x-full md:translate-x-0"
+                : "-translate-x-full lg:translate-x-0"
             }
           `}
         >
@@ -192,7 +187,8 @@ const MainPage = () => {
                     location.pathname === `/manage/${InventoryId}` &&
                     item.path === `/manage/${InventoryId}`
                       ? "bg-[#26487E] text-white rounded-b-xl"
-                      : location.pathname === item.path || location.pathname === item.path + "/new"
+                      : location.pathname === item.path ||
+                        location.pathname === item.path + "/new"
                       ? "bg-[#26487E] text-white rounded-xl"
                       : "hover:bg-gray-200"
                   }`}
@@ -210,7 +206,7 @@ const MainPage = () => {
           className={`
             flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10 custom-scrollbar 
             transition-all duration-300 ease-in-out
-            md:ml-0
+            lg:ml-0
           `}
         >
           <Routes>
@@ -222,7 +218,7 @@ const MainPage = () => {
               element={<ProductManagement />}
             />
             <Route path="/products/:Productid/edit" element={<EditProduct />} />
-            
+
             <Route path="/categories" element={<Categories />} />
             <Route path="/categories/new" element={<AddCategory />} />
             <Route
