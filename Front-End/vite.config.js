@@ -161,6 +161,14 @@ export default defineConfig({
         target: "https://localhost:7156/",
         secure: false,
       },
+      "^/Inventory/get-access": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
+      "^/Inventory/remove-access": {
+        target: "https://localhost:7156/",
+        secure: false,
+      },
     },
     port: 5173,
     https: {

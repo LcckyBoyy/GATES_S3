@@ -24,13 +24,7 @@ import EditProduct from "./Products/EditProduct";
 import Stocks from "./Stock/Stocks";
 import StockForm from "./Stock/StockForm";
 import EditStock from "./Stock/EditStock";
-
-const SettingsContent = () => (
-  <div className="p-6 bg-white rounded-lg shadow-md">
-    <h1 className="text-2xl font-bold mb-4">System Settings</h1>
-    <p>Configure your system preferences.</p>
-  </div>
-);
+import Settings from "./Dashboard/Settings";
 
 const MainPage = () => {
   const [openDropdown, setOpenDropdown] = useState({});
@@ -128,7 +122,9 @@ const MainPage = () => {
           `}
         >
           <div className="w-full h-1 mb-4 border-t-2 max-lg:hidden"></div>
-          <div className="w-full h-4 hidden max-lg:block text-[11px] py-8 mb-4 border-b-2 text-gray-700 font-semibold">MENU</div>
+          <div className="w-full h-4 hidden max-lg:block text-[11px] py-8 mb-4 border-b-2 text-gray-700 font-semibold">
+            MENU
+          </div>
           {menuItems.map((item) => (
             <div key={item.id}>
               {item.subItems ? (
@@ -236,7 +232,7 @@ const MainPage = () => {
             <Route path="/stock" element={<Stocks />} />
             <Route path="/stock/new" element={<StockForm />} />
             <Route path="/stock/:movementId/edit" element={<EditStock />} />
-            <Route path="/settings" element={<SettingsContent />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </div>
       </div>

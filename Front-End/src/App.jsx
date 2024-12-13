@@ -7,6 +7,7 @@ import Loading from "./components/Loading";
 import Manage from "./pages/Manage";
 import Dashboard from "./pages/Dashboard";
 import NoAccess from "./pages/noAccessPage";
+import Settings from "./components/Dashboard/Settings";
 
 function App() {
   return (
