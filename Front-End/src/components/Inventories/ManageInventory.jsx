@@ -15,7 +15,7 @@ function ManageInventory() {
 
   const fetchInventory = async () => {
     try {
-      const response = await fetch("/Inventory/read", {
+      const response = await fetch("/Inventory", {
         method: "GET",
         credentials: "include",
         headers: {

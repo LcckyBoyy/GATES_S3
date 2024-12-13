@@ -34,7 +34,7 @@ function AddSupplier() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/Supplier/create", {
+      const response = await fetch("/Supplier", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

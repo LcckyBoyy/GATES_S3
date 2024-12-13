@@ -27,9 +27,12 @@ function EditProduct() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          `/Category/read?inventoryId=${InventoryId}`
-        );
+        const response = await fetch(`/Category?inventoryId=${InventoryId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -47,9 +50,12 @@ function EditProduct() {
 
     const fetchSuppliers = async () => {
       try {
-        const response = await fetch(
-          `/Supplier/read?inventoryId=${InventoryId}`
-        );
+        const response = await fetch(`/Supplier?inventoryId=${InventoryId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -78,7 +84,13 @@ function EditProduct() {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `/Product/get?inventoryId=${InventoryId}&productId=${Productid}`
+          `/Product?inventoryId=${InventoryId}&productId=${Productid}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
         if (!response.ok) {
           throw new Error("Failed to fetch product");

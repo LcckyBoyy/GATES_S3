@@ -13,7 +13,7 @@ function Suppliers() {
     const fetchSuppliers = async () => {
       try {
         const response = await fetch(
-          `/Supplier/read?inventoryId=${InventoryId}`
+          `/Supplier?inventoryId=${InventoryId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

@@ -35,7 +35,7 @@ function StockForm() {
       setNoProductFound(false);
 
       const response = await fetch(
-        `/Product/read?inventoryId=${InventoryId}&productName=${searchTerm}`,
+        `/Product?inventoryId=${InventoryId}&productName=${searchTerm}`,
         {
           method: "GET",
           credentials: "include",
@@ -143,7 +143,7 @@ function StockForm() {
         ...stockData,
       };
 
-      const response = await fetch("/api/StockMovement/create", {
+      const response = await fetch("/StockMovement", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

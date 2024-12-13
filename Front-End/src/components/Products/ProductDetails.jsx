@@ -89,7 +89,13 @@ function ProductDetails() {
       setLoading(true);
       try {
         const response = await fetch(
-          `/Product/get?inventoryId=${InventoryId}&productId=${Productid}`
+          `/Product/get?inventoryId=${InventoryId}&productId=${Productid}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
         if (!response.ok) throw new Error("Failed to fetch product");
 
@@ -170,7 +176,7 @@ function ProductDetails() {
       ) : (
         <Routes>
           <Route path="/" element={<ProductOverview product={product} />} />
-          <Route path="/history" element={<StockMovementHistories/>} />
+          <Route path="/history" element={<StockMovementHistories />} />
         </Routes>
       )}
     </div>

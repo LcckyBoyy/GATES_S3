@@ -13,7 +13,7 @@ function Categories() {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          `/Category/read?inventoryId=${InventoryId}`
+          `/Category?inventoryId=${InventoryId}`
         );
         if (!response.ok) {
           throw new Error("Network response was not ok");

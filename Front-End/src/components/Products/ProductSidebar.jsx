@@ -15,9 +15,12 @@ function ProductSidebar() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(
-          `/Product/read?inventoryId=${InventoryId}`
-        );
+        const response = await fetch(`/Product?inventoryId=${InventoryId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }

@@ -27,7 +27,7 @@ function Settings() {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          `/Inventory/get-access?inventoryId=${InventoryId}`,
+          `/Inventory/access?inventoryId=${InventoryId}`,
           {
             method: "GET",
             headers: {
@@ -42,7 +42,6 @@ function Settings() {
 
         const data = await response.json();
 
-        // Transform API response to match existing user structure
         const formattedUsers = data.result.map((user, index) => ({
           id: index + 1,
           name: user.username,
@@ -71,7 +70,7 @@ function Settings() {
   const handleDeleteUser = async (userEmail) => {
     try {
       const response = await fetch(
-        `/Inventory/remove-access?inventoryId=${InventoryId}&email=${userEmail}`,
+        `/Inventory/access?inventoryId=${InventoryId}&email=${userEmail}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -92,7 +91,7 @@ function Settings() {
   const handleShareAccess = async () => {
     try {
       const response = await fetch(
-        `/Inventory/give-access?email=${newUser.email}&InventoryId=${InventoryId}`,
+        `/Inventory/access?email=${newUser.email}&InventoryId=${InventoryId}`,
         {
           method: "POST",
           credentials: "include",

@@ -54,7 +54,7 @@ function EditCategory() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/Category/update`, {
+      const response = await fetch(`/Category`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +111,7 @@ function EditCategory() {
 
       try {
         const response = await fetch(
-          `/Category/delete?categoryId=${categoryId}`,
+          `/Category?categoryId=${categoryId}`,
           {
             method: "DELETE",
             headers: {

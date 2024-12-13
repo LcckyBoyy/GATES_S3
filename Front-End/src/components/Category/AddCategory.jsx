@@ -31,7 +31,7 @@ function AddCategory() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/Category/create", {
+      const response = await fetch("/Category", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

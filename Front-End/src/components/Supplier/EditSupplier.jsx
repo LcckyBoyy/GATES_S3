@@ -53,7 +53,7 @@ function EditSupplier() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/Supplier/update`, {
+      const response = await fetch(`/Supplier`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ function EditSupplier() {
 
       try {
         const response = await fetch(
-          `/Supplier/delete?supplierId=${supplierId}`,
+          `/Supplier?supplierId=${supplierId}`,
           {
             method: "DELETE",
             headers: {

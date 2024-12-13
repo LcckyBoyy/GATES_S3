@@ -29,7 +29,7 @@ function NewInventoryModal({ onInventoryCreated }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/Inventory/create", {
+      const response = await fetch("/Inventory", {
         method: "POST",
         credentials: "include",
         headers: {

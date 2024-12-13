@@ -23,7 +23,7 @@ function LoginForm() {
     
     setIsLoading(true);
 
-    fetch("/user/login", {
+    fetch("/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

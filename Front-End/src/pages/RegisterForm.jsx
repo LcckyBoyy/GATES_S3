@@ -42,7 +42,7 @@ const RegisterForm = () => {
     setIsLoading(true);
     const userId = cuid();
 
-    fetch("/user/registration", {
+    fetch("/registration", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

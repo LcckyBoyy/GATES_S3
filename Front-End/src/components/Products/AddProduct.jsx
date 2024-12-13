@@ -28,9 +28,12 @@ function AddProduct() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          `/Category/read?inventoryId=${InventoryId}`
-        );
+        const response = await fetch(`/Category?inventoryId=${InventoryId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -48,12 +51,12 @@ function AddProduct() {
 
     const fetchSuppliers = async () => {
       try {
-        const response = await fetch(
-          `/Supplier/read?inventoryId=${InventoryId}`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        const response = await fetch(`/Supplier?inventoryId=${InventoryId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         const data = await response.json();
 
         if (Array.isArray(data.result)) {
@@ -144,7 +147,9 @@ function AddProduct() {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 xl:mb-0 mb-16">
-      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">Add Product</h1>
+      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">
+        Add Product
+      </h1>
 
       <form onSubmit={handleSubmit} className="">
         <div className="grid md:grid-cols-2 gap-6">

@@ -53,120 +53,60 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "^/user/pingauth": {
-        target: "https://localhost:7156/",
+      "^/user": {
+        target: "https://localhost:7184/",
         secure: false,
       },
       "^/user/login": {
-        target: "https://localhost:7156/",
+        target: "https://localhost:7184/",
         secure: false,
       },
-      "^/user/registration": {
-        target: "https://localhost:7156/",
+      "^/registration": {
+        target: "https://localhost:7184/",
         secure: false,
       },
-      "^/user/logout": {
-        target: "https://localhost:7156/",
+      "^/logout": {
+        target: "https://localhost:7184/",
         secure: false,
       },
-      "^/Inventory/read": {
-        target: "https://localhost:7156/",
+      "^/Inventory": {
+        target: "https://localhost:7184/",
         secure: false,
       },
-      "^/Inventory/delete": {
-        target: "https://localhost:7156/",
+      "^/Inventory/access": {
+        target: "https://localhost:7184/",
         secure: false,
       },
-      "^/Inventory/create": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Inventory/give-access": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Product/read": {
-        target: "https://localhost:7156/",
+      "^/Product": {
+        target: "https://localhost:7184/",
         secure: false,
       },
       "^/Product/get": {
-        target: "https://localhost:7156/",
+        target: "https://localhost:7184/",
         secure: false,
       },
-      "^/Product/create": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Product/update": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Category/read": {
-        target: "https://localhost:7156/",
+      "^/Category": {
+        target: "https://localhost:7184/",
         secure: false,
       },
       "^/Category/get": {
-        target: "https://localhost:7156/",
+        target: "https://localhost:7184/",
         secure: false,
       },
-      "^/Category/create": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Category/delete": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Category/update": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Supplier/read": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Supplier/create": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Supplier/delete": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Supplier/update": {
-        target: "https://localhost:7156/",
+      "^/Supplier": {
+        target: "https://localhost:7184/",
         secure: false,
       },
       "^/Supplier/get": {
-        target: "https://localhost:7156/",
+        target: "https://localhost:7184/",
         secure: false,
       },
-      "^/api/StockMovement/create": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/api/StockMovement/read": {
-        target: "https://localhost:7156/",
+      "^/StockMovement": {
+        target: "https://localhost:7184/",
         secure: false,
       },
       "^/api/StockMovement/get": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/api/StockMovement/update": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/api/StockMovement/delete": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Inventory/get-access": {
-        target: "https://localhost:7156/",
-        secure: false,
-      },
-      "^/Inventory/remove-access": {
-        target: "https://localhost:7156/",
+        target: "https://localhost:7184/",
         secure: false,
       },
     },

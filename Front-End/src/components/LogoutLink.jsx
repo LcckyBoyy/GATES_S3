@@ -7,7 +7,7 @@ function LogoutLink() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch("/user/logout", {
+    fetch("/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

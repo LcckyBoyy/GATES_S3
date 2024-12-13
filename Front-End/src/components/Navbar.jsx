@@ -24,7 +24,7 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    fetch("/user/logout", {
+    fetch("/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

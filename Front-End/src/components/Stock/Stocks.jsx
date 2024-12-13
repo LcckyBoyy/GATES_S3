@@ -15,7 +15,7 @@ function Stocks() {
     async function fetchProducts() {
       try {
         const response = await fetch(
-          `/Product/read?inventoryId=${InventoryId}`,
+          `/Product?inventoryId=${InventoryId}`,
           {
             method: "GET",
             credentials: "include",

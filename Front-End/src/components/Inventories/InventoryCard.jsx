@@ -53,7 +53,7 @@ function InventoryCard({
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await fetch(`/Inventory/delete?inventoryId=${invId}`, {
+      const response = await fetch(`/Inventory/access?inventoryId=${invId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
@@ -101,7 +101,7 @@ function InventoryCard({
   const handleShareAccess = async (email) => {
     try {
       const response = await fetch(
-        `/Inventory/give-access?email=${encodeURIComponent(
+        `/Inventory/access?email=${encodeURIComponent(
           email
         )}&InventoryId=${encodeURIComponent(invId)}`,
         {

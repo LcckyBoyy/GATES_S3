@@ -11,7 +11,7 @@ function StockMovementHistories() {
     const fetchStockMovements = async () => {
       try {
         const response = await fetch(
-          `/api/StockMovement/read?productId=${Productid}`
+          `/StockMovement?productId=${Productid}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch stock movements");

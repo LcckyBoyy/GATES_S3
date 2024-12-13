@@ -37,7 +37,7 @@ function EditStock() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `/api/StockMovement/get?productId=${queryParams.get(
+        `/StockMovement/get?productId=${queryParams.get(
           "product"
         )}&movementId=${movementId}`,
         {
@@ -81,7 +81,7 @@ function EditStock() {
       setLoading(true);
       setNoProductFound(false);
       const response = await fetch(
-        `/Product/read?inventoryId=${InventoryId}&productName=${searchTerm}`,
+        `/Product?inventoryId=${InventoryId}&productName=${searchTerm}`,
         {
           method: "GET",
           credentials: "include",
@@ -178,7 +178,7 @@ function EditStock() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/StockMovement/update/`, {
+      const response = await fetch(`/StockMovement`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(stockData),
@@ -226,7 +226,7 @@ function EditStock() {
 
       try {
         const response = await fetch(
-          `/api/StockMovement/delete?movementId=${movementId}`,
+          `/StockMovement?movementId=${movementId}`,
           {
             method: "DELETE",
             headers: {
