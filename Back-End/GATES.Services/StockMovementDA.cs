@@ -40,7 +40,8 @@ namespace GATES.DA
                     MovementType = req.MovementType,
                     Quantity = req.Quantity,
                     ReferenceNo = req.ReferenceNo,
-                    MovementDate = DateTime.UtcNow,
+                    MovementDate = DateTime.Parse(req.MovementDate)
+,
                     Notes = req.Notes,
                     Status = req.Status,
                 });
@@ -68,6 +69,7 @@ namespace GATES.DA
                              MovementType = i.MovementType,
                              Quantity = i.Quantity,
                              ReferenceNo = i.ReferenceNo,
+                             MovementDate = i.MovementDate.ToString(),
                              Notes = i.Notes,
                              Status = i.Status,
                          };
@@ -99,6 +101,7 @@ namespace GATES.DA
                     MovementType = movement.MovementType, 
                     Quantity = movement.Quantity, 
                     ReferenceNo = movement.ReferenceNo, 
+                    MovementDate = movement.MovementDate.ToString(),
                     Notes = movement.Notes, 
                     Status = movement.Status
                 };
@@ -170,7 +173,7 @@ namespace GATES.DA
                 movement.MovementType = req.MovementType;
                 movement.Quantity = req.Quantity;
                 movement.ReferenceNo = req.ReferenceNo;
-                //movement.MovementDate = DateTime.UtcNow;
+                movement.MovementDate = DateTime.Parse(req.MovementDate);
                 movement.Notes = req.Notes;
                 movement.Status = req.Status;
 

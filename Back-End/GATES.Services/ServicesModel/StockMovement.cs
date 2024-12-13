@@ -18,6 +18,8 @@ namespace GATES.DA.ServicesModel
 
         public string? ReferenceNo { get; set; }
 
+        public string MovementDate { get; set; } = null!;
+
         public string? Notes { get; set; }
 
         public string? Status { get; set; }
@@ -35,6 +37,8 @@ namespace GATES.DA.ServicesModel
 
         public string? ReferenceNo { get; set; }
 
+        public string MovementDate { get; set; } = null!;
+
         public string? Notes { get; set; }
 
         public string? Status { get; set; }
@@ -51,6 +55,8 @@ namespace GATES.DA.ServicesModel
         public int Quantity { get; set; }
 
         public string? ReferenceNo { get; set; }
+
+        public string MovementDate { get; set; } = null!;
 
         public string? Notes { get; set; }
 

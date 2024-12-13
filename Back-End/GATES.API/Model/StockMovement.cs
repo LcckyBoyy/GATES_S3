@@ -19,6 +19,8 @@ namespace GATES.API.Model
         [Required]
         public string? ReferenceNo { get; set; }
 
+        public string MovementDate { get; set; } = null!;
+
         public string? Notes { get; set; }
 
         public string? Status { get; set; }
@@ -40,6 +42,8 @@ namespace GATES.API.Model
 
         [Required]
         public string? ReferenceNo { get; set; }
+
+        public string MovementDate { get; set; } = null!;
 
         public string? Notes { get; set; }
 

@@ -1,10 +1,7 @@
 ﻿using GATES.DA.Interface;
 using GATES.DA.ServicesModel;
 using GATES.API.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using GATES.DA;
-using static Azure.Core.HttpHeader;
 
 namespace GATES.API.Controllers
 {
@@ -32,6 +29,7 @@ namespace GATES.API.Controllers
                     MovementType = request.MovementType,
                     Quantity = request.Quantity,
                     ReferenceNo = request.ReferenceNo,
+                    MovementDate = request.MovementDate,
                     Notes = request.Notes,
                     Status = request.Status,
                 });
@@ -102,6 +100,7 @@ namespace GATES.API.Controllers
                     MovementType = request.MovementType,
                     Quantity = request.Quantity,
                     ReferenceNo = request.ReferenceNo,
+                    MovementDate = request.MovementDate,
                     Notes = request.Notes,
                     Status = request.Status
                 });
