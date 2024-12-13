@@ -15,6 +15,6 @@ namespace GATES.DA.Interface
         public BaseResponse<bool> Delete(string id, string ownerId);
         public BaseResponse<bool> GiveAccessTo(string userId, string InventoryId, string ownerId);
         public BaseResponse<List<daGetListAccess>> GetListAccess(string inventoryId);
-        public BaseResponse<bool> RemoveAccess(string inventoryId, string accessId);
+        public BaseResponse<bool> RemoveAccess(string inventoryId, string ownerId, string userId);
     }
 }

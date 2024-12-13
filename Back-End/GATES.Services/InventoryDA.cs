@@ -195,7 +195,7 @@ namespace GATES.DA
             return response;
         }
 
-        public BaseResponse<bool> RemoveAccess(string inventoryId, string userId)
+        public BaseResponse<bool> RemoveAccess(string inventoryId, string ownerId, string userId)
         {
             var response = new BaseResponse<bool>();
             using (GatesContext server = new GatesContext())
@@ -211,6 +211,11 @@ namespace GATES.DA
                     return response;
                 }
 
+                if (db.Inventory.OwnerId != ownerId)
+                {
+                    response.Message = "Access not found";
+                    return response;
+                }
                 server.PInventoryAccesses.Remove(db);
                 server.SaveChanges();
 

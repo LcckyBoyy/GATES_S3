@@ -129,11 +129,11 @@ namespace GATES.API.Controllers
 
         [HttpDelete]
 		[Route("remove-access")]
-		public JsonResult DeleteAcces(string inventoryId, string ownerId)
+		public JsonResult DeleteAcces(string inventoryId, string email)
 		{
             try
             {
-                var result = daInventory.RemoveAccess(inventoryId, ownerId);
+                var result = daInventory.RemoveAccess(inventoryId, User.Id(), email);
 				return new JsonResult(result);
 
             }
