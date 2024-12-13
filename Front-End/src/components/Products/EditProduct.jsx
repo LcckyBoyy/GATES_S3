@@ -84,7 +84,7 @@ function EditProduct() {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `/Product?inventoryId=${InventoryId}&productId=${Productid}`,
+          `/Product/get?inventoryId=${InventoryId}&productId=${Productid}`,
           {
             method: "GET",
             headers: {
@@ -144,7 +144,7 @@ function EditProduct() {
         unitMeasure: productData.unitMeasure,
       };
 
-      const response = await fetch("/Product/update", {
+      const response = await fetch("/Product", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

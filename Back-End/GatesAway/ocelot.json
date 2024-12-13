@@ -160,7 +160,7 @@
           "Port": 8002
         }
       ],
-      "UpstreamPathTemplate": "/login",
+      "UpstreamPathTemplate": "/user/login",
       "UpstreamHttpMethod": [ "POST" ]
     },
 
@@ -205,7 +205,7 @@
       "UpstreamPathTemplate": "/user",
       "UpstreamHttpMethod": [ "GET" ]
     }
-  ],
+  ]
 
-  "GlobalConfiguration": {} // belum penting
+  //"GlobalConfiguration": "CorsPolicy"
 }

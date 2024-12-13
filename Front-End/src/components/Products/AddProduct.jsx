@@ -108,7 +108,7 @@ function AddProduct() {
         unitMeasure: productData.unitOfMeasure,
       };
 
-      const response = await fetch("/Product/create", {
+      const response = await fetch("/Product", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

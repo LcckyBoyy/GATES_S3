@@ -34,7 +34,17 @@ app.Run();
 
 void ConfigureService(ConfigurationManager config, IServiceCollection services)
 {
-	services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    //services.AddCors(options =>
+    //{
+    //    options.AddPolicy("CorsPolicy",
+    //        builder => builder
+    //            .AllowAnyMethod()
+    //            .AllowAnyHeader()
+    //            .WithOrigins("https://localhost:5173") // Specify the allowed client origin
+    //            .AllowCredentials());
+    //});
+
+    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 		.AddCookie(options =>
 		{
 			options.ExpireTimeSpan = TimeSpan.FromHours(720);
