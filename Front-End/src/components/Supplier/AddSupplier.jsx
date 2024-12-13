@@ -81,8 +81,8 @@ function AddSupplier() {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-8 mb-16">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">
-        Add New Supplier
+      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">
+        Add Supplier
       </h1>
 
       <form onSubmit={handleSubmit}>

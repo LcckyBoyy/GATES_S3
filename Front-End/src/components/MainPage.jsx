@@ -100,12 +100,12 @@ const MainPage = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <div className="fixed top-0 left-0 right-0 z-50 h-24">
+      <div className=" top-0 left-0 right-0 z-20 h-24">
         <Navbar onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       </div>
 
       {/* Main content area */}
-      <div className="flex pt-24 z-0 relative">
+      <div className="flex relative">
         {/* Overlay for mobile sidebar */}
         {isSidebarOpen && (
           <div
@@ -117,9 +117,9 @@ const MainPage = () => {
         {/* Sidebar */}
         <div
           className={`
-            fixed left-0 top-24 bottom-0 z-40 w-[279px] bg-[#DFE8FA] overflow-y-auto 
-            transition-all duration-300 ease-in-out
-            lg:static lg:block max-lg:w-56
+            fixed left-0 top-0 bottom-0 z-40 w-[279px] bg-white border-r-2 overflow-y-auto 
+            transition-all duration-300 ease-in-out px-4
+            lg:static lg:block max-lg:w-60
             ${
               isSidebarOpen
                 ? "translate-x-0 shadow-2xl"
@@ -127,13 +127,15 @@ const MainPage = () => {
             }
           `}
         >
+          <div className="w-full h-1 mb-4 border-t-2 max-lg:hidden"></div>
+          <div className="w-full h-4 hidden max-lg:block text-[11px] py-8 mb-4 border-b-2 text-gray-700 font-semibold">MENU</div>
           {menuItems.map((item) => (
             <div key={item.id}>
               {item.subItems ? (
                 <>
                   <button
                     onClick={() => toggleDropdown(item.id)}
-                    className={`flex flex-row w-full text-left px-6 py-2 items-center justify-between ${
+                    className={`flex flex-row w-full text-left p-2 items-center justify-between  ${
                       location.pathname.startsWith(item.path)
                         ? "bg-blue-700 text-white"
                         : ""
@@ -166,10 +168,10 @@ const MainPage = () => {
                           toggleSidebar();
                         }}
                         key={sub.id}
-                        className={`w-full text-left px-14 py-1 ${
+                        className={`w-full text-left px-14 py-1 my-[2px] ${
                           location.pathname.startsWith(sub.path)
-                            ? "bg-[#26487E] text-white rounded-xl"
-                            : "hover:bg-gray-200 rounded-xl"
+                            ? "bg-[#E6F2FF] text-[#1565C0] rounded-xl"
+                            : "hover:bg-[#E6F2FF] hover:text-[#0D47A1] rounded-xl"
                         }`}
                       >
                         {sub.label}
@@ -183,14 +185,14 @@ const MainPage = () => {
                     navigate(item.path);
                     toggleSidebar();
                   }}
-                  className={`w-full text-left px-6 py-2 flex items-center ${
+                  className={`w-full text-left p-2 flex items-center my-[2px] ${
                     location.pathname === `/manage/${InventoryId}` &&
                     item.path === `/manage/${InventoryId}`
-                      ? "bg-[#26487E] text-white rounded-b-xl"
+                      ? "bg-[#E6F2FF] text-[#1565C0] rounded-xl"
                       : location.pathname === item.path ||
                         location.pathname === item.path + "/new"
-                      ? "bg-[#26487E] text-white rounded-xl"
-                      : "hover:bg-gray-200"
+                      ? "bg-[#E6F2FF] text-[#1565C0] rounded-xl"
+                      : "hover:bg-[#E6F2FF] hover:text-[#0D47A1] rounded-xl"
                   }`}
                 >
                   <item.icon className="mr-2" />
@@ -204,7 +206,7 @@ const MainPage = () => {
         {/* Main content area */}
         <div
           className={`
-            flex-1 bg-gray-50 p-6 overflow-y-auto h-screen z-10 custom-scrollbar 
+            flex-1 bg-[#fbfbfb] p-6 pb-16 overflow-y-auto h-screen z-10 custom-scrollbar 
             transition-all duration-300 ease-in-out
             lg:ml-0
           `}

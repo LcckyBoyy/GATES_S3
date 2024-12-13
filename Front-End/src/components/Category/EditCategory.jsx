@@ -152,8 +152,8 @@ function EditCategory() {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-8">
-      <h1 className="text-2xl font-bold mb-6 text-gray-700/95">
-        Edit <span className="text-black">{oldCategory?.name}</span>
+      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">
+        Category Edit
       </h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">

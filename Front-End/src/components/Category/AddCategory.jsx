@@ -52,7 +52,6 @@ function AddCategory() {
       const data = await response.json();
       console.log("Category Created:", data);
 
-      // Show success alert
       MySwal.fire({
         title: "Success!",
         text: "Category created successfully.",
@@ -64,7 +63,6 @@ function AddCategory() {
     } catch (error) {
       console.error("Error:", error);
 
-      // Show error alert
       MySwal.fire({
         title: "Error!",
         text: error.message || "An error occurred while creating the category.",
@@ -78,8 +76,8 @@ function AddCategory() {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-8">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">
-        Add New Product Category
+      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">
+        Add Category
       </h1>
 
       <form onSubmit={handleSubmit}>
