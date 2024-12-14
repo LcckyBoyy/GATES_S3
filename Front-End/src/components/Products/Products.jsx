@@ -86,7 +86,7 @@ function Products() {
       {
         Header: "Price",
         accessor: "unitPrice",
-        Cell: ({ value }) => `$${value}`,
+        Cell: ({ value }) => `$${value.toLocaleString()}`,
       },
     ],
     []

@@ -135,8 +135,11 @@ function Settings() {
           title: "Success!",
           text: "Inventory details updated successfully",
           icon: "success",
-          confirmButtonColor: "#3085d6",
+          showConfirmButton: false,
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } catch (err) {
         MySwal.fire({
           title: "Error!",

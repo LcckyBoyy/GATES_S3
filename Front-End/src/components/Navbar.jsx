@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "./AuthorizeView";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineLogout } from "react-icons/md";
-import {  FiMenu, FiChevronRight } from "react-icons/fi";
+import { FiMenu, FiChevronRight } from "react-icons/fi";
 import Swal from "sweetalert2";
 
 function Navbar({ onToggleSidebar, isSidebarOpen }) {
@@ -20,7 +20,6 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
   const navigate = useNavigate();
   const user = useContext(UserContext);
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -38,11 +37,9 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch inventories and current inventory details
   useEffect(() => {
     const fetchInventoryDetails = async () => {
       try {
-        // Fetch current inventory details
         const currentInventoryResponse = await fetch(
           `/Inventory/get?inventoryId=${InventoryId}`,
           {
@@ -53,7 +50,6 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
           }
         );
 
-        // Fetch all inventories
         const inventoriesResponse = await fetch(`/Inventory`, {
           method: "GET",
           headers: {
@@ -182,6 +178,12 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
                       {inventory.inventoryName}
                     </button>
                   ))}
+                  <button
+                    onClick={() => navigate("/manage")}
+                    className={`w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100 border-t-2 flex items-center`}
+                  >
+                    <FiChevronRight className="rotate-180"/>Back
+                  </button>
                 </div>
               )}
             </div>

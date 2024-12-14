@@ -43,7 +43,7 @@ function ProductOverview({ product }) {
           <div className="flex justify-between items-center border-b pb-2">
             <span className="text-gray-600 font-medium">Price</span>
             <span className="font-semibold text-green-600">
-              ${parseFloat(product.unitPrice).toFixed(2)}
+              ${product.unitPrice.toLocaleString()}
             </span>
           </div>
           <div className="flex justify-between items-center border-b pb-2">
