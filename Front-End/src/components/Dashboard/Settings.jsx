@@ -282,19 +282,20 @@ function Settings() {
           throw new Error("Failed to remove user access");
         }
 
-        setUsers(users.filter((user) => user.email !== userEmail));
-        if ((response.result = true)) {
+        const data = await response.json();
+        if (data.result == true) {
           MySwal.fire({
             title: "Removed!",
             text: `${userName}'s access has been removed successfully.`,
             icon: "success",
             confirmButtonColor: "#3085d6",
           });
+          setUsers(users.filter((user) => user.email !== userEmail));
         }
-        if ((response.result = false)) {
+        if (data.result == false) {
           MySwal.fire({
             title: "Error!",
-            text: `${response.message}`,
+            text: `${data.message}`,
             icon: "error",
             confirmButtonColor: "#d33",
           });
