@@ -125,7 +125,7 @@ namespace GATES.API.Controllers
                 var check = daHelper.CheckAccess(User.Id(), inventoryId);
                 if (!check) return new JsonResult(new { Result = new { }, Message = "You dont have the access for this inventory" });
 
-                var result = daProduct.Remove(inventoryId, productId);
+                var result = daProduct.Remove(productId, inventoryId);
                 return new JsonResult(result);
             }
             catch (Exception ex)
