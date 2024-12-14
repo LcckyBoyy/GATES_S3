@@ -67,7 +67,7 @@ export default defineConfig({
         target: port,
         secure: false,
       },
-      "^/user/logout": {
+      "^/logout": {
         target: port,
         secure: false,
       },

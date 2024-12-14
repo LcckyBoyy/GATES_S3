@@ -256,7 +256,13 @@ namespace GATES.DA
                     response.Message = "Only the owner of this inventory can remove this access";
                     return response;
                 }
-                 
+                
+                if (inventory.OwnerId == user)
+                {
+                    response.Message = "You cannot remove your own access";
+                    return response;
+                }
+
                 server.PInventoryAccesses.Remove(access);
                 server.SaveChanges();
 
