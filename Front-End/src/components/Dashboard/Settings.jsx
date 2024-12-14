@@ -283,13 +283,22 @@ function Settings() {
         }
 
         setUsers(users.filter((user) => user.email !== userEmail));
-
-        MySwal.fire({
-          title: "Removed!",
-          text: `${userName}'s access has been removed successfully.`,
-          icon: "success",
-          confirmButtonColor: "#3085d6",
-        });
+        if ((response.result = true)) {
+          MySwal.fire({
+            title: "Removed!",
+            text: `${userName}'s access has been removed successfully.`,
+            icon: "success",
+            confirmButtonColor: "#3085d6",
+          });
+        }
+        if ((response.result = false)) {
+          MySwal.fire({
+            title: "Error!",
+            text: `${response.message}`,
+            icon: "error",
+            confirmButtonColor: "#d33",
+          });
+        }
       } catch (err) {
         MySwal.fire({
           title: "Error!",
