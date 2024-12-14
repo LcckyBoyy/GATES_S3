@@ -21,7 +21,9 @@ function EditCategory() {
     const fetchCategory = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/Category/get?categoryId=${categoryId}&inventoryId=${InventoryId}`);
+        const response = await fetch(
+          `/Category/get?categoryId=${categoryId}&inventoryId=${InventoryId}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch category");
         }
@@ -97,28 +99,25 @@ function EditCategory() {
 
   const handleDelete = async () => {
     const result = await MySwal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: "Critical Action Required!",
+      text: "This action will permanently delete this category and all associated products. Are you absolutely sure you want to proceed?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Yes, delete it permanently!",
     });
 
     if (result.isConfirmed) {
       setIsLoading(true);
 
       try {
-        const response = await fetch(
-          `/Category?categoryId=${categoryId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`/Category?categoryId=${categoryId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
           throw new Error("Failed to delete category");

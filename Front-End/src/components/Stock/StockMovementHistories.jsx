@@ -159,7 +159,7 @@ function StockMovementHistories() {
                   className="border-b hover:bg-gray-100 cursor-pointer"
                   onClick={() =>
                     navigate(
-                      `/manage/${InventoryId}/products/${row.original.productId}`
+                      `/manage/${InventoryId}/stock/${row.original.movementId}/edit?product=${Productid}`
                     )
                   }
                 >

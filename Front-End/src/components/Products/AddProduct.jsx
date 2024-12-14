@@ -203,6 +203,7 @@ function AddProduct() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 step="0.01"
+                required
               />
             </div>
 

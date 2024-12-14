@@ -113,7 +113,6 @@ function AddSupplier() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 placeholder="Enter Contact Person"
-                required
               />
             </div>
 
@@ -128,7 +127,6 @@ function AddSupplier() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 placeholder="Enter contact number"
-                required
               />
             </div>
 
@@ -143,7 +141,6 @@ function AddSupplier() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 placeholder="Enter email address"
-                required
               />
             </div>
 
@@ -158,7 +155,6 @@ function AddSupplier() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 placeholder="Enter address"
-                required
               />
             </div>
           </div>

@@ -283,7 +283,6 @@ function EditProduct() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 step="0.01"
-                required
               />
             </div>
 
@@ -345,7 +344,6 @@ function EditProduct() {
                 value={productData.sku}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
-                required
               />
             </div>
 
@@ -374,7 +372,6 @@ function EditProduct() {
             onChange={handleInputChange}
             className="w-full px-3 py-2 border rounded-md"
             rows="4"
-            required
           ></textarea>
         </div>
 

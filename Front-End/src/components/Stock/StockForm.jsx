@@ -195,13 +195,15 @@ function StockForm() {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6 mb-16">
-      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">Stock Management</h1>
+      <h1 className="text-xl font-semibold mb-6 text-black border-b-2">
+        Stock Management
+      </h1>
       <form onSubmit={handleSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="mb-2">
             <div className="mb-2 relative" ref={dropdownRef}>
               <label className="block text-gray-700 font-bold mb-2">
-                Product {stockData.productId}
+                Product Name
               </label>
               <div className="relative">
                 <input
@@ -212,6 +214,7 @@ function StockForm() {
                   className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Search for a product"
                   autoComplete="off"
+                  required
                 />
                 {stockData.productId && (
                   <button
@@ -299,6 +302,7 @@ function StockForm() {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
                 placeholder="Enter reference number"
+                required
               />
             </div>
             <div className="mb-2">
@@ -334,6 +338,7 @@ function StockForm() {
                 value={stockData.status}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border rounded-md"
+                required
               >
                 <option value="">Select Status</option>
                 <option value="completed">Completed</option>
