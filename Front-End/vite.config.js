@@ -43,6 +43,8 @@ const target = env.ASPNETCORE_HTTPS_PORT
   ? env.ASPNETCORE_URLS.split(";")[0]
   : "https://localhost:7217";
 
+var port = "https://localhost:7184/"; // # port
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [plugin()],
@@ -54,59 +56,63 @@ export default defineConfig({
   server: {
     proxy: {
       "^/user": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/user/login": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/registration": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/user/logout": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/Inventory": {
-        target: "https://localhost:7156/",
+        target: port,
+        secure: false,
+      },
+      "^/Inventory/get": {
+        target: port,
         secure: false,
       },
       "^/Inventory/access": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/Product": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/Product/get": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/Category": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/Category/get": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/Supplier": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/Supplier/get": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/StockMovement": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
       "^/api/StockMovement/get": {
-        target: "https://localhost:7156/",
+        target: port,
         secure: false,
       },
     },

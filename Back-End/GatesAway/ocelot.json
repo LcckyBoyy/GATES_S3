@@ -1,18 +1,5 @@
 {
   "Routes": [
-    //{
-    //  "DownstreamPathTemplate": "/inventory/read", // URL API yang kita bikin
-    //  "DownstreamScheme": "http",
-    //  "DownstreamHostAndPorts": [
-    //    {
-    //      "Host": "localhost", // URL dari IIS
-    //      "Port": 8081 // port yang kita publish di IIS
-    //    }
-    //  ],
-    //  "UpstreamPathTemplate": "/inventory/read", // URL API yang akan di akses user ( bisa cutom )
-    //  "UpstreamHttpMethod": [ "GET" ] // methodnya
-    //},
-
     //Inventory
     {
       "DownstreamPathTemplate": "/inventory",
@@ -25,6 +12,19 @@
       ],
       "UpstreamPathTemplate": "/inventory",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/inventory/get",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8002
+        }
+      ],
+      "UpstreamPathTemplate": "/inventory/get",
+      "UpstreamHttpMethod": [ "GET" ]
     },
 
     //Inventory/Access
@@ -205,6 +205,21 @@
       "UpstreamPathTemplate": "/user",
       "UpstreamHttpMethod": [ "GET" ]
     }
+
+
+    //{
+    //  "DownstreamPathTemplate": "/inventory/read", // URL API yang kita bikin
+    //  "DownstreamScheme": "http",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "localhost", // URL dari IIS
+    //      "Port": 8081 // port yang kita publish di IIS
+    //    }
+    //  ],
+    //  "UpstreamPathTemplate": "/inventory/read", // URL API yang akan di akses user ( bisa cutom )
+    //  "UpstreamHttpMethod": [ "GET" ] // methodnya
+    //},
+
   ]
 
   //"GlobalConfiguration": "CorsPolicy"
