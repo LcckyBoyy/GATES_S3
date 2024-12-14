@@ -142,7 +142,7 @@ function Navbar({ onToggleSidebar, isSidebarOpen }) {
   return (
     <div className="h-full bg-[#fbfbfb] flex items-center max-lg:border-b-2">
       <div className="flex items-center w-full">
-        <div className="w-[279px] h-[5rem] flex items-center justify-center bg-white border-r-2 max-lg:border-r-0 max-lg:bg-[#fbfbfb] max-lg:w-auto transition-all duration-300 ease-in-out border-b-2">
+        <div className="w-[279px] h-[5rem] flex items-center justify-center bg-white border-r-2 max-lg:border-r-0 max-lg:bg-[#fbfbfb] max-lg:w-auto transition-all duration-300 ease-in-out max-md:border-b-0 border-b-2">
           <div className="flex items-center">
             <a
               href="#"

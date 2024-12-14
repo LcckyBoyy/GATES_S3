@@ -151,7 +151,7 @@ function Categories() {
       <h1 className="text-gray-400 font-semibold text-xs mb-4">List</h1>
 
       <div className="bg-white shadow-md rounded-lg overflow-hidden mb-16 p-3">
-        <div className="flex items-center justify-between p-4 bg-white border-b-[1px]">
+        <div className="flex items-center justify-between max-md:p-1 p-4 gap-2 bg-white border-b-[1px]">
           <div className="flex items-center border rounded-md px-2">
             <FiSearch className="text-gray-400 mr-2" />
             <input
