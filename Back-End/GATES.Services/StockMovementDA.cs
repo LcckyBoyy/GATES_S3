@@ -162,9 +162,9 @@ namespace GATES.DA
                         product.CurrentStock = product.CurrentStock - movement.Quantity - movement.Quantity;
                 }
 
-                if (product.CurrentStock < product.MinimumStock)
+                if (product.CurrentStock < 0)
                 {
-                    response.Message = $"Invalid stock, stock cannot be less than {product.MinimumStock}. Stock Left : {stock} {product.UnitMeasure}";
+                    response.Message = $"Invalid stock, stock cannot be less than 0. Stock Left : {stock} {product.UnitMeasure}";
                     return response;
                 }
 
