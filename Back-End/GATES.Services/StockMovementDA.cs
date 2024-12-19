@@ -164,7 +164,7 @@ namespace GATES.DA
 
                 if (product.CurrentStock < 0)
                 {
-                    response.Message = $"Invalid stock, stock cannot be less than 0. Stock Left : {stock} {product.UnitMeasure}";
+                    response.Message = $"Invalid stock, stock cannot be less than 0.";
                     return response;
                 }
 

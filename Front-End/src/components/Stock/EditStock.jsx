@@ -183,19 +183,29 @@ function EditStock() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(stockData),
       });
-      if (!response.ok) {
-        throw new Error("Failed to update stock movement");
+
+      const data = await response.json();
+
+      if(data.result == true)
+      {
+        MySwal.fire({
+          title: "Success!",
+          text: "Stock movement updated successfully.",
+          icon: "success",
+          confirmButtonColor: "#3085d6",
+        }).then(() =>
+          navigate(`/manage/${InventoryId}/products/${queryParams.get(
+            "product"
+          )}/history`)
+        );
+      }else{
+        MySwal.fire({
+          title: "Failed!",
+          text: data.message,
+          icon: "error",
+          confirmButtonColor: "#3085d6",
+        });
       }
-      MySwal.fire({
-        title: "Success!",
-        text: "Stock movement updated successfully.",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-      }).then(() =>
-        navigate(`/manage/${InventoryId}/products/${queryParams.get(
-          "product"
-        )}/history`)
-      );
     } catch (error) {
       console.error("Error updating stock:", error);
       MySwal.fire({
